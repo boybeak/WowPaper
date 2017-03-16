@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.google.gson.GsonBuilder;
 import com.nulldreams.base.manager.AbsManager;
+import com.nulldreams.wowpaper.modules.PaperResult;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,6 +13,9 @@ import java.util.Properties;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -32,14 +36,15 @@ public class ApiManager extends AbsManager {
 
     private ApiService mApi;
 
+    private String mApiKey;
+
     private ApiManager(Context context) {
         super(context);
-        String api_key = "";
         try {
             Properties properties = new Properties();
             InputStream is = context.getAssets().open("app.properties");
             properties.load(is);
-            api_key = properties.getProperty("api_key");
+            mApiKey = properties.getProperty("api_key");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -67,6 +72,10 @@ public class ApiManager extends AbsManager {
                 .build();
 
         mApi = retrofit.create(ApiService.class);
+    }
+
+    public void getNewest (Callback<PaperResult> callback) {
+        mApi.getPapers(mApiKey, "newest").enqueue(callback);
     }
 
 }

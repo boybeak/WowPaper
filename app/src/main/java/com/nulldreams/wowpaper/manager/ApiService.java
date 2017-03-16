@@ -1,7 +1,8 @@
 package com.nulldreams.wowpaper.manager;
 
-import android.telecom.Call;
+import com.nulldreams.wowpaper.modules.PaperResult;
 
+import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
 
@@ -12,6 +13,6 @@ import retrofit2.http.Query;
 public interface ApiService {
 
     @GET("get.php")
-    Call getPapers (@Query("auth") String auth, @Query("method") String method);
+    Call<PaperResult> getPapers (@Query("auth") String auth, @Query("method") String method);
 
 }
