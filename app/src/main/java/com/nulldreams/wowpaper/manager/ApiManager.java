@@ -52,16 +52,16 @@ public class ApiManager extends AbsManager {
 
         GsonBuilder gsonBuilder = new GsonBuilder();
 
-        HttpUrl baseUrl = new HttpUrl.Builder()
+        /*HttpUrl baseUrl = new HttpUrl.Builder()
                 .scheme("https")
                 .host("wall.alphacoders.com")
                 .addPathSegment("api2.0")
                 .addPathSegment("get.php")
                 .addQueryParameter("auth", api_key)
-                .build();
+                .build();*/
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(baseUrl)
+                .baseUrl("https://wall.alphacoders.com/api2.0/")
                 .client(okBuilder.build())
                 .addConverterFactory(GsonConverterFactory.create(gsonBuilder.create()))
                 .build();

@@ -27,7 +27,7 @@ ext {
 
     supportLibVersion='25.2.0'
     okHttpVersion='3.6.0'
-    retrofitVersion='2.1.0'
+    retrofitVersion='2.2.0'
     glideVersion='3.7.0'
 }
 
