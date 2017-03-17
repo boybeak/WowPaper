@@ -6,4 +6,5 @@ package com.nulldreams.wowpaper.modules;
 
 public class Result {
     public boolean success;
+    public String error;
 }

@@ -4,10 +4,21 @@ import android.content.Context;
 
 import com.google.gson.GsonBuilder;
 import com.nulldreams.base.manager.AbsManager;
+import com.nulldreams.wowpaper.modules.CategoryResult;
+import com.nulldreams.wowpaper.modules.Paper;
+import com.nulldreams.wowpaper.modules.PaperInfoResult;
 import com.nulldreams.wowpaper.modules.PaperResult;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.ByteBuffer;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.WritableByteChannel;
 import java.util.Properties;
 
 import okhttp3.HttpUrl;
@@ -24,6 +35,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 
 public class ApiManager extends AbsManager {
+
+    public static final String WOW_TYPE_NEWEST = "newest", WOW_TYPE_HIGHEST_RATED = "highest_rated";
 
     private static ApiManager sManager = null;
 
@@ -74,8 +87,35 @@ public class ApiManager extends AbsManager {
         mApi = retrofit.create(ApiService.class);
     }
 
-    public void getNewest (Callback<PaperResult> callback) {
-        mApi.getPapers(mApiKey, "newest").enqueue(callback);
+    public void getNewest (int page, String type, Callback<PaperResult> callback) {
+        mApi.getPapers(mApiKey, type, page).enqueue(callback);
+    }
+
+    public void getPaperInfo (int id, Callback<PaperInfoResult> callback) {
+        mApi.getPaperInfo(mApiKey, id).enqueue(callback);
+    }
+
+    public void getCategories (Callback<CategoryResult> callback) {
+        mApi.getCategories(mApiKey, "category_list").enqueue(callback);
+    }
+
+    public void downloadPaper (Paper paper, String outputPath) {
+        URL website;
+        try {
+            website = new URL(paper.url_image);
+            ReadableByteChannel rbc = Channels.newChannel(website.openStream());
+            FileOutputStream fos = new FileOutputStream(outputPath);
+            fos.getChannel().transferFrom(rbc, 0, paper.file_size);
+        } catch (MalformedURLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (FileNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
 }

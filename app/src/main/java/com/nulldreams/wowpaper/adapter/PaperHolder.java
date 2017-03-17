@@ -16,6 +16,8 @@ import com.nulldreams.wowpaper.modules.Paper;
 
 public class PaperHolder extends AbsViewHolder<PaperDelegate> {
 
+    private static final String TAG = PaperHolder.class.getSimpleName();
+
     private ImageView thumbIv;
 
     public PaperHolder(View itemView) {
@@ -26,6 +28,6 @@ public class PaperHolder extends AbsViewHolder<PaperDelegate> {
     @Override
     public void onBindView(Context context, PaperDelegate paperDelegate, int position, DelegateAdapter adapter) {
         Paper paper = paperDelegate.getSource();
-        Glide.with(context).load(paper.url_thumb).into(thumbIv);
+        Glide.with(context).load(paper.getThumb350()).placeholder(R.drawable.bg_paper_place_holder).into(thumbIv);
     }
 }
