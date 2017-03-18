@@ -7,6 +7,6 @@ import java.util.List;
  */
 
 public class PaperInfoResult extends Result {
-    public PaperInfo wallpaper;
-    public List<Tag> tags;
+    public Paper wallpaper;
+    public List<Category> tags;
 }

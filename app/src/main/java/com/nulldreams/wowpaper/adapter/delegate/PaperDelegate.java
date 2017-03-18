@@ -1,8 +1,10 @@
-package com.nulldreams.wowpaper.adapter;
+package com.nulldreams.wowpaper.adapter.delegate;
 
 import com.nulldreams.adapter.annotation.AnnotationDelegate;
 import com.nulldreams.adapter.annotation.DelegateInfo;
 import com.nulldreams.wowpaper.R;
+import com.nulldreams.wowpaper.adapter.holder.PaperHolder;
+import com.nulldreams.wowpaper.adapter.event.PaperClick;
 import com.nulldreams.wowpaper.modules.Paper;
 
 /**

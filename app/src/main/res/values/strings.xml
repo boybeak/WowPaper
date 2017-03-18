@@ -2,6 +2,14 @@
     <string name="app_name">WowPaper</string>
 
     <string name="title_activity_paper">PaperActivity</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="title_newest">Latest</string>
+    <string name="title_high_rate">Best</string>
+
+    <string name="text_set_wallpaper">Set As Wallpaper</string>
+
+    <string name="toast_set_wallpaper_success">Wallpaper Set Success</string>
+    <string name="toast_set_wallpaper_failed">Wallpaper Set Failed</string>
+    <string name="toast_wallpaper_downloading">Wallpaper is downloading</string>
+
+    <string name="dialog_msg_device_wallpaper_not_allowed">This device can not set wallpaper.</string>
 </resources>

@@ -1,7 +1,6 @@
 package com.nulldreams.wowpaper.manager;
 
 import com.nulldreams.wowpaper.modules.CategoryResult;
-import com.nulldreams.wowpaper.modules.PaperInfo;
 import com.nulldreams.wowpaper.modules.PaperInfoResult;
 import com.nulldreams.wowpaper.modules.PaperResult;
 

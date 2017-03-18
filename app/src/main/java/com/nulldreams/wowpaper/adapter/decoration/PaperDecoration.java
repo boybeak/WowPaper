@@ -1,4 +1,4 @@
-package com.nulldreams.wowpaper.adapter;
+package com.nulldreams.wowpaper.adapter.decoration;
 
 import android.content.Context;
 import android.graphics.Rect;
@@ -20,7 +20,7 @@ public class PaperDecoration extends RecyclerView.ItemDecoration {
     private int gap;
 
     public PaperDecoration(Context context) {
-        gap = context.getResources().getDimensionPixelSize(R.dimen.margin_middle);
+        gap = context.getResources().getDimensionPixelSize(R.dimen.margin_small);
     }
 
     @Override

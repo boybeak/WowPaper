@@ -25,7 +25,7 @@ ext {
     minSdkVersion=15
     targetSdkVersion=25
 
-    supportLibVersion='25.3.0'
+    supportLibVersion='25.2.0'
     okHttpVersion='3.6.0'
     retrofitVersion='2.2.0'
     glideVersion='3.7.0'

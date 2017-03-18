@@ -1,4 +1,4 @@
-package com.nulldreams.wowpaper.adapter;
+package com.nulldreams.wowpaper.adapter.holder;
 
 import android.content.Context;
 import android.view.View;
@@ -8,6 +8,7 @@ import com.bumptech.glide.Glide;
 import com.nulldreams.adapter.AbsViewHolder;
 import com.nulldreams.adapter.DelegateAdapter;
 import com.nulldreams.wowpaper.R;
+import com.nulldreams.wowpaper.adapter.delegate.PaperDelegate;
 import com.nulldreams.wowpaper.modules.Paper;
 
 /**
@@ -28,6 +29,6 @@ public class PaperHolder extends AbsViewHolder<PaperDelegate> {
     @Override
     public void onBindView(Context context, PaperDelegate paperDelegate, int position, DelegateAdapter adapter) {
         Paper paper = paperDelegate.getSource();
-        Glide.with(context).load(paper.getThumb350()).placeholder(R.drawable.bg_paper_place_holder).into(thumbIv);
+        Glide.with(context).load(paper.getThumb350()).crossFade().placeholder(R.drawable.bg_paper_place_holder).into(thumbIv);
     }
 }

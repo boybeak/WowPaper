@@ -1,10 +1,66 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.nulldreams.wowpaper.ui.PaperActivity">
+    tools:context="com.nulldreams.wowpaper.activity.PaperActivity"
+    >
     <com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
         android:id="@+id/paper_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-</FrameLayout>
+    <View
+        android:id="@+id/paper_mask"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_centerVertical="true"
+        android:background="#882e77c1"
+        android:visibility="gone"
+        />
+    <FrameLayout
+        android:id="@+id/paper_position_layout"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_gravity="bottom"
+        android:background="@color/colorHalfBlack"
+        android:layout_alignParentBottom="true"
+        android:visibility="gone"
+        >
+        <ImageView
+            android:id="@+id/paper_position_thumb"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal"
+            android:scaleType="centerCrop"
+            />
+        <View
+            android:id="@+id/paper_position_screen"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal"
+            android:background="@color/colorPlaceHolder"
+            />
+    </FrameLayout>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/paper_info_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/margin_middle"
+        android:paddingRight="@dimen/margin_middle"
+        android:layout_above="@+id/paper_position_layout"
+        android:fadingEdge="none"
+        android:requiresFadingEdge="none"
+        />
+    <TextView
+        android:id="@+id/paper_set_btn"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="@string/text_set_wallpaper"
+        android:gravity="center"
+        android:textAppearance="@style/TextAppearance.AppCompat.Title.Inverse"
+        android:background="@color/colorHalfBlack"
+        android:visibility="gone"
+        android:layout_alignParentTop="true"
+        />
+</RelativeLayout>

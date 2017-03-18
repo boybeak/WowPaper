@@ -1,4 +1,4 @@
-package com.nulldreams.wowpaper.adapter;
+package com.nulldreams.wowpaper.adapter.event;
 
 import android.content.Context;
 import android.view.View;
@@ -6,8 +6,10 @@ import android.view.View;
 import com.nulldreams.adapter.DelegateAdapter;
 import com.nulldreams.adapter.widget.OnItemClickListener;
 import com.nulldreams.base.content.It;
+import com.nulldreams.wowpaper.adapter.delegate.PaperDelegate;
+import com.nulldreams.wowpaper.adapter.holder.PaperHolder;
 import com.nulldreams.wowpaper.modules.Paper;
-import com.nulldreams.wowpaper.ui.PaperActivity;
+import com.nulldreams.wowpaper.activity.PaperActivity;
 
 /**
  * Created by boybe on 2017/3/17.
