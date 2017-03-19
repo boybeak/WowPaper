@@ -36,7 +36,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ApiManager extends AbsManager {
 
-    public static final String WOW_TYPE_NEWEST = "newest", WOW_TYPE_HIGHEST_RATED = "highest_rated";
+    public static final String WOW_TYPE_NEWEST = "newest",
+            WOW_TYPE_HIGHEST_RATED = "highest_rated", WOW_TYPE_CATEGORY = "category";
 
     private static ApiManager sManager = null;
 
@@ -87,8 +88,12 @@ public class ApiManager extends AbsManager {
         mApi = retrofit.create(ApiService.class);
     }
 
-    public void getNewest (int page, String type, Callback<PaperResult> callback) {
+    public void getWallpapers(int page, String type, Callback<PaperResult> callback) {
         mApi.getPapers(mApiKey, type, page).enqueue(callback);
+    }
+
+    public void getWallpapersWithId (String type, int id, int page, Callback<PaperResult> callback) {
+        mApi.getPapersWithId(mApiKey, type, id, page).enqueue(callback);
     }
 
     public void getPaperInfo (int id, Callback<PaperInfoResult> callback) {

@@ -10,6 +10,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.LinearSnapHelper;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
@@ -73,7 +74,7 @@ public class PaperActivity extends AppCompatActivity {
         public void onClick(View v) {
             final int id = v.getId();
             if (id == mSetBtn.getId()) {
-                if (mBmp != null) {
+                if (mBmp == null) {
                     Toast.makeText(PaperActivity.this, R.string.toast_wallpaper_downloading, Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -121,7 +122,11 @@ public class PaperActivity extends AppCompatActivity {
         mMaskView = findViewById(R.id.paper_mask);
 
         mInfoRv = (RecyclerView) findViewById(R.id.paper_info_layout);
-        mInfoRv.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, true));
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, true);
+        layoutManager.setStackFromEnd(true);
+        mInfoRv.setLayoutManager(layoutManager);
+        /*LinearSnapHelper helper = new LinearSnapHelper();
+        helper.attachToRecyclerView(mInfoRv);*/
         mInfoAdapter = new DelegateAdapter(this);
         mInfoRv.setAdapter(mInfoAdapter);
 
@@ -130,8 +135,6 @@ public class PaperActivity extends AppCompatActivity {
         mPositionThumbIv = (ImageView)findViewById(R.id.paper_position_thumb);
 
         mPaper = getIntent().getParcelableExtra(Paper.class.getSimpleName());
-
-
 
         mScreenWidth = getResources().getDisplayMetrics().widthPixels;
         mScreenHeight = getResources().getDisplayMetrics().heightPixels;

@@ -6,6 +6,7 @@ import com.nulldreams.adapter.AbsDelegate;
 import com.nulldreams.adapter.annotation.AnnotationDelegate;
 import com.nulldreams.adapter.annotation.DelegateInfo;
 import com.nulldreams.wowpaper.R;
+import com.nulldreams.wowpaper.adapter.event.TagStyleClick;
 import com.nulldreams.wowpaper.adapter.holder.TagStyleHolder;
 import com.nulldreams.wowpaper.modules.Category;
 
@@ -17,7 +18,8 @@ import java.lang.annotation.RetentionPolicy;
  */
 @DelegateInfo(
         layoutID = R.layout.layout_tag_style,
-        holderClass = TagStyleHolder.class
+        holderClass = TagStyleHolder.class,
+        onClick = TagStyleClick.class
 )
 public class TagStyleDelegate extends AnnotationDelegate<Category> {
 

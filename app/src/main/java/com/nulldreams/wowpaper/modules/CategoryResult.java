@@ -1,5 +1,6 @@
 package com.nulldreams.wowpaper.modules;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -7,5 +8,5 @@ import java.util.List;
  */
 
 public class CategoryResult extends Result {
-    public List<Category> categories;
+    public ArrayList<Category> categories;
 }

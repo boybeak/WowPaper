@@ -18,6 +18,9 @@ public interface ApiService {
     Call<PaperResult> getPapers (@Query("auth") String auth, @Query("method") String method, @Query("page") int page);
 
     @GET("get.php")
+    Call<PaperResult> getPapersWithId (@Query("auth") String auth, @Query("method") String method, @Query("id") int id, @Query("page") int page);
+
+    @GET("get.php")
     Call<CategoryResult> getCategories (@Query("auth") String auth, @Query("method") String method);
 
     @GET("get.php?method=wallpaper_info")

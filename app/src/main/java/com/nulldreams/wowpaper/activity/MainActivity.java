@@ -7,14 +7,18 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ViewGroup;
 
 import com.nulldreams.base.fragment.AbsPagerFragment;
 import com.nulldreams.wowpaper.R;
 import com.nulldreams.wowpaper.fragment.PaperListFragment;
+import com.nulldreams.wowpaper.fragment.TagStyleFragment;
 import com.nulldreams.wowpaper.manager.ApiManager;
 
 public class MainActivity extends AppCompatActivity {
+
+    private static final String TAG = MainActivity.class.getSimpleName();
 
     private TabLayout mTabLayout;
     private ViewPager mVp;
@@ -33,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
         mVp = (ViewPager) findViewById(R.id.main_vp);
 
         mPagers = new AbsPagerFragment[] {
+                TagStyleFragment.newInstance(),
                 PaperListFragment.newInstance(getString(R.string.title_newest),
                         ApiManager.WOW_TYPE_NEWEST),
                 PaperListFragment.newInstance(getString(R.string.title_high_rate),
@@ -40,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
         };
 
         mVp.setAdapter(new PaperAdapter(getSupportFragmentManager()));
+        mVp.setCurrentItem(1);
         mTabLayout.setupWithViewPager(mVp);
 
     }
@@ -57,11 +63,13 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public Fragment getItem(int position) {
+            Log.v(TAG, "TAG getItem");
             return mPagers[position];
         }
 
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
+            Log.v(TAG, "TAG instantiateItem");
             return super.instantiateItem(container, position);
         }
 

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,7 @@ import android.view.ViewGroup;
 
 import com.nulldreams.adapter.DelegateAdapter;
 import com.nulldreams.adapter.DelegateParser;
+import com.nulldreams.adapter.SimpleFilter;
 import com.nulldreams.adapter.impl.LayoutImpl;
 import com.nulldreams.adapter.widget.OnScrollBottomListener;
 import com.nulldreams.base.fragment.AbsPagerFragment;
@@ -21,6 +23,8 @@ import com.nulldreams.wowpaper.adapter.delegate.PaperDelegate;
 import com.nulldreams.wowpaper.manager.ApiManager;
 import com.nulldreams.wowpaper.modules.Paper;
 import com.nulldreams.wowpaper.modules.PaperResult;
+
+import java.util.ArrayList;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -85,6 +89,22 @@ public class PaperListFragment extends AbsPagerFragment implements SwipeRefreshL
         mAdapter = new DelegateAdapter(getContext());
         mRv.setAdapter(mAdapter);
 
+        if (savedInstanceState != null) {
+            ArrayList<Paper> papers = savedInstanceState.getParcelableArrayList("papers");
+            int position = savedInstanceState.getInt("position");
+            mPage = savedInstanceState.getInt("page");
+            if (papers != null && !papers.isEmpty()) {
+                mAdapter.addAll(papers, new DelegateParser<Paper>() {
+                    @Override
+                    public LayoutImpl parse(DelegateAdapter adapter, Paper data) {
+                        return new PaperDelegate(data);
+                    }
+                });
+                mAdapter.notifyDataSetChanged();
+                mRv.scrollToPosition(position);
+            }
+        }
+
         if (mAdapter.isEmpty() && getUserVisibleHint() && !mSrl.isRefreshing()) {
             mSrl.post(new Runnable() {
                 @Override
@@ -111,6 +131,24 @@ public class PaperListFragment extends AbsPagerFragment implements SwipeRefreshL
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        if (mAdapter != null && !mAdapter.isEmpty()) {
+            ArrayList<Paper> papers = mAdapter.getDataSourceArrayList(new SimpleFilter<Paper>(Paper.class));
+            outState.putParcelableArrayList("papers", papers);
+            LinearLayoutManager layoutManager = (LinearLayoutManager)mRv.getLayoutManager();
+            outState.putInt("position", layoutManager.findFirstVisibleItemPosition());
+            outState.putInt("page", mPage);
+        }
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mSrl.setOnRefreshListener(null);
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
         mRv.removeOnScrollListener(mBottomListener);
@@ -118,7 +156,7 @@ public class PaperListFragment extends AbsPagerFragment implements SwipeRefreshL
 
     private void loadData () {
         isLoading = true;
-        ApiManager.getInstance(getContext()).getNewest(mPage, mMethod, new Callback<PaperResult>() {
+        ApiManager.getInstance(getContext()).getWallpapers(mPage, mMethod, new Callback<PaperResult>() {
             @Override
             public void onResponse(Call<PaperResult> call, Response<PaperResult> response) {
                 isLoading = false;

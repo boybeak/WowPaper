@@ -4,6 +4,7 @@
     <string name="title_activity_paper">PaperActivity</string>
     <string name="title_newest">Latest</string>
     <string name="title_high_rate">Best</string>
+    <string name="title_tag_style">Category</string>
 
     <string name="text_set_wallpaper">Set As Wallpaper</string>
 
