@@ -10,13 +10,15 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.LinearSnapHelper;
 import android.support.v7.widget.RecyclerView;
+import android.text.format.Formatter;
 import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -37,6 +39,7 @@ import com.nulldreams.wowpaper.modules.Paper;
 import com.nulldreams.wowpaper.modules.PaperInfoResult;
 
 import java.io.IOException;
+import java.text.Format;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,6 +57,7 @@ public class PaperActivity extends AppCompatActivity {
 
     private Paper mPaper;
 
+    private ProgressBar mPb;
     private SubsamplingScaleImageView mPaperIv;
     private View mMaskView;
 
@@ -61,6 +65,7 @@ public class PaperActivity extends AppCompatActivity {
     private View mPositionLayout, mPositionScreen;
     private RecyclerView mInfoRv;
     private ImageView mPositionThumbIv;
+    private TextView mSizeTv, mLengthTv;
 
     private int mScreenWidth, mScreenHeight, mThumbWidth, mThumbHeight;
 
@@ -108,12 +113,18 @@ public class PaperActivity extends AppCompatActivity {
     private Animator mSetBtnAnim;
     private AnimatorSet mPositionAnim;
 
+    private int mThumbScale = 8;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_paper);
 
+        mPb = (ProgressBar)findViewById(R.id.paper_progress_bar);
+
         mSetBtn = findViewById(R.id.paper_set_btn);
+        mSizeTv = (TextView)findViewById(R.id.paper_info_size);
+        mLengthTv = (TextView)findViewById(R.id.paper_info_length);
         mSetBtn.setOnClickListener(mClickListener);
 
         mPaperIv = (SubsamplingScaleImageView)findViewById(R.id.paper_image);
@@ -121,7 +132,7 @@ public class PaperActivity extends AppCompatActivity {
 
         mMaskView = findViewById(R.id.paper_mask);
 
-        mInfoRv = (RecyclerView) findViewById(R.id.paper_info_layout);
+        mInfoRv = (RecyclerView) findViewById(R.id.paper_info_rv);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, true);
         layoutManager.setStackFromEnd(true);
         mInfoRv.setLayoutManager(layoutManager);
@@ -140,6 +151,9 @@ public class PaperActivity extends AppCompatActivity {
         mScreenHeight = getResources().getDisplayMetrics().heightPixels;
         mScale = mScreenHeight * 1.0f / mPaper.height;
 
+        mPb.setVisibility(View.VISIBLE);
+        mSizeTv.setText(getString(R.string.text_size, mPaper.width, mPaper.height));
+        mLengthTv.setText(Formatter.formatFileSize(this, mPaper.file_size));
         ApiManager.getInstance(this).getPaperInfo(mPaper.id, new Callback<PaperInfoResult>() {
             @Override
             public void onResponse(Call<PaperInfoResult> call, Response<PaperInfoResult> response) {
@@ -148,16 +162,23 @@ public class PaperActivity extends AppCompatActivity {
                         .into(new SimpleTarget<Bitmap>() {
                             @Override
                             public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                                mPb.setVisibility(View.GONE);
                                 mBmp = resource;
                                 mPaperIv.setImage(ImageSource.bitmap(resource));
                                 mPositionThumbIv.setImageBitmap(Bitmap.createScaledBitmap(
                                         resource, mThumbWidth, mThumbHeight, true));
                             }
                         });
-                mInfoAdapter.add(mPaper, new DelegateListParser<Paper>() {
+                mInfoAdapter.add(response.body(), new DelegateListParser<PaperInfoResult>() {
                     @Override
-                    public List<LayoutImpl> parse(DelegateAdapter adapter, Paper data) {
+                    public List<LayoutImpl> parse(DelegateAdapter adapter, PaperInfoResult data) {
                         List<LayoutImpl> delegates = new ArrayList<LayoutImpl>();
+                        List<Category> tags = data.tags;
+                        if (tags != null && !tags.isEmpty()) {
+                            for (Category tag : tags) {
+                                delegates.add(new TagStyleDelegate(tag).setStyle(TagStyleDelegate.STYLE_TAG));
+                            }
+                        }
                         if (mPaper.user_id > 0) {
                             delegates.add(new TagStyleDelegate(
                                     new Category(mPaper.user_id, mPaper.user_name))
@@ -208,7 +229,7 @@ public class PaperActivity extends AppCompatActivity {
             @Override
             public void onCenterChanged(PointF newCenter, int origin) {
                 float delta = mCenterX - newCenter.x;
-                mPositionThumbIv.setTranslationX(delta / 8 * mScale);
+                mPositionThumbIv.setTranslationX(delta / mThumbScale * mScale);
             }
         });
 
@@ -238,7 +259,7 @@ public class PaperActivity extends AppCompatActivity {
 
     private void initPositionLayout () {
 
-        final int height8 = mScreenHeight / 8;
+        final int height8 = mScreenHeight / mThumbScale;
 
         RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams)mPositionLayout.getLayoutParams();
         layoutParams.height = height8;
@@ -251,7 +272,7 @@ public class PaperActivity extends AppCompatActivity {
         mPositionThumbIv.setLayoutParams(thumbParams);
 
         FrameLayout.LayoutParams screenParams = (FrameLayout.LayoutParams)mPositionScreen.getLayoutParams();
-        screenParams.width = mScreenWidth / 8;
+        screenParams.width = mScreenWidth / mThumbScale;
         screenParams.height = height8;
         mPositionScreen.setLayoutParams(screenParams);
 

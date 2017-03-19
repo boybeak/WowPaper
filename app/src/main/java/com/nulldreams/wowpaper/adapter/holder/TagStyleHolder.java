@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.View;
 import android.widget.TextView;
 
+import com.google.android.flexbox.FlexboxLayoutManager;
 import com.nulldreams.adapter.AbsViewHolder;
 import com.nulldreams.adapter.DelegateAdapter;
 import com.nulldreams.wowpaper.R;
@@ -36,11 +37,17 @@ public class TagStyleHolder extends AbsViewHolder<TagStyleDelegate> {
                 textTv.setText("@" + category.name);
                 break;
             case TagStyleDelegate.STYLE_CATEGORY:
+                textTv.setText("\"" + category.name + "\"");
+                break;
+            case TagStyleDelegate.STYLE_SUB_CATEGORY:
+                textTv.setText("'" + category.name + "'");
+                break;
             case TagStyleDelegate.STYLE_COLLECTION:
             case TagStyleDelegate.STYLE_GROUP:
-            case TagStyleDelegate.STYLE_SUB_CATEGORY:
-            case TagStyleDelegate.STYLE_TAG:
                 textTv.setText("#" + category.name + "#");
+                break;
+            case TagStyleDelegate.STYLE_TAG:
+                textTv.setText("*" + category.name + "*");
                 break;
             default:
                 textTv.setText(category.name);

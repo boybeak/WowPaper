@@ -4,6 +4,14 @@
     android:layout_height="match_parent"
     tools:context="com.nulldreams.wowpaper.activity.PaperActivity"
     >
+    <ProgressBar
+        android:id="@+id/paper_progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/Widget.AppCompat.ProgressBar"
+        android:layout_centerInParent="true"
+        android:visibility="gone"
+        />
     <com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
         android:id="@+id/paper_image"
         android:layout_width="match_parent"
@@ -42,7 +50,7 @@
             />
     </FrameLayout>
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/paper_info_layout"
+        android:id="@+id/paper_info_rv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingLeft="@dimen/margin_middle"
@@ -51,15 +59,54 @@
         android:fadingEdge="none"
         android:requiresFadingEdge="none"
         />
-    <TextView
+    <RelativeLayout
         android:id="@+id/paper_set_btn"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:text="@string/text_set_wallpaper"
-        android:gravity="center"
-        android:textAppearance="@style/TextAppearance.AppCompat.Title.Inverse"
         android:background="@color/colorHalfBlack"
         android:visibility="gone"
-        android:layout_alignParentTop="true"
-        />
+        android:layout_alignParentTop="true">
+        <LinearLayout
+            android:id="@+id/paper_info_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:gravity="end"
+            >
+            <TextView
+                android:id="@+id/paper_info_size"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                android:paddingLeft="@dimen/margin_middle"
+                android:paddingRight="@dimen/margin_middle"
+                android:textColor="@android:color/white"
+                />
+            <TextView
+                android:id="@+id/paper_info_length"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                android:paddingLeft="@dimen/margin_middle"
+                android:paddingRight="@dimen/margin_middle"
+                android:textColor="@android:color/white"
+                />
+        </LinearLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/text_set_wallpaper"
+            android:gravity="left|center_vertical"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title.Inverse"
+            android:layout_toStartOf="@+id/paper_info_layout"
+            android:layout_toLeftOf="@+id/paper_info_layout"
+            android:paddingLeft="@dimen/margin_middle"
+            android:paddingRight="@dimen/margin_middle"
+            />
+    </RelativeLayout>
 </RelativeLayout>

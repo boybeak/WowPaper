@@ -5,12 +5,17 @@
     <string name="title_newest">Latest</string>
     <string name="title_high_rate">Best</string>
     <string name="title_tag_style">Category</string>
+    <string name="title_category">Categories</string>
+    <string name="title_collection">Collections</string>
+    <string name="title_group">Groups</string>
 
     <string name="text_set_wallpaper">Set As Wallpaper</string>
+    <string name="text_size">%1$d × %2$d</string>
 
     <string name="toast_set_wallpaper_success">Wallpaper Set Success</string>
     <string name="toast_set_wallpaper_failed">Wallpaper Set Failed</string>
     <string name="toast_wallpaper_downloading">Wallpaper is downloading</string>
+    <string name="toast_load_data_failed">Load data failed</string>
 
     <string name="dialog_msg_device_wallpaper_not_allowed">This device can not set wallpaper.</string>
 </resources>

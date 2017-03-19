@@ -6,7 +6,7 @@ import android.view.View;
 import com.nulldreams.adapter.DelegateAdapter;
 import com.nulldreams.adapter.widget.OnItemClickListener;
 import com.nulldreams.base.content.It;
-import com.nulldreams.wowpaper.activity.PagerListActivity;
+import com.nulldreams.wowpaper.activity.PaperListActivity;
 import com.nulldreams.wowpaper.adapter.delegate.TagStyleDelegate;
 import com.nulldreams.wowpaper.adapter.holder.TagStyleHolder;
 
@@ -17,10 +17,11 @@ import com.nulldreams.wowpaper.adapter.holder.TagStyleHolder;
 public class TagStyleClick implements OnItemClickListener<TagStyleDelegate, TagStyleHolder> {
     @Override
     public void onClick(View view, Context context, TagStyleDelegate tagStyleDelegate, TagStyleHolder tagStyleHolder, int position, DelegateAdapter adapter) {
-        switch (tagStyleDelegate.getStyle()) {
-            case TagStyleDelegate.STYLE_CATEGORY:
-                It.newInstance().putExtra("style", tagStyleDelegate.getSource()).startActivity(context, PagerListActivity.class);
-                break;
+        if (!TagStyleDelegate.STYLE_NONE.equals(tagStyleDelegate.getStyle())) {
+            It.newInstance()
+                    .putExtra("style", tagStyleDelegate.getSource())
+                    .putExtra("type", tagStyleDelegate.getStyle())
+                    .startActivity(context, PaperListActivity.class);
         }
     }
 }

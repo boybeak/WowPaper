@@ -3,13 +3,13 @@ package com.nulldreams.wowpaper.fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.annotation.RestrictTo;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.android.flexbox.FlexDirection;
 import com.google.android.flexbox.FlexboxLayoutManager;
@@ -20,9 +20,12 @@ import com.nulldreams.adapter.impl.LayoutImpl;
 import com.nulldreams.base.fragment.AbsPagerFragment;
 import com.nulldreams.wowpaper.R;
 import com.nulldreams.wowpaper.adapter.delegate.TagStyleDelegate;
+import com.nulldreams.wowpaper.adapter.delegate.TitleDelegate;
 import com.nulldreams.wowpaper.manager.ApiManager;
 import com.nulldreams.wowpaper.modules.Category;
 import com.nulldreams.wowpaper.modules.CategoryResult;
+import com.nulldreams.wowpaper.modules.CollectionResult;
+import com.nulldreams.wowpaper.modules.GroupResult;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,9 +51,7 @@ public class TagStyleFragment extends AbsPagerFragment implements SwipeRefreshLa
 
     private DelegateAdapter mAdapter;
 
-    private boolean isLoading;
-
-    private ArrayList<Category> mCategories;
+    private ArrayList<Category> mCategories, mCollections, mGroups;
 
     @Override
     public CharSequence getTitle(Context context, Bundle bundle) {
@@ -83,6 +84,7 @@ public class TagStyleFragment extends AbsPagerFragment implements SwipeRefreshLa
             mCategories = savedInstanceState.getParcelableArrayList("categories");
             if (mCategories != null && !mCategories.isEmpty()) {
                 mAdapter.clear();
+                mAdapter.add(new TitleDelegate(getString(R.string.title_category)));
                 mAdapter.addAll(mCategories, new DelegateParser<Category>() {
                     @Override
                     public LayoutImpl parse(DelegateAdapter adapter, Category data) {
@@ -119,6 +121,9 @@ public class TagStyleFragment extends AbsPagerFragment implements SwipeRefreshLa
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        if (mSrl.isRefreshing()) {
+            mSrl.setRefreshing(false);
+        }
         mSrl.setOnRefreshListener(null);
         Log.v(TAG, "TAG onDestroyView");
     }
@@ -139,39 +144,81 @@ public class TagStyleFragment extends AbsPagerFragment implements SwipeRefreshLa
     }
 
     private void loadData () {
-        isLoading = true;
         ApiManager.getInstance(getContext()).getCategories(new Callback<CategoryResult>() {
             @Override
             public void onResponse(Call<CategoryResult> call, Response<CategoryResult> response) {
-                isLoading = false;
                 if (mSrl.isRefreshing()) {
                     mSrl.setRefreshing(false);
                 }
                 mCategories = response.body().categories;
-                mAdapter.clear();
-                mAdapter.addAll(mCategories, new DelegateParser<Category>() {
-                    @Override
-                    public LayoutImpl parse(DelegateAdapter adapter, Category data) {
-                        return new TagStyleDelegate(data).setStyle(TagStyleDelegate.STYLE_CATEGORY);
-                    }
-                });
+                addDataList(getString(R.string.title_category), mCategories, TagStyleDelegate.STYLE_CATEGORY);
             }
 
             @Override
             public void onFailure(Call<CategoryResult> call, Throwable t) {
-                isLoading = false;
                 if (mSrl.isRefreshing()) {
                     mSrl.setRefreshing(false);
                 }
+                Toast.makeText(getContext(), R.string.toast_load_data_failed, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        ApiManager.getInstance(getContext()).getCollections(new Callback<CollectionResult>() {
+            @Override
+            public void onResponse(Call<CollectionResult> call, Response<CollectionResult> response) {
+                if (mSrl.isRefreshing()) {
+                    mSrl.setRefreshing(false);
+                }
+                mCategories = response.body().collections;
+                addDataList(getString(R.string.title_collection), mCategories, TagStyleDelegate.STYLE_COLLECTION);
+            }
+
+            @Override
+            public void onFailure(Call<CollectionResult> call, Throwable t) {
+                if (mSrl.isRefreshing()) {
+                    mSrl.setRefreshing(false);
+                }
+                Toast.makeText(getContext(), R.string.toast_load_data_failed, Toast.LENGTH_SHORT).show();
+            }
+        });
+        ApiManager.getInstance(getContext()).getGroups(new Callback<GroupResult>() {
+            @Override
+            public void onResponse(Call<GroupResult> call, Response<GroupResult> response) {
+                if (mSrl.isRefreshing()) {
+                    mSrl.setRefreshing(false);
+                }
+                mGroups = response.body().groups;
+                addDataList(getString(R.string.title_group), mGroups, TagStyleDelegate.STYLE_GROUP);
+            }
+
+            @Override
+            public void onFailure(Call<GroupResult> call, Throwable t) {
+                if (mSrl.isRefreshing()) {
+                    mSrl.setRefreshing(false);
+                }
+                Toast.makeText(getContext(), R.string.toast_load_data_failed, Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    @Override
-    public void onRefresh() {
-        if (isLoading) {
+    private synchronized void addDataList (String title, List<Category> categories, @TagStyleDelegate.Style final String style) {
+        if (categories == null || categories.isEmpty()) {
             return;
         }
+        mAdapter.add(new TitleDelegate(title));
+        mAdapter.addAll(categories, new DelegateParser<Category>() {
+            @Override
+            public LayoutImpl parse(DelegateAdapter adapter, Category data) {
+                return new TagStyleDelegate(data).setStyle(style);
+            }
+        });
+        mAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onRefresh() {
+        mAdapter.clear();
+        mAdapter.notifyDataSetChanged();
         loadData();
     }
 }

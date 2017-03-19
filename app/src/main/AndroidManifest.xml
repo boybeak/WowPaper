@@ -28,7 +28,7 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_paper"
             android:theme="@style/FullscreenTheme" />
-        <activity android:name=".activity.PagerListActivity"></activity>
+        <activity android:name=".activity.PaperListActivity"></activity>
     </application>
 
 </manifest>

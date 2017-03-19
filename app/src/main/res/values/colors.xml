@@ -2,10 +2,10 @@
 <resources>
     <color name="colorPrimary">#494a54</color>
     <color name="colorPrimaryDark">#2a2b33</color>
-    <color name="colorWindowBackground">@color/colorPrimary</color>
-    <color name="colorAccent">#ff8040</color>
+    <color name="colorWindowBackground">#f0f0f0</color>
+    <color name="colorAccent">#f98b56</color>
 
-    <color name="colorPlaceHolder">#66ff8040</color>
+    <color name="colorPlaceHolder">#66f98b56</color>
     <color name="colorHalfBlack">#88000000</color>
 
 </resources>

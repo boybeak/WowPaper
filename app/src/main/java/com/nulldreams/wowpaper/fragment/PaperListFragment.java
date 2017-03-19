@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.nulldreams.adapter.DelegateAdapter;
 import com.nulldreams.adapter.DelegateParser;
@@ -76,7 +77,7 @@ public class PaperListFragment extends AbsPagerFragment implements SwipeRefreshL
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        final int spanCount = 2;
+        final int spanCount = getResources().getInteger(R.integer.span_count);
 
         mSrl = (SwipeRefreshLayout)view.findViewById(R.id.paper_list_srl);
         mSrl.setOnRefreshListener(this);
@@ -135,7 +136,7 @@ public class PaperListFragment extends AbsPagerFragment implements SwipeRefreshL
         if (mAdapter != null && !mAdapter.isEmpty()) {
             ArrayList<Paper> papers = mAdapter.getDataSourceArrayList(new SimpleFilter<Paper>(Paper.class));
             outState.putParcelableArrayList("papers", papers);
-            LinearLayoutManager layoutManager = (LinearLayoutManager)mRv.getLayoutManager();
+            GridLayoutManager layoutManager = (GridLayoutManager)mRv.getLayoutManager();
             outState.putInt("position", layoutManager.findFirstVisibleItemPosition());
             outState.putInt("page", mPage);
         }
@@ -145,6 +146,9 @@ public class PaperListFragment extends AbsPagerFragment implements SwipeRefreshL
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        if (mSrl.isRefreshing()) {
+            mSrl.setRefreshing(false);
+        }
         mSrl.setOnRefreshListener(null);
     }
 
@@ -160,6 +164,7 @@ public class PaperListFragment extends AbsPagerFragment implements SwipeRefreshL
             @Override
             public void onResponse(Call<PaperResult> call, Response<PaperResult> response) {
                 isLoading = false;
+
                 if (mSrl.isRefreshing()) {
                     mSrl.setRefreshing(false);
                 }
@@ -181,6 +186,7 @@ public class PaperListFragment extends AbsPagerFragment implements SwipeRefreshL
                 if (mSrl.isRefreshing()) {
                     mSrl.setRefreshing(false);
                 }
+                Toast.makeText(getContext(), R.string.toast_load_data_failed, Toast.LENGTH_SHORT).show();
             }
         });
     }

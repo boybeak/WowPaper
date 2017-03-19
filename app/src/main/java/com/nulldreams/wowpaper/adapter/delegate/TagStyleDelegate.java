@@ -1,6 +1,7 @@
 package com.nulldreams.wowpaper.adapter.delegate;
 
 import android.support.annotation.IntDef;
+import android.support.annotation.StringDef;
 
 import com.nulldreams.adapter.AbsDelegate;
 import com.nulldreams.adapter.annotation.AnnotationDelegate;
@@ -25,11 +26,11 @@ public class TagStyleDelegate extends AnnotationDelegate<Category> {
 
     public static final String KEY_STYLE = "style";
 
-    public static final int STYLE_NONE = 0, STYLE_USER = 1,
-            STYLE_CATEGORY = 2, STYLE_SUB_CATEGORY = 3, STYLE_COLLECTION = 4,
-            STYLE_GROUP = 5, STYLE_TAG = 6;
+    public static final String STYLE_NONE = "", STYLE_USER = "user",
+            STYLE_CATEGORY = "category", STYLE_SUB_CATEGORY = "sub_category",
+            STYLE_COLLECTION = "collection", STYLE_GROUP = "group", STYLE_TAG = "tag";
 
-    @IntDef({
+    @StringDef({
             STYLE_NONE, STYLE_USER, STYLE_CATEGORY, STYLE_SUB_CATEGORY,
             STYLE_COLLECTION, STYLE_GROUP, STYLE_TAG
     })
@@ -42,11 +43,11 @@ public class TagStyleDelegate extends AnnotationDelegate<Category> {
         super(category);
     }
 
-    public AbsDelegate setStyle (@Style int style) {
-        return putInt(KEY_STYLE, style);
+    public AbsDelegate setStyle (@Style String style) {
+        return putString(KEY_STYLE, style);
     }
 
-    public int getStyle () {
-        return getInt(KEY_STYLE, STYLE_NONE);
+    public String getStyle () {
+        return getString(KEY_STYLE, STYLE_NONE);
     }
 }

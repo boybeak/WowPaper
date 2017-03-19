@@ -69,8 +69,9 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
-            Log.v(TAG, "TAG instantiateItem");
-            return super.instantiateItem(container, position);
+            AbsPagerFragment fragment = (AbsPagerFragment)super.instantiateItem(container, position);
+            mPagers[position] = fragment;
+            return fragment;
         }
 
         @Override

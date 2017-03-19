@@ -37,7 +37,7 @@
         <item name="android:textAppearance">@style/TextAppearance.AppCompat.Caption</item>
         <item name="android:background">@drawable/bg_tag_style</item>
         <item name="android:layout_margin">@dimen/margin_small</item>
-        <item name="android:textColor">@color/colorPlaceHolder</item>
+        <item name="android:textColor">@color/colorAccent</item>
     </style>
 
 </resources>

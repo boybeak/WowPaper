@@ -5,9 +5,12 @@ import android.content.Context;
 import com.google.gson.GsonBuilder;
 import com.nulldreams.base.manager.AbsManager;
 import com.nulldreams.wowpaper.modules.CategoryResult;
+import com.nulldreams.wowpaper.modules.CollectionResult;
+import com.nulldreams.wowpaper.modules.GroupResult;
 import com.nulldreams.wowpaper.modules.Paper;
 import com.nulldreams.wowpaper.modules.PaperInfoResult;
 import com.nulldreams.wowpaper.modules.PaperResult;
+import com.nulldreams.wowpaper.modules.SubCategoryResult;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -15,18 +18,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
-import java.nio.channels.WritableByteChannel;
 import java.util.Properties;
 
-import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
-import retrofit2.Call;
 import retrofit2.Callback;
-import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -37,7 +35,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class ApiManager extends AbsManager {
 
     public static final String WOW_TYPE_NEWEST = "newest",
-            WOW_TYPE_HIGHEST_RATED = "highest_rated", WOW_TYPE_CATEGORY = "category";
+            WOW_TYPE_HIGHEST_RATED = "highest_rated";
 
     private static ApiManager sManager = null;
 
@@ -100,8 +98,20 @@ public class ApiManager extends AbsManager {
         mApi.getPaperInfo(mApiKey, id).enqueue(callback);
     }
 
-    public void getCategories (Callback<CategoryResult> callback) {
-        mApi.getCategories(mApiKey, "category_list").enqueue(callback);
+    public void getCategories(Callback<CategoryResult> callback) {
+        mApi.getCategories(mApiKey).enqueue(callback);
+    }
+
+    public void getSubCategories(int id, Callback<SubCategoryResult> callback) {
+        mApi.getSubCategories(mApiKey, id).enqueue(callback);
+    }
+
+    public void getCollections(Callback<CollectionResult> callback) {
+        mApi.getCollections(mApiKey).enqueue(callback);
+    }
+
+    public void getGroups(Callback<GroupResult> callback) {
+        mApi.getGroups(mApiKey).enqueue(callback);
     }
 
     public void downloadPaper (Paper paper, String outputPath) {
