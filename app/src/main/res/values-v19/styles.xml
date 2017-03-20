@@ -1,0 +1,5 @@
+<resources>
+    <style name="MainTheme" parent="AbsTheme">
+        <item name="android:windowTranslucentStatus">true</item>
+    </style>
+</resources>

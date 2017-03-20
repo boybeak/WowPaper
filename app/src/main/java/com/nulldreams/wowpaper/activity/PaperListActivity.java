@@ -100,8 +100,8 @@ public class PaperListActivity extends AppCompatActivity implements SwipeRefresh
 
         setTitle(mCategory.name);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        /*getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);*/
     }
 
     @Override

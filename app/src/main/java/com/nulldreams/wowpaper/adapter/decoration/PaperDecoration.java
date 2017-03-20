@@ -17,9 +17,11 @@ public class PaperDecoration extends RecyclerView.ItemDecoration {
 
     private static final String TAG = PaperDecoration.class.getSimpleName();
 
+    private int offset;
     private int gap;
 
     public PaperDecoration(Context context) {
+        offset = context.getResources().getDimensionPixelSize(R.dimen.offset_header);
         gap = context.getResources().getDimensionPixelSize(R.dimen.margin_small);
     }
 
@@ -44,7 +46,7 @@ public class PaperDecoration extends RecyclerView.ItemDecoration {
         r = gap;
 
         if (rowIndex == 0) {
-            t = gap;
+            t = gap + offset;
         } else {
             t = 0;
         }

@@ -1,29 +1,22 @@
 <resources>
 
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AbsTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="android:windowBackground">@color/colorWindowBackground</item>
         <item name="colorAccent">@color/colorAccent</item>
-    </style>
-    <style name="MainTheme" parent="AppTheme">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
-    </style>
-    <style name="FullscreenTheme" parent="AppTheme">
+        <item name="android:windowBackground">@color/colorWindowBackground</item>
         <item name="android:windowFullscreen">true</item>
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
     </style>
-    <!--<item name="android:windowBackground">@null</item>-->
-    <!--<item name="android:actionBarStyle">@style/FullscreenActionBarStyle</item>
-    <item name="android:windowActionBarOverlay">true</item>
-    <item name="metaButtonBarStyle">?android:attr/buttonBarStyle</item>
-    <item name="metaButtonBarButtonStyle">?android:attr/buttonBarButtonStyle</item>-->
-    <style name="FullscreenActionBarStyle" parent="Widget.AppCompat.ActionBar">
-        <item name="android:background">@color/colorPrimary</item>
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="AbsTheme">
+
+    </style>
+
+    <style name="MainTheme" parent="AbsTheme">
+
     </style>
 
     <style name="TagStyle">
