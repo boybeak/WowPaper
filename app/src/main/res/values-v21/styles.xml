@@ -1,5 +1,5 @@
 <resources>
-    <style name="MainTheme" parent="AbsTheme">
+    <style name="MainTheme" parent="FullScreenTheme">
         <item name="android:windowTranslucentStatus">true</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
     </style>

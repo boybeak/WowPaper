@@ -59,12 +59,16 @@
         android:fadingEdge="none"
         android:requiresFadingEdge="none"
         />
-    <RelativeLayout
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/paper_tb"
+        style="@style/ToolbarStyle"/>
+    <!--<RelativeLayout
         android:id="@+id/paper_set_btn"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
+        android:layout_height="?actionBarSize"
         android:background="@color/colorHalfBlack"
         android:visibility="gone"
+        android:alpha="0"
         android:layout_alignParentTop="true">
         <LinearLayout
             android:id="@+id/paper_info_layout"
@@ -108,5 +112,5 @@
             android:paddingLeft="@dimen/margin_middle"
             android:paddingRight="@dimen/margin_middle"
             />
-    </RelativeLayout>
+    </RelativeLayout>-->
 </RelativeLayout>

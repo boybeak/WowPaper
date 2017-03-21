@@ -5,7 +5,6 @@
     android:id="@+id/main_drawer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
     tools:context="com.nulldreams.wowpaper.activity.MainActivity">
     <!--<android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
@@ -34,31 +33,39 @@
 
 
     </android.support.design.widget.CoordinatorLayout>-->
-    <android.support.v4.view.ViewPager
-        android:id="@+id/main_vp"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fitsSystemWindows="true"
-        />
-    <android.support.design.widget.TabLayout
-        android:id="@+id/main_tab_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/colorHalfBlack"
-        app:tabTextColor="@color/colorPlaceHolder"
-        app:tabSelectedTextColor="@color/colorAccent"
-        android:fitsSystemWindows="true"
-        android:visibility="gone"
-        />
+        >
+        <android.support.v4.view.ViewPager
+            android:id="@+id/main_vp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/main_tb"
+            style="@style/ToolbarStyle"
+            />
+        <android.support.design.widget.TabLayout
+            android:id="@+id/main_tab_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorHalfBlack"
+            app:tabTextColor="@color/colorPlaceHolder"
+            app:tabSelectedTextColor="@color/colorAccent"
+            android:fitsSystemWindows="true"
+            android:visibility="gone"
+            />
+    </RelativeLayout>
     <android.support.design.widget.NavigationView
         android:id="@+id/main_nav"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="left|start"
-        android:background="@color/colorHalfBlack"
+        android:background="@android:color/transparent"
         app:menu="@menu/menu_nav"
         app:headerLayout="@layout/layout_nav_header"
-        app:itemTextColor="@color/colorPlaceHolder"
-        app:itemIconTint="@color/colorPlaceHolder"
+        app:itemTextColor="@color/colorAccent"
+        app:itemIconTint="@color/colorAccent"
         />
 </android.support.v4.widget.DrawerLayout>

@@ -4,6 +4,10 @@ import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.app.WallpaperManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.PointF;
 import android.support.v7.app.AlertDialog;
@@ -11,8 +15,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.text.format.Formatter;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -22,6 +29,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.davemorrissey.labs.subscaleview.ImageSource;
@@ -61,11 +69,10 @@ public class PaperActivity extends AppCompatActivity {
     private SubsamplingScaleImageView mPaperIv;
     private View mMaskView;
 
-    private View mSetBtn;
+    private Toolbar mTb;
     private View mPositionLayout, mPositionScreen;
     private RecyclerView mInfoRv;
     private ImageView mPositionThumbIv;
-    private TextView mSizeTv, mLengthTv;
 
     private int mScreenWidth, mScreenHeight, mThumbWidth, mThumbHeight;
 
@@ -78,29 +85,7 @@ public class PaperActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             final int id = v.getId();
-            if (id == mSetBtn.getId()) {
-                if (mBmp == null) {
-                    Toast.makeText(PaperActivity.this, R.string.toast_wallpaper_downloading, Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if (WowApp.checkWallpaperPermission(PaperActivity.this)) {
-                    try {
-                        WallpaperManager.getInstance(PaperActivity.this).setBitmap(mBmp);
-                        WallpaperManager.getInstance(PaperActivity.this).suggestDesiredDimensions(
-                                (int)(mPaper.width * mScale), mScreenHeight);
-                        Toast.makeText(PaperActivity.this, R.string.toast_set_wallpaper_success, Toast.LENGTH_SHORT).show();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        Toast.makeText(PaperActivity.this, R.string.toast_set_wallpaper_failed, Toast.LENGTH_SHORT).show();
-                        Log.w(TAG, "set wall paper failed with a IOException");
-                    }
-                } else {
-                    new AlertDialog.Builder(PaperActivity.this)
-                            .setMessage(R.string.dialog_msg_device_wallpaper_not_allowed)
-                            .setPositiveButton(android.R.string.ok, null)
-                            .show();
-                }
-            } else if (id == mPositionThumbIv.getId()) {
+            if (id == mPositionThumbIv.getId()) {
                 if (mPaperIv.isReady()) {
                     mPaperIv.animateCenter(new PointF(mCenterX, mCenterY)).start();
                 }
@@ -115,6 +100,8 @@ public class PaperActivity extends AppCompatActivity {
 
     private int mThumbScale = 8;
 
+    private RequestManager mGlideManager = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -122,10 +109,8 @@ public class PaperActivity extends AppCompatActivity {
 
         mPb = (ProgressBar)findViewById(R.id.paper_progress_bar);
 
-        mSetBtn = findViewById(R.id.paper_set_btn);
-        mSizeTv = (TextView)findViewById(R.id.paper_info_size);
-        mLengthTv = (TextView)findViewById(R.id.paper_info_length);
-        mSetBtn.setOnClickListener(mClickListener);
+        mTb = (Toolbar)findViewById(R.id.paper_tb);
+        setSupportActionBar(mTb);
 
         mPaperIv = (SubsamplingScaleImageView)findViewById(R.id.paper_image);
         mPaperIv.setZoomEnabled(false);
@@ -151,14 +136,16 @@ public class PaperActivity extends AppCompatActivity {
         mScreenHeight = getResources().getDisplayMetrics().heightPixels;
         mScale = mScreenHeight * 1.0f / mPaper.height;
 
+        setTitle(mPaper.name);
+        mTb.setSubtitle(getString(R.string.text_size, mPaper.width, mPaper.height) + "  " + Formatter.formatFileSize(this, mPaper.file_size));
+
         mPb.setVisibility(View.VISIBLE);
-        mSizeTv.setText(getString(R.string.text_size, mPaper.width, mPaper.height));
-        mLengthTv.setText(Formatter.formatFileSize(this, mPaper.file_size));
         ApiManager.getInstance(this).getPaperInfo(mPaper.id, new Callback<PaperInfoResult>() {
             @Override
             public void onResponse(Call<PaperInfoResult> call, Response<PaperInfoResult> response) {
                 mPaper = response.body().wallpaper;
-                Glide.with(PaperActivity.this).load(response.body().wallpaper.url_image).asBitmap()
+                mGlideManager = Glide.with(PaperActivity.this);
+                mGlideManager.load(response.body().wallpaper.url_image).asBitmap()
                         .into(new SimpleTarget<Bitmap>() {
                             @Override
                             public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
@@ -248,6 +235,11 @@ public class PaperActivity extends AppCompatActivity {
 
         animShowPositionLayout();
         animShowSetBtn();
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setHomeButtonEnabled(true);
+        }
     }
 
     @Override
@@ -255,6 +247,54 @@ public class PaperActivity extends AppCompatActivity {
         super.onPostCreate(savedInstanceState);
 
         initPositionLayout();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_paper, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.paper_set) {
+            if (mBmp == null) {
+                Toast.makeText(PaperActivity.this, R.string.toast_wallpaper_downloading, Toast.LENGTH_SHORT).show();
+                return true;
+            }
+            if (WowApp.checkWallpaperPermission(PaperActivity.this)) {
+                try {
+                    WallpaperManager.getInstance(PaperActivity.this).setBitmap(mBmp);
+                    WallpaperManager.getInstance(PaperActivity.this).suggestDesiredDimensions(
+                            (int)(mPaper.width * mScale), mScreenHeight);
+                    Toast.makeText(PaperActivity.this, R.string.toast_set_wallpaper_success, Toast.LENGTH_SHORT).show();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Toast.makeText(PaperActivity.this, R.string.toast_set_wallpaper_failed, Toast.LENGTH_SHORT).show();
+                    Log.w(TAG, "set wall paper failed with a IOException");
+                }
+            } else {
+                new AlertDialog.Builder(PaperActivity.this)
+                        .setMessage(R.string.dialog_msg_device_wallpaper_not_allowed)
+                        .setPositiveButton(android.R.string.ok, null)
+                        .show();
+            }
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mPaperIv.recycle();
+        if (mBmp != null && !mBmp.isRecycled()) {
+            mBmp.recycle();
+        }
+        if (mGlideManager != null) {
+            mGlideManager.onDestroy();
+        }
+        System.gc();
     }
 
     private void initPositionLayout () {
@@ -292,11 +332,11 @@ public class PaperActivity extends AppCompatActivity {
             return;
         }
         ObjectAnimator animator = ObjectAnimator.ofFloat(
-                mSetBtn, "alpha", 0f, 1f);
+                mTb, "alpha", 0f, 1f);
         animator.addListener(new DefaultAnimatorListener(){
             @Override
             public void onAnimationStart(Animator animation) {
-                mSetBtn.setVisibility(View.VISIBLE);
+                mTb.setVisibility(View.VISIBLE);
             }
         });
         animator.start();
@@ -308,12 +348,12 @@ public class PaperActivity extends AppCompatActivity {
             return;
         }
         ObjectAnimator animator = ObjectAnimator.ofFloat(
-                mSetBtn, "alpha", 1f, 0f);
+                mTb, "alpha", 1f, 0f);
         animator.addListener(new DefaultAnimatorListener(){
 
             @Override
             public void onAnimationEnd(Animator animation) {
-                mSetBtn.setVisibility(View.GONE);
+                mTb.setVisibility(View.GONE);
             }
         });
         animator.start();

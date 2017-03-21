@@ -16,7 +16,6 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".activity.MainActivity"
-            android:theme="@style/MainTheme"
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -31,7 +30,7 @@
             android:theme="@style/MainTheme"
              />
         <activity android:name=".activity.PaperListActivity"
-            android:theme="@style/MainTheme"/>
+            />
     </application>
 
 </manifest>

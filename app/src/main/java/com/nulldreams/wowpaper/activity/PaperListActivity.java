@@ -6,7 +6,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import com.nulldreams.adapter.DelegateAdapter;
@@ -14,6 +16,7 @@ import com.nulldreams.adapter.DelegateParser;
 import com.nulldreams.adapter.SimpleFilter;
 import com.nulldreams.adapter.impl.LayoutImpl;
 import com.nulldreams.adapter.widget.OnScrollBottomListener;
+import com.nulldreams.base.utils.UiHelper;
 import com.nulldreams.wowpaper.R;
 import com.nulldreams.wowpaper.adapter.decoration.PaperDecoration;
 import com.nulldreams.wowpaper.adapter.delegate.PaperDelegate;
@@ -30,6 +33,7 @@ import retrofit2.Response;
 
 public class PaperListActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener{
 
+    private Toolbar mTb;
     private RecyclerView mRv;
     private DelegateAdapter mAdapter;
 
@@ -68,9 +72,13 @@ public class PaperListActivity extends AppCompatActivity implements SwipeRefresh
 
         final int spanCount = getResources().getInteger(R.integer.span_count);
 
+        mTb = (Toolbar)findViewById(R.id.paper_list_tb);
+        setSupportActionBar(mTb);
+
         mSrl = (SwipeRefreshLayout)findViewById(R.id.paper_list_srl);
         mSrl.setColorSchemeResources(R.color.colorAccent);
         mSrl.setOnRefreshListener(this);
+        mSrl.setProgressViewOffset(false, 0, UiHelper.getActionBarSize(this));
 
         mRv = (RecyclerView)findViewById(R.id.paper_list_rv);
         mRv.setLayoutManager(new GridLayoutManager(this, spanCount));
@@ -100,8 +108,10 @@ public class PaperListActivity extends AppCompatActivity implements SwipeRefresh
 
         setTitle(mCategory.name);
 
-        /*getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);*/
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
     }
 
     @Override
@@ -124,6 +134,21 @@ public class PaperListActivity extends AppCompatActivity implements SwipeRefresh
             onBackPressed();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void uiVisibility () {
+        getWindow().getDecorView().setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus) {
+            uiVisibility();
+        }
     }
 
     @Override

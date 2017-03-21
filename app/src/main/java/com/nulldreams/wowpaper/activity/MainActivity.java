@@ -1,37 +1,45 @@
 package com.nulldreams.wowpaper.activity;
 
-import android.app.WallpaperManager;
-import android.os.Build;
+import android.content.res.Configuration;
+import android.graphics.drawable.Drawable;
+import android.os.PersistableBundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.ImageView;
 
 import com.nulldreams.base.fragment.AbsPagerFragment;
 import com.nulldreams.wowpaper.R;
 import com.nulldreams.wowpaper.fragment.PaperListFragment;
-import com.nulldreams.wowpaper.fragment.TagStyleFragment;
 import com.nulldreams.wowpaper.manager.ApiManager;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
+    private DrawerLayout mDl;
     private NavigationView mNavView;
     private TabLayout mTabLayout;
     private ViewPager mVp;
+    private Toolbar mTb;
 
     private ImageView mHeaderCover;
+
+    private ActionBarDrawerToggle mToggle;
 
     private AbsPagerFragment[] mPagers;
 
@@ -40,13 +48,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mDl = (DrawerLayout)findViewById(R.id.main_drawer);
         mNavView = (NavigationView)findViewById(R.id.main_nav);
         mTabLayout = (TabLayout)findViewById(R.id.main_tab_layout);
-        mVp = (ViewPager) findViewById(R.id.main_vp);
+        mVp = (ViewPager)findViewById(R.id.main_vp);
+        mTb = (Toolbar)findViewById(R.id.main_tb);
 
         mHeaderCover = (ImageView) mNavView.getHeaderView(0).findViewById(R.id.nav_header_cover);
-
-        mHeaderCover.setImageDrawable(this.getWallpaper());
 
         mPagers = new AbsPagerFragment[] {
                 //TagStyleFragment.newInstance(),
@@ -60,25 +68,69 @@ public class MainActivity extends AppCompatActivity {
         mVp.setCurrentItem(1);
         mTabLayout.setupWithViewPager(mVp);
 
-        uiVisibility();
+        setSupportActionBar(mTb);
 
+        mToggle = new ActionBarDrawerToggle(this, mDl, mTb, R.string.title_drawer_open, R.string.title_drawer_close);
+        mDl.addDrawerListener(mToggle);
+        mToggle.syncState();
+        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        //getSupportActionBar().setHomeButtonEnabled(true);
+//        uiVisibility();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mDl.isDrawerOpen(Gravity.LEFT|Gravity.START)) {
+            mDl.closeDrawers();
+            return;
+        }
+        super.onBackPressed();
+    }
+
+    @Override
+    public void onPostCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
+        super.onPostCreate(savedInstanceState, persistentState);
+        mToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        mToggle.onConfigurationChanged(newConfig);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (mToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void uiVisibility () {
-        /*getWindow().getDecorView().setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);*/
+        getWindow().getDecorView().setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                | View.SYSTEM_UI_FLAG_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
     }
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-        uiVisibility();
+        if (hasFocus) {
+            uiVisibility();
+
+            Drawable wallpaper = this.getWallpaper();
+            if (wallpaper != null) {
+                mHeaderCover.setImageDrawable(wallpaper);
+            }
+        }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        mDl.removeDrawerListener(mToggle);
     }
 
     private class PaperAdapter extends FragmentStatePagerAdapter {

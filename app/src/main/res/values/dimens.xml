@@ -4,5 +4,4 @@
     <dimen name="margin_small">4dp</dimen>
     <dimen name="margin_middle">8dp</dimen>
 
-    <dimen name="offset_header">0dp</dimen>
 </resources>

@@ -2,7 +2,17 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/nav_category"
-        android:title="@string/app_name"
-        android:icon="@mipmap/ic_launcher"
+        android:title="@string/title_menu_category"
+        android:icon="@drawable/ic_format_quote_open"
+        />
+    <item
+        android:id="@+id/nav_group"
+        android:title="@string/title_menu_group"
+        android:icon="@drawable/ic_pound"
+        />
+    <item
+        android:id="@+id/nav_tag"
+        android:title="@string/title_menu_tag"
+        android:icon="@drawable/ic_asterisk"
         />
 </menu>

@@ -5,8 +5,10 @@ import android.graphics.Rect;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 
+import com.nulldreams.base.utils.UiHelper;
 import com.nulldreams.wowpaper.R;
 
 /**
@@ -21,7 +23,7 @@ public class PaperDecoration extends RecyclerView.ItemDecoration {
     private int gap;
 
     public PaperDecoration(Context context) {
-        offset = context.getResources().getDimensionPixelSize(R.dimen.offset_header);
+        offset = UiHelper.getActionBarSize(context);
         gap = context.getResources().getDimensionPixelSize(R.dimen.margin_small);
     }
 
@@ -46,7 +48,7 @@ public class PaperDecoration extends RecyclerView.ItemDecoration {
         r = gap;
 
         if (rowIndex == 0) {
-            t = gap + offset;
+            t = gap * 2 + offset;
         } else {
             t = 0;
         }
