@@ -27,7 +27,7 @@ import com.nulldreams.wowpaper.R;
 import com.nulldreams.wowpaper.fragment.PaperListFragment;
 import com.nulldreams.wowpaper.manager.ApiManager;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends WowActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -107,19 +107,10 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void uiVisibility () {
-        getWindow().getDecorView().setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                | View.SYSTEM_UI_FLAG_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
-    }
-
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
         if (hasFocus) {
-            uiVisibility();
-
             Drawable wallpaper = this.getWallpaper();
             if (wallpaper != null) {
                 mHeaderCover.setImageDrawable(wallpaper);

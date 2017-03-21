@@ -12,9 +12,12 @@
     <string name="title_drawer_close">DrawerClose</string>
 
     <string name="title_menu_set_wallpaper">Set As Wallpaper</string>
+    <string name="title_menu_share">Share</string>
     <string name="title_menu_category">Category</string>
     <string name="title_menu_group">Group</string>
     <string name="title_menu_tag">Tag</string>
+
+    <string name="title_dialog_share">Share Wallpaper:</string>
 
     <string name="text_set_wallpaper">Set As Wallpaper</string>
     <string name="text_size">%1$d × %2$d</string>
@@ -23,6 +26,7 @@
     <string name="toast_set_wallpaper_failed">Wallpaper Set Failed</string>
     <string name="toast_wallpaper_downloading">Wallpaper is downloading</string>
     <string name="toast_load_data_failed">Load data failed</string>
+    <string name="toast_no_app_response">No apps response this action</string>
 
     <string name="dialog_msg_device_wallpaper_not_allowed">This device can not set wallpaper.</string>
 </resources>

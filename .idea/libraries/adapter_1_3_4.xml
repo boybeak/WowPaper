@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="adapter-1.3.4">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.android/build-cache/94fdfa7b52d09370b92307f1e13fa8d579b53942/output/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.android/build-cache/94fdfa7b52d09370b92307f1e13fa8d579b53942/output/res" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.boybeak/adapter/1.3.4/7ebe328929dbd7675ee79e577d2335b50e958896/adapter-1.3.4-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

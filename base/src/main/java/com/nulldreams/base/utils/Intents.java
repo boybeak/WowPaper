@@ -2,7 +2,10 @@ package com.nulldreams.base.utils;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
+import android.provider.MediaStore;
+import android.support.annotation.StringRes;
 
 import java.io.File;
 
@@ -42,6 +45,31 @@ public abstract class Intents {
 
     public static void shareImage (Context context, String chooserTitle, String path) {
         shareImage(context, chooserTitle, new File(path));
+    }
+
+    public static void shareImage (Context context, @StringRes int chooserTitleRes, Uri uri) {
+        shareImage(context, context.getString(chooserTitleRes), uri);
+    }
+
+    public static void shareImage (Context context, @StringRes int chooserTitleRes, File file) {
+        shareImage(context, chooserTitleRes, Uri.fromFile(file));
+    }
+
+    public static void shareImage (Context context, @StringRes int chooserTitleRes, String path) {
+        shareImage(context, chooserTitleRes, new File(path));
+    }
+
+    public static void shareImage (Context context, String chooserTitle, Bitmap bitmap) {
+        String pathofBmp = MediaStore.Images.Media.insertImage(
+                context.getContentResolver(), bitmap, System.currentTimeMillis() + ".jpg", null);
+        shareImage(context, chooserTitle, pathofBmp);
+        new File(pathofBmp).deleteOnExit();
+    }
+
+    public static void shareImage (Context context, @StringRes int chooserTitleRes, Bitmap bitmap) {
+        String pathofBmp = MediaStore.Images.Media.insertImage(
+                context.getContentResolver(), bitmap, System.currentTimeMillis() + ".jpg", null);
+        shareImage(context, context.getString(chooserTitleRes), pathofBmp);
     }
 
     public static void call (Context context, String phoneNumber) {

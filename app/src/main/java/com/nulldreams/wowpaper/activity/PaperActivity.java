@@ -1,5 +1,6 @@
 package com.nulldreams.wowpaper.activity;
 
+import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
@@ -38,6 +39,8 @@ import com.nulldreams.adapter.DelegateAdapter;
 import com.nulldreams.adapter.DelegateListParser;
 import com.nulldreams.adapter.impl.LayoutImpl;
 import com.nulldreams.base.animation.DefaultAnimatorListener;
+import com.nulldreams.base.event.PermissionCallback;
+import com.nulldreams.base.utils.Intents;
 import com.nulldreams.wowpaper.R;
 import com.nulldreams.wowpaper.WowApp;
 import com.nulldreams.wowpaper.adapter.delegate.TagStyleDelegate;
@@ -59,7 +62,7 @@ import retrofit2.Response;
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
-public class PaperActivity extends AppCompatActivity {
+public class PaperActivity extends WowActivity {
 
     private static final String TAG = PaperActivity.class.getSimpleName();
 
@@ -257,29 +260,50 @@ public class PaperActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.paper_set) {
-            if (mBmp == null) {
-                Toast.makeText(PaperActivity.this, R.string.toast_wallpaper_downloading, Toast.LENGTH_SHORT).show();
-                return true;
-            }
-            if (WowApp.checkWallpaperPermission(PaperActivity.this)) {
-                try {
-                    WallpaperManager.getInstance(PaperActivity.this).setBitmap(mBmp);
-                    WallpaperManager.getInstance(PaperActivity.this).suggestDesiredDimensions(
-                            (int)(mPaper.width * mScale), mScreenHeight);
-                    Toast.makeText(PaperActivity.this, R.string.toast_set_wallpaper_success, Toast.LENGTH_SHORT).show();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    Toast.makeText(PaperActivity.this, R.string.toast_set_wallpaper_failed, Toast.LENGTH_SHORT).show();
-                    Log.w(TAG, "set wall paper failed with a IOException");
-                }
-            } else {
-                new AlertDialog.Builder(PaperActivity.this)
-                        .setMessage(R.string.dialog_msg_device_wallpaper_not_allowed)
-                        .setPositiveButton(android.R.string.ok, null)
-                        .show();
-            }
+        if (mBmp == null) {
+            Toast.makeText(PaperActivity.this, R.string.toast_wallpaper_downloading, Toast.LENGTH_SHORT).show();
             return true;
+        }
+        switch (item.getItemId()) {
+            case R.id.paper_set:
+                if (WowApp.checkWallpaperPermission(PaperActivity.this)) {
+                    try {
+                        WallpaperManager.getInstance(PaperActivity.this).setBitmap(mBmp);
+                        WallpaperManager.getInstance(PaperActivity.this).suggestDesiredDimensions(
+                                (int)(mPaper.width * mScale), mScreenHeight);
+                        Toast.makeText(PaperActivity.this, R.string.toast_set_wallpaper_success, Toast.LENGTH_SHORT).show();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        Toast.makeText(PaperActivity.this, R.string.toast_set_wallpaper_failed, Toast.LENGTH_SHORT).show();
+                        Log.w(TAG, "set wall paper failed with a IOException");
+                    }
+                } else {
+                    new AlertDialog.Builder(PaperActivity.this)
+                            .setMessage(R.string.dialog_msg_device_wallpaper_not_allowed)
+                            .setPositiveButton(android.R.string.ok, null)
+                            .show();
+                }
+                return true;
+            case R.id.paper_share:
+                requestPermissions(new String[]{
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        Manifest.permission.READ_EXTERNAL_STORAGE}, new PermissionCallback() {
+                    @Override
+                    public void onGranted() {
+                        try {
+                            Intents.shareImage(PaperActivity.this, R.string.title_dialog_share, mBmp);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            Toast.makeText(PaperActivity.this, R.string.toast_no_app_response, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onDenied() {
+
+                    }
+                });
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -287,10 +311,10 @@ public class PaperActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mPaperIv.recycle();
-        if (mBmp != null && !mBmp.isRecycled()) {
+        //mPaperIv.recycle();
+        /*if (mBmp != null && !mBmp.isRecycled()) {
             mBmp.recycle();
-        }
+        }*/
         if (mGlideManager != null) {
             mGlideManager.onDestroy();
         }

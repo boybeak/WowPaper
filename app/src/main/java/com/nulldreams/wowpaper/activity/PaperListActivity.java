@@ -31,7 +31,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class PaperListActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener{
+public class PaperListActivity extends WowActivity implements SwipeRefreshLayout.OnRefreshListener{
 
     private Toolbar mTb;
     private RecyclerView mRv;

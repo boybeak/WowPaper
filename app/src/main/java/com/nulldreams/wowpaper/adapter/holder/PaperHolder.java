@@ -31,4 +31,9 @@ public class PaperHolder extends AbsViewHolder<PaperDelegate> {
         Paper paper = paperDelegate.getSource();
         Glide.with(context).load(paper.getThumb350()).crossFade().placeholder(R.drawable.bg_paper_place_holder).into(thumbIv);
     }
+
+    @Override
+    public void onViewRecycled(Context context) {
+        Glide.clear(thumbIv);
+    }
 }
