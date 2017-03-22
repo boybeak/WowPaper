@@ -7,18 +7,23 @@ import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
 import com.nulldreams.adapter.DelegateAdapter;
+import com.nulldreams.adapter.DelegateFilter;
 import com.nulldreams.adapter.DelegateParser;
 import com.nulldreams.adapter.SimpleFilter;
 import com.nulldreams.adapter.impl.LayoutImpl;
 import com.nulldreams.adapter.widget.OnScrollBottomListener;
+import com.nulldreams.base.utils.Intents;
 import com.nulldreams.base.utils.UiHelper;
 import com.nulldreams.wowpaper.R;
 import com.nulldreams.wowpaper.adapter.decoration.PaperDecoration;
+import com.nulldreams.wowpaper.adapter.delegate.FooterDelegate;
 import com.nulldreams.wowpaper.adapter.delegate.PaperDelegate;
 import com.nulldreams.wowpaper.manager.ApiManager;
 import com.nulldreams.wowpaper.modules.Category;
@@ -62,6 +67,8 @@ public class PaperListActivity extends WowActivity implements SwipeRefreshLayout
         }
     };
 
+    private FooterDelegate mFooter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,16 +88,31 @@ public class PaperListActivity extends WowActivity implements SwipeRefreshLayout
         mSrl.setProgressViewOffset(false, 0, UiHelper.getActionBarSize(this));
 
         mRv = (RecyclerView)findViewById(R.id.paper_list_rv);
-        mRv.setLayoutManager(new GridLayoutManager(this, spanCount));
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, spanCount);
+        gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(int i) {
+                if (mAdapter.getItemCount() - 1 == i) {
+                    return spanCount;
+                }
+                return 1;
+            }
+        });
+        mRv.setLayoutManager(gridLayoutManager);
         mRv.addItemDecoration(new PaperDecoration(this));
         mAdapter = new DelegateAdapter(this);
         mRv.setAdapter(mAdapter);
         mRv.addOnScrollListener(mBottomListener);
 
+        mFooter = new FooterDelegate (FooterDelegate.STATE_NONE);
+
         if (savedInstanceState != null) {
             ArrayList<Paper> papers = savedInstanceState.getParcelableArrayList("papers");
+            final int countBefore = mAdapter.getItemCount();
             mAdapter.addAll(papers, mPaperParser);
-            mAdapter.notifyDataSetChanged();
+            mFooter.setState(FooterDelegate.STATE_SUCCESS);
+            mAdapter.addIfNotExist(mFooter);
+            mAdapter.notifyItemRangeInserted(countBefore, mAdapter.getItemCount() - countBefore);
             mPage = savedInstanceState.getInt("page");
             final int position = savedInstanceState.getInt("position");
             mRv.scrollToPosition(position);
@@ -112,6 +134,7 @@ public class PaperListActivity extends WowActivity implements SwipeRefreshLayout
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
+
     }
 
     @Override
@@ -129,27 +152,48 @@ public class PaperListActivity extends WowActivity implements SwipeRefreshLayout
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        if (!TextUtils.isEmpty(mCategory.url)) {
+            getMenuInflater().inflate(R.menu.menu_paper_list, menu);
+        }
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             onBackPressed();
+            return true;
+        }
+        switch (item.getItemId()) {
+            case R.id.paper_list_share:
+                if (TextUtils.isEmpty(mCategory.url)) {
+                    return true;
+                }
+                try {
+                    Intents.shareText(this, R.string.title_dialog_share, mCategory.url);
+                } catch (Exception e) {
+                    Toast.makeText(this, R.string.toast_no_app_response, Toast.LENGTH_SHORT).show();
+                }
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    private void uiVisibility () {
+    /*private void uiVisibility () {
         getWindow().getDecorView().setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
                         | View.SYSTEM_UI_FLAG_FULLSCREEN
                         | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
-    }
+    }*/
 
-    @Override
+    /*@Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
         if (hasFocus) {
             uiVisibility();
         }
-    }
+    }*/
 
     @Override
     protected void onDestroy() {
@@ -160,6 +204,10 @@ public class PaperListActivity extends WowActivity implements SwipeRefreshLayout
 
     private void loadData () {
         isLoading = true;
+        if (mAdapter.endWith(mFooter)) {
+            mFooter.setState(FooterDelegate.STATE_LOADING);
+            mAdapter.notifyItemChanged(mAdapter.getItemCount() - 1);
+        }
         ApiManager.getInstance(this).getWallpapersWithId(mType, mCategory.id, mPage, new Callback<PaperResult>() {
             @Override
             public void onResponse(Call<PaperResult> call, Response<PaperResult> response) {
@@ -170,8 +218,17 @@ public class PaperListActivity extends WowActivity implements SwipeRefreshLayout
                 if (mSrl.isRefreshing()) {
                     mSrl.setRefreshing(false);
                 }
-                mAdapter.addAll(response.body().wallpapers, mPaperParser);
-                mAdapter.notifyDataSetChanged();
+                final int countBefore = mAdapter.getItemCount();
+                mAdapter.addAllAtFirst(new DelegateFilter() {
+                    @Override
+                    public boolean accept(DelegateAdapter adapter, LayoutImpl impl) {
+                        return impl == mFooter;
+                    }
+                }, response.body().wallpapers, mPaperParser);
+
+                mAdapter.addIfNotExist(mFooter);
+                mFooter.setState(FooterDelegate.STATE_SUCCESS);
+                mAdapter.notifyItemRangeInserted(countBefore, mAdapter.getItemCount() - countBefore);
                 mPage++;
             }
 
@@ -181,6 +238,9 @@ public class PaperListActivity extends WowActivity implements SwipeRefreshLayout
                 if (mSrl.isRefreshing()) {
                     mSrl.setRefreshing(false);
                 }
+                mAdapter.addIfNotExist(mFooter);
+                mFooter.setState(FooterDelegate.STATE_FAILED);
+                mAdapter.notifyItemChanged(mAdapter.getItemCount() - 1);
                 Toast.makeText(PaperListActivity.this, R.string.toast_load_data_failed, Toast.LENGTH_SHORT).show();
             }
         });

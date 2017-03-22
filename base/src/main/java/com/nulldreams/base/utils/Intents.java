@@ -32,6 +32,17 @@ public abstract class Intents {
         context.startActivity(it);
     }
 
+    public static void shareText(Context context, String chooserTitle, String url) {
+        Intent shareIntent = new Intent(Intent.ACTION_SEND)
+                .putExtra(Intent.EXTRA_TEXT, url)
+                .setType("text/plain");
+        context.startActivity(Intent.createChooser(shareIntent, chooserTitle));
+    }
+
+    public static void shareText(Context context, @StringRes int chooserTitleRes, String url) {
+        shareText(context, context.getString(chooserTitleRes), url);
+    }
+
     public static void shareImage (Context context, String chooserTitle, Uri uri) {
         Intent shareIntent = new Intent(Intent.ACTION_SEND)
                 .putExtra(Intent.EXTRA_STREAM, uri)

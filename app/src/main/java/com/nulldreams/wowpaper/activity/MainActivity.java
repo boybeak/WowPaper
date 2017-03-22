@@ -1,8 +1,10 @@
 package com.nulldreams.wowpaper.activity;
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.os.PersistableBundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -43,6 +45,22 @@ public class MainActivity extends WowActivity {
 
     private AbsPagerFragment[] mPagers;
 
+    private NavigationView.OnNavigationItemSelectedListener mNavListener = new NavigationView.OnNavigationItemSelectedListener() {
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+            switch (menuItem.getItemId()) {
+                case R.id.nav_category:
+                    startActivity(new Intent(MainActivity.this, CategoryActivity.class));
+                    break;
+                case R.id.nav_settings:
+                    startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+                    break;
+            }
+            mDl.closeDrawers();
+            return true;
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,6 +73,7 @@ public class MainActivity extends WowActivity {
         mTb = (Toolbar)findViewById(R.id.main_tb);
 
         mHeaderCover = (ImageView) mNavView.getHeaderView(0).findViewById(R.id.nav_header_cover);
+        mNavView.setNavigationItemSelectedListener(mNavListener);
 
         mPagers = new AbsPagerFragment[] {
                 //TagStyleFragment.newInstance(),

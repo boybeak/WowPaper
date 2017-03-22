@@ -5,14 +5,9 @@ import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.app.WallpaperManager;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.PointF;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -26,7 +21,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -50,7 +44,6 @@ import com.nulldreams.wowpaper.modules.Paper;
 import com.nulldreams.wowpaper.modules.PaperInfoResult;
 
 import java.io.IOException;
-import java.text.Format;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -202,7 +195,7 @@ public class PaperActivity extends WowActivity {
 
             @Override
             public void onFailure(Call<PaperInfoResult> call, Throwable t) {
-
+                Toast.makeText(PaperActivity.this, R.string.toast_load_data_failed, Toast.LENGTH_SHORT).show();
             }
         });
         mPaperIv.setOnImageEventListener(new SubsamplingScaleImageView.DefaultOnImageEventListener(){
@@ -260,12 +253,16 @@ public class PaperActivity extends WowActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (mBmp == null) {
-            Toast.makeText(PaperActivity.this, R.string.toast_wallpaper_downloading, Toast.LENGTH_SHORT).show();
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
             return true;
         }
         switch (item.getItemId()) {
             case R.id.paper_set:
+                if (mBmp == null) {
+                    Toast.makeText(PaperActivity.this, R.string.toast_wallpaper_downloading, Toast.LENGTH_SHORT).show();
+                    return true;
+                }
                 if (WowApp.checkWallpaperPermission(PaperActivity.this)) {
                     try {
                         WallpaperManager.getInstance(PaperActivity.this).setBitmap(mBmp);
@@ -285,24 +282,24 @@ public class PaperActivity extends WowActivity {
                 }
                 return true;
             case R.id.paper_share:
-                requestPermissions(new String[]{
+                try {
+                    Intents.shareText(PaperActivity.this, R.string.title_dialog_share, mPaper.url_page);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Toast.makeText(PaperActivity.this, R.string.toast_no_app_response, Toast.LENGTH_SHORT).show();
+                }
+                /*requestPermissions(new String[]{
                         Manifest.permission.WRITE_EXTERNAL_STORAGE,
                         Manifest.permission.READ_EXTERNAL_STORAGE}, new PermissionCallback() {
                     @Override
                     public void onGranted() {
-                        try {
-                            Intents.shareImage(PaperActivity.this, R.string.title_dialog_share, mBmp);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            Toast.makeText(PaperActivity.this, R.string.toast_no_app_response, Toast.LENGTH_SHORT).show();
-                        }
                     }
 
                     @Override
                     public void onDenied() {
 
                     }
-                });
+                });*/
                 break;
         }
         return super.onOptionsItemSelected(item);

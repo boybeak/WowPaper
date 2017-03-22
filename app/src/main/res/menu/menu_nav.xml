@@ -15,4 +15,14 @@
         android:title="@string/title_menu_tag"
         android:icon="@drawable/ic_asterisk"
         />
+    <item
+        android:id="@+id/nav_settings"
+        android:title="@string/title_menu_settings"
+        android:icon="@drawable/ic_settings"
+        />
+    <item
+        android:id="@+id/nav_about"
+        android:title="@string/title_menu_about"
+        android:icon="@drawable/ic_help_circle_outline"
+        />
 </menu>
