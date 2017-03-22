@@ -8,4 +8,10 @@
     <android.support.v7.widget.Toolbar
         android:id="@+id/category_tb"
         style="@style/ToolbarStyle"/>
+    <fragment
+        android:id="@+id/category_fg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:name="com.nulldreams.wowpaper.fragment.TagStyleFragment"
+        android:layout_below="@+id/category_tb"/>
 </RelativeLayout>

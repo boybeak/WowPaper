@@ -196,6 +196,9 @@ public class PaperListFragment extends AbsPagerFragment implements SwipeRefreshL
                 if (mSrl.isRefreshing()) {
                     mSrl.setRefreshing(false);
                 }
+                if (mPage == 1) {
+                    mAdapter.clear();
+                }
                 final int countBefore = mAdapter.getItemCount();
                 mAdapter.addAllAtFirst(new DelegateFilter() {
                     @Override
@@ -212,7 +215,16 @@ public class PaperListFragment extends AbsPagerFragment implements SwipeRefreshL
                 });
                 mFooter.setState(FooterDelegate.STATE_SUCCESS);
                 mAdapter.addIfNotExist(mFooter);
-                mAdapter.notifyItemRangeInserted(countBefore, mAdapter.getItemCount() - countBefore);
+                final int count = mAdapter.getItemCount() - countBefore;
+                if (mPage == 1) {
+                    mAdapter.notifyDataSetChanged();
+                } else {
+                    if (count == 0) {
+                        mAdapter.notifyItemChanged(mAdapter.getItemCount() - 1);
+                    } else {
+                        mAdapter.notifyItemRangeInserted(countBefore, count);
+                    }
+                }
                 mPage++;
             }
 
