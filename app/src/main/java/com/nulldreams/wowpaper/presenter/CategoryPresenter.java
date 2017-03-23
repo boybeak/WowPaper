@@ -50,4 +50,9 @@ public class CategoryPresenter extends WowPresenter {
             }
         });
     }
+
+    @Override
+    boolean needLockDrawerLayout() {
+        return false;
+    }
 }

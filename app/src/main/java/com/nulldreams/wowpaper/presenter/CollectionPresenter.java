@@ -51,4 +51,9 @@ public class CollectionPresenter extends WowPresenter {
             }
         });
     }
+
+    @Override
+    boolean needLockDrawerLayout() {
+        return false;
+    }
 }

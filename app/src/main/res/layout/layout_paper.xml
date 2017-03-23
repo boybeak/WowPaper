@@ -5,7 +5,7 @@
     <ImageView
         android:id="@+id/paper_thumb"
         android:layout_width="match_parent"
-        android:layout_height="120dp"
+        android:layout_height="@dimen/grid_height"
         android:scaleType="centerCrop"
         />
 </RelativeLayout>

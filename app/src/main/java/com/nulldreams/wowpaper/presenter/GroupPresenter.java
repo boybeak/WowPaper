@@ -49,4 +49,9 @@ public class GroupPresenter extends WowPresenter {
             }
         });
     }
+
+    @Override
+    boolean needLockDrawerLayout() {
+        return false;
+    }
 }

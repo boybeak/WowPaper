@@ -24,7 +24,7 @@
 
     </style>
 
-    <style name="TagStyle">
+    <style name="BaseTagStyle">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:paddingTop">@dimen/margin_small</item>
@@ -32,10 +32,12 @@
         <item name="android:paddingLeft">@dimen/margin_middle</item>
         <item name="android:paddingRight">@dimen/margin_middle</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Caption</item>
         <item name="android:background">@drawable/bg_tag_style</item>
         <item name="android:layout_margin">@dimen/margin_small</item>
         <item name="android:textColor">@color/colorAccent</item>
+    </style>
+    <style name="TagStyle" parent="BaseTagStyle">
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Caption</item>
     </style>
 
     <style name="ThemeToolbar" parent="AbsTheme">
@@ -50,5 +52,9 @@
         <item name="android:background">@color/colorHalfBlack</item>
         <item name="titleTextColor">@android:color/white</item>
         <item name="theme">@style/ThemeToolbar</item>
+    </style>
+    <style name="DrawerStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
     </style>
 </resources>

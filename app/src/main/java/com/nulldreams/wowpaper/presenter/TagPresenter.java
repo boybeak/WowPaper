@@ -22,4 +22,9 @@ public class TagPresenter extends WowPresenter {
     void loadNavList() {
         //ApiManager.getInstance(getActivity()).getT
     }
+
+    @Override
+    boolean needLockDrawerLayout() {
+        return true;
+    }
 }

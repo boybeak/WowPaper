@@ -115,6 +115,7 @@ public class PaperListFragment extends AbsPagerFragment implements SwipeRefreshL
             ArrayList<Paper> papers = savedInstanceState.getParcelableArrayList("papers");
             int position = savedInstanceState.getInt("position");
             mPage = savedInstanceState.getInt("page");
+            mMethod = savedInstanceState.getString("method");
             if (papers != null && !papers.isEmpty()) {
                 final int countBefore = mAdapter.getItemCount();
                 mAdapter.addAll(papers, new DelegateParser<Paper>() {
@@ -163,6 +164,7 @@ public class PaperListFragment extends AbsPagerFragment implements SwipeRefreshL
             GridLayoutManager layoutManager = (GridLayoutManager)mRv.getLayoutManager();
             outState.putInt("position", layoutManager.findFirstVisibleItemPosition());
             outState.putInt("page", mPage);
+            outState.putString("method", mMethod);
         }
         super.onSaveInstanceState(outState);
     }

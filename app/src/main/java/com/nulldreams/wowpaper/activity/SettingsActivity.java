@@ -132,14 +132,19 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        final PreferenceScreen screen = this.getPreferenceScreen();
         if (!BuildConfig.DEBUG) {
-            PreferenceScreen screen = this.getPreferenceScreen();
             screen.removePreference(findPreference(getString(R.string.pref_key_count)));
         } else {
             ApiManager.getInstance(this).getQueryCount(new Callback<CountResult>() {
                 @Override
                 public void onResponse(Call<CountResult> call, Response<CountResult> response) {
-                    findPreference(getString(R.string.pref_key_count)).setSummary(response.body().counts.toString());
+                    screen.findPreference(getString(R.string.pref_key_count)).setSummary(response.body().counts.toString());
                 }
 
                 @Override

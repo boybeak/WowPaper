@@ -5,7 +5,7 @@
     <TextView
         android:id="@+id/footer_message"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
+        android:layout_height="@dimen/footer_height"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textStyle="bold"
         android:layout_centerInParent="true"
@@ -17,8 +17,8 @@
         />
     <ProgressBar
         android:id="@+id/footer_progress"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="@dimen/footer_height"
+        android:layout_height="@dimen/footer_height"
         android:padding="@dimen/margin_middle"
         android:layout_centerInParent="true"
         android:visibility="gone"

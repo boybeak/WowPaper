@@ -31,6 +31,9 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
 
     private CrashHandler(Context context) {
         mContext = context;
+    }
+
+    public void install () {
         Thread.setDefaultUncaughtExceptionHandler(this);
     }
 

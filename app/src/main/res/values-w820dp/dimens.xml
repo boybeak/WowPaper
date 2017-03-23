@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="margin_tiny">4dp</dimen>
+    <dimen name="margin_small">8dp</dimen>
+    <dimen name="margin_middle">16dp</dimen>
+
+    <dimen name="grid_height">160dp</dimen>
+    <dimen name="grid_padding_horizontal">72dp</dimen>
+    <dimen name="grid_gap_width">8dp</dimen>
+
+    <dimen name="footer_height">56dp</dimen>
+
+</resources>

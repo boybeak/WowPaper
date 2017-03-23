@@ -24,7 +24,7 @@ public class PaperDecoration extends RecyclerView.ItemDecoration {
 
     public PaperDecoration(Context context) {
         offset = UiHelper.getActionBarSize(context);
-        gap = context.getResources().getDimensionPixelSize(R.dimen.margin_small);
+        gap = context.getResources().getDimensionPixelSize(R.dimen.grid_gap_width);
     }
 
     @Override

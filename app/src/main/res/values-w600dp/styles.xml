@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="DrawerStyle">
+        <item name="android:layout_width">300dp</item>
+        <item name="android:layout_height">match_parent</item>
+    </style>
+
+    <style name="TagStyle" parent="BaseTagStyle">
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Body2</item>
+    </style>
+</resources>

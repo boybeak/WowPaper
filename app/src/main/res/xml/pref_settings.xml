@@ -7,7 +7,7 @@
         android:summary="@string/pref_summary"
         />
     <Preference
-        android:key="@string/pref_key_abyss"
+        android:key="@string/pref_key_count"
         android:title="@string/pref_key_count"
         />
 </PreferenceScreen>

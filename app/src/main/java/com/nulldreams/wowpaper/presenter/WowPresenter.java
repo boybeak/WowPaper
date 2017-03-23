@@ -42,6 +42,7 @@ public abstract class WowPresenter extends ActivityPresenter {
         if (mCategory != null) {
             selectItem(mCategory, false);
         }
+        mView.onLockDragLayout(needLockDrawerLayout());
     }
 
     public WowView getWowView () {
@@ -49,6 +50,8 @@ public abstract class WowPresenter extends ActivityPresenter {
     }
 
     abstract void loadNavList ();
+
+    abstract boolean needLockDrawerLayout ();
 
     public void loadPaperList () {
         loadPaperList(mCategory);

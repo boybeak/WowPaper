@@ -19,7 +19,10 @@
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/paper_list_rv"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+                android:layout_height="match_parent"
+                android:paddingLeft="@dimen/grid_padding_horizontal"
+                android:paddingRight="@dimen/grid_padding_horizontal"
+                />
         </android.support.v4.widget.SwipeRefreshLayout>
         <android.support.v7.widget.Toolbar
             android:id="@+id/paper_list_tb"
@@ -28,11 +31,10 @@
     </RelativeLayout>
     <android.support.v7.widget.RecyclerView
         android:id="@+id/paper_list_nav_rv"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        style="@style/DrawerStyle"
         android:layout_gravity="end|right"
         android:paddingTop="64dp"
-        android:paddingBottom="64dp"
+        android:paddingBottom="@dimen/paper_list_drawer_padding_bottom"
         android:overScrollMode="never"
         />
 </android.support.v4.widget.DrawerLayout>
