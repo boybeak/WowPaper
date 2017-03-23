@@ -38,6 +38,7 @@ public class TagStyleDelegate extends AnnotationDelegate<Category> {
     public @interface Style {
     }
 
+    private boolean isSelected = false;
 
     public TagStyleDelegate(Category category) {
         super(category);
@@ -49,5 +50,13 @@ public class TagStyleDelegate extends AnnotationDelegate<Category> {
 
     public String getStyle () {
         return getString(KEY_STYLE, STYLE_NONE);
+    }
+
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
     }
 }

@@ -17,7 +17,14 @@ import android.text.TextUtils;
 import android.view.MenuItem;
 
 import com.nulldreams.base.utils.Intents;
+import com.nulldreams.wowpaper.BuildConfig;
 import com.nulldreams.wowpaper.R;
+import com.nulldreams.wowpaper.manager.ApiManager;
+import com.nulldreams.wowpaper.modules.CountResult;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On
@@ -123,6 +130,23 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayShowHomeEnabled(true);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+
+        if (!BuildConfig.DEBUG) {
+            PreferenceScreen screen = this.getPreferenceScreen();
+            screen.removePreference(findPreference(getString(R.string.pref_key_count)));
+        } else {
+            ApiManager.getInstance(this).getQueryCount(new Callback<CountResult>() {
+                @Override
+                public void onResponse(Call<CountResult> call, Response<CountResult> response) {
+                    findPreference(getString(R.string.pref_key_count)).setSummary(response.body().counts.toString());
+                }
+
+                @Override
+                public void onFailure(Call<CountResult> call, Throwable t) {
+
+                }
+            });
         }
     }
 

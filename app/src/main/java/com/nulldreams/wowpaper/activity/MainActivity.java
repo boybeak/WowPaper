@@ -14,18 +14,18 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.nulldreams.base.content.It;
 import com.nulldreams.base.fragment.AbsPagerFragment;
 import com.nulldreams.wowpaper.R;
+import com.nulldreams.wowpaper.adapter.delegate.TagStyleDelegate;
 import com.nulldreams.wowpaper.fragment.PaperListFragment;
 import com.nulldreams.wowpaper.manager.ApiManager;
 
@@ -50,8 +50,17 @@ public class MainActivity extends WowActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
             switch (menuItem.getItemId()) {
                 case R.id.nav_category:
-                    startActivity(new Intent(MainActivity.this, CategoryActivity.class));
+                    It.newInstance().putExtra("type", TagStyleDelegate.STYLE_CATEGORY)
+                            .startActivity(MainActivity.this, PaperListActivity.class);
                     break;
+                case R.id.nav_collection:
+                    It.newInstance().putExtra("type", TagStyleDelegate.STYLE_COLLECTION)
+                            .startActivity(MainActivity.this, PaperListActivity.class);
+                    break;
+                /*case R.id.nav_tag:
+                    It.newInstance().putExtra("type", TagStyleDelegate.STYLE_COLLECTION)
+                            .startActivity(MainActivity.this, PaperListActivity.class);
+                    break;*/
                 case R.id.nav_settings:
                     startActivity(new Intent(MainActivity.this, SettingsActivity.class));
                     break;

@@ -6,4 +6,8 @@
         android:title="@string/text_powered_by"
         android:summary="@string/pref_summary"
         />
+    <Preference
+        android:key="@string/pref_key_abyss"
+        android:title="@string/pref_key_count"
+        />
 </PreferenceScreen>

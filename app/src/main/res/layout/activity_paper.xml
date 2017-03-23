@@ -58,6 +58,7 @@
         android:layout_above="@+id/paper_position_layout"
         android:fadingEdge="none"
         android:requiresFadingEdge="none"
+        android:overScrollMode="never"
         />
     <android.support.v7.widget.Toolbar
         android:id="@+id/paper_tb"

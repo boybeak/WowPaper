@@ -2,6 +2,7 @@ package com.nulldreams.wowpaper.manager;
 
 import com.nulldreams.wowpaper.modules.CategoryResult;
 import com.nulldreams.wowpaper.modules.CollectionResult;
+import com.nulldreams.wowpaper.modules.CountResult;
 import com.nulldreams.wowpaper.modules.GroupResult;
 import com.nulldreams.wowpaper.modules.PaperInfoResult;
 import com.nulldreams.wowpaper.modules.PaperResult;
@@ -37,4 +38,7 @@ public interface ApiService {
 
     @GET("get.php?method=wallpaper_info")
     Call<PaperInfoResult> getPaperInfo (@Query("auth") String auth, @Query("id") int id);
+
+    @GET("get.php?method=query_count")
+    Call<CountResult> getQueryCount (@Query("auth") String auth);
 }

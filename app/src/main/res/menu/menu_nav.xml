@@ -6,15 +6,15 @@
         android:icon="@drawable/ic_format_quote_open"
         />
     <item
-        android:id="@+id/nav_group"
-        android:title="@string/title_menu_group"
+        android:id="@+id/nav_collection"
+        android:title="@string/title_menu_collection"
         android:icon="@drawable/ic_pound"
         />
-    <item
+    <!--<item
         android:id="@+id/nav_tag"
         android:title="@string/title_menu_tag"
         android:icon="@drawable/ic_asterisk"
-        />
+        />-->
     <item
         android:id="@+id/nav_settings"
         android:title="@string/title_menu_settings"

@@ -1,6 +1,7 @@
 package com.nulldreams.wowpaper.presenter;
 
 import android.app.Activity;
+import android.os.Bundle;
 
 import com.nulldreams.base.mvp.ActivityPresenter;
 import com.nulldreams.wowpaper.manager.ApiManager;
@@ -25,8 +26,6 @@ public abstract class WowPresenter extends ActivityPresenter {
 
     public WowPresenter (Activity activity, WowView view, Category category, String type) {
         this (activity, view, category, type, 1);
-
-        loadNavList();
     }
 
     public WowPresenter (Activity activity, WowView view, Category category, String type, int startPage) {
@@ -35,8 +34,14 @@ public abstract class WowPresenter extends ActivityPresenter {
         mCategory = category;
         mType = type;
         mPage = startPage;
+    }
 
+    @Override
+    public void create(Activity activity, Bundle savedInstanceState) {
         loadNavList();
+        if (mCategory != null) {
+            selectItem(mCategory, false);
+        }
     }
 
     public WowView getWowView () {
@@ -52,6 +57,24 @@ public abstract class WowPresenter extends ActivityPresenter {
     public void reloadPaperList () {
         mPage = 1;
         loadPaperList();
+    }
+
+    public Category getCategory () {
+        return mCategory;
+    }
+
+    public void selectItem (Category category) {
+        selectItem(category, true);
+    }
+
+    protected void selectItem(Category category, boolean userAction) {
+        if ((category == null || category.equals(mCategory)) && userAction) {
+            return;
+        }
+        mCategory = category;
+        getWowView().onItemChanged(category, userAction);
+        //loadNavList();
+        //reloadPaperList();
     }
 
     public void loadNextPagerList () {

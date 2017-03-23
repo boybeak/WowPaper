@@ -1,12 +1,14 @@
 package com.nulldreams.wowpaper.activity;
 
 import android.os.PersistableBundle;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -14,6 +16,7 @@ import android.widget.Toast;
 import com.google.android.flexbox.FlexDirection;
 import com.google.android.flexbox.FlexboxLayoutManager;
 import com.google.android.flexbox.JustifyContent;
+import com.nulldreams.adapter.DelegateAction;
 import com.nulldreams.adapter.DelegateAdapter;
 import com.nulldreams.adapter.DelegateFilter;
 import com.nulldreams.adapter.DelegateParser;
@@ -30,8 +33,15 @@ import com.nulldreams.wowpaper.adapter.delegate.TagStyleDelegate;
 import com.nulldreams.wowpaper.modules.Category;
 import com.nulldreams.wowpaper.modules.Paper;
 import com.nulldreams.wowpaper.presenter.CategoryPresenter;
+import com.nulldreams.wowpaper.presenter.CollectionPresenter;
+import com.nulldreams.wowpaper.presenter.GroupPresenter;
+import com.nulldreams.wowpaper.presenter.TagPresenter;
 import com.nulldreams.wowpaper.presenter.WowPresenter;
 import com.nulldreams.wowpaper.presenter.WowView;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +49,7 @@ import java.util.List;
 public class PaperListActivity extends WowActivity implements SwipeRefreshLayout.OnRefreshListener,
         WowView{
 
+    private DrawerLayout mDl;
     private Toolbar mTb;
     private RecyclerView mRv, mNavRv;
     private DelegateAdapter mAdapter, mNavAdapter;
@@ -78,6 +89,8 @@ public class PaperListActivity extends WowActivity implements SwipeRefreshLayout
         setContentView(R.layout.activity_paper_list);
 
         final int spanCount = getResources().getInteger(R.integer.span_count);
+
+        mDl = (DrawerLayout)findViewById(R.id.paper_list_dl);
 
         mTb = (Toolbar)findViewById(R.id.paper_list_tb);
         setSupportActionBar(mTb);
@@ -141,22 +154,42 @@ public class PaperListActivity extends WowActivity implements SwipeRefreshLayout
             case TagStyleDelegate.STYLE_CATEGORY:
                 mPresenter = new CategoryPresenter(this, this, mCategory, mType, page);
                 break;
+            case TagStyleDelegate.STYLE_GROUP:
+                mPresenter = new GroupPresenter(this, this, mCategory, mType, page);
+                break;
+            case TagStyleDelegate.STYLE_COLLECTION:
+                mPresenter = new CollectionPresenter(this, this, mCategory, mType, page);
+                break;
+            case TagStyleDelegate.STYLE_TAG:
+            case TagStyleDelegate.STYLE_USER:
+            case TagStyleDelegate.STYLE_SUB_CATEGORY:
+                mPresenter = new TagPresenter(this, this, mCategory, mType, page);
+                break;
         }
 
         mPresenter.create(this, savedInstanceState);
 
-        if (mAdapter.isEmpty()) {
-            mSrl.post(new Runnable() {
-                @Override
-                public void run() {
-                    mSrl.setRefreshing(true);
-                    mPresenter.loadPaperList();
-                }
-            });
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mDl.isDrawerOpen(Gravity.END|Gravity.RIGHT)) {
+            mDl.closeDrawers();
+            return;
         }
+        super.onBackPressed();
+    }
 
-        setTitle(mCategory.name);
+    @Override
+    protected void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -175,7 +208,7 @@ public class PaperListActivity extends WowActivity implements SwipeRefreshLayout
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (!TextUtils.isEmpty(mCategory.url)) {
+        if (mCategory != null && !TextUtils.isEmpty(mCategory.url)) {
             getMenuInflater().inflate(R.menu.menu_paper_list, menu);
         }
         return super.onCreateOptionsMenu(menu);
@@ -219,6 +252,42 @@ public class PaperListActivity extends WowActivity implements SwipeRefreshLayout
         mPresenter.reloadPaperList();
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onCategorySelected (Category category) {
+        mPresenter.selectItem(category);
+        mDl.closeDrawers();
+    }
+
+    @Override
+    public void onItemChanged(Category category, boolean userAction) {
+        mCategory = category;
+        setTitle(category.name);
+        mNavAdapter.actionWith(new DelegateAction() {
+            @Override
+            public void onAction(LayoutImpl impl) {
+                if (impl instanceof TagStyleDelegate) {
+                    TagStyleDelegate delegate = (TagStyleDelegate)impl;
+                    delegate.setSelected(delegate.getSource().equals(mPresenter.getCategory()));
+                }
+            }
+        });
+        mNavAdapter.notifyDataSetChanged();
+        if (userAction) {
+            mAdapter.clear();
+            mAdapter.notifyDataSetChanged();
+        }
+        if (mAdapter.isEmpty()) {
+            mSrl.post(new Runnable() {
+                @Override
+                public void run() {
+                    mSrl.setRefreshing(true);
+                    mPresenter.reloadPaperList();
+                }
+            });
+        }
+        invalidateOptionsMenu();
+    }
+
     @Override
     public void onNavListLoading() {
 
@@ -230,7 +299,9 @@ public class PaperListActivity extends WowActivity implements SwipeRefreshLayout
         mNavAdapter.addAll(categoryList, new DelegateParser<Category>() {
             @Override
             public LayoutImpl parse(DelegateAdapter adapter, Category data) {
-                return new TagStyleDelegate(data);
+                TagStyleDelegate tagStyleDelegate = new TagStyleDelegate(data);
+                tagStyleDelegate.setSelected(data.equals(mPresenter.getCategory()));
+                return tagStyleDelegate;
             }
         });
         mNavAdapter.notifyDataSetChanged();
@@ -291,5 +362,12 @@ public class PaperListActivity extends WowActivity implements SwipeRefreshLayout
         mFooter.setState(FooterDelegate.STATE_FAILED);
         mAdapter.notifyItemChanged(mAdapter.getItemCount() - 1);
         Toast.makeText(PaperListActivity.this, R.string.toast_load_data_failed, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onLockDragLayout(boolean needLock) {
+        if (needLock) {
+            mDl.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        }
     }
 }

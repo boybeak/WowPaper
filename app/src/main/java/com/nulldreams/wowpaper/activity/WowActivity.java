@@ -18,8 +18,8 @@ public class WowActivity extends BaseActivity {
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-        if (hasFocus && getWindow().getDecorView().getSystemUiVisibility() != uiVisibility()) {
+        /*if (hasFocus && getWindow().getDecorView().getSystemUiVisibility() != uiVisibility()) {
             getWindow().getDecorView().setSystemUiVisibility(uiVisibility());
-        }
+        }*/
     }
 }

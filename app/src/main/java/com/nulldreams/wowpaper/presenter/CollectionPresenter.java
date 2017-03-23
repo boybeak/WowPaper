@@ -5,6 +5,7 @@ import android.app.Activity;
 import com.nulldreams.wowpaper.manager.ApiManager;
 import com.nulldreams.wowpaper.modules.Category;
 import com.nulldreams.wowpaper.modules.CategoryResult;
+import com.nulldreams.wowpaper.modules.CollectionResult;
 
 import java.util.List;
 
@@ -16,25 +17,25 @@ import retrofit2.Response;
  * Created by gaoyunfei on 2017/3/22.
  */
 
-public class CategoryPresenter extends WowPresenter {
+public class CollectionPresenter extends WowPresenter {
 
 
-    public CategoryPresenter(Activity activity, WowView view, Category category, String type) {
+    public CollectionPresenter(Activity activity, WowView view, Category category, String type) {
         super(activity, view, category, type);
     }
 
-    public CategoryPresenter(Activity activity, WowView view, Category category, String type, int startPage) {
+    public CollectionPresenter(Activity activity, WowView view, Category category, String type, int startPage) {
         super(activity, view, category, type, startPage);
     }
 
     @Override
     void loadNavList() {
         getWowView().onNavListLoading();
-        ApiManager.getInstance(getActivity()).getCategories(new Callback<CategoryResult>() {
+        ApiManager.getInstance(getActivity()).getCollections(new Callback<CollectionResult>() {
             @Override
-            public void onResponse(Call<CategoryResult> call, Response<CategoryResult> response) {
+            public void onResponse(Call<CollectionResult> call, Response<CollectionResult> response) {
                 if (getWowView() != null) {
-                    List<Category> categories = response.body().categories;
+                    List<Category> categories = response.body().collections;
                     getWowView().onNavListPrepared(categories);
                     if (categories != null && !categories.isEmpty() && getCategory() == null) {
                         selectItem(categories.get(0));
@@ -43,10 +44,10 @@ public class CategoryPresenter extends WowPresenter {
             }
 
             @Override
-            public void onFailure(Call<CategoryResult> call, Throwable t) {
-                    if (getWowView() != null) {
-                        getWowView().onNavListFailed();
-                    }
+            public void onFailure(Call<CollectionResult> call, Throwable t) {
+                if (getWowView() != null) {
+                    getWowView().onNavListFailed();
+                }
             }
         });
     }

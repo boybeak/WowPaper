@@ -12,6 +12,7 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:windowBackground">@color/colorWindowBackground</item>
+        <item name="android:windowFullscreen">true</item>
     </style>
     <style name="FullScreenTheme" parent="AppTheme">
         <item name="android:windowFullscreen">true</item>

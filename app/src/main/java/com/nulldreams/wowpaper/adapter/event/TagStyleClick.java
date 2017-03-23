@@ -10,6 +10,8 @@ import com.nulldreams.wowpaper.activity.PaperListActivity;
 import com.nulldreams.wowpaper.adapter.delegate.TagStyleDelegate;
 import com.nulldreams.wowpaper.adapter.holder.TagStyleHolder;
 
+import org.greenrobot.eventbus.EventBus;
+
 /**
  * Created by gaoyunfei on 2017/3/19.
  */
@@ -22,6 +24,8 @@ public class TagStyleClick implements OnItemClickListener<TagStyleDelegate, TagS
                     .putExtra("style", tagStyleDelegate.getSource())
                     .putExtra("type", tagStyleDelegate.getStyle())
                     .startActivity(context, PaperListActivity.class);
+        } else {
+            EventBus.getDefault().post(tagStyleDelegate.getSource());
         }
     }
 }

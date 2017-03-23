@@ -53,5 +53,7 @@ public class TagStyleHolder extends AbsViewHolder<TagStyleDelegate> {
                 textTv.setText(category.name);
                 break;
         }
+
+        itemView.setSelected(tagStyleDelegate.isSelected());
     }
 }

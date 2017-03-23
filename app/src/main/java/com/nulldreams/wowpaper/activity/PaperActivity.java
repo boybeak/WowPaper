@@ -1,6 +1,5 @@
 package com.nulldreams.wowpaper.activity;
 
-import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
@@ -139,6 +138,9 @@ public class PaperActivity extends WowActivity {
         ApiManager.getInstance(this).getPaperInfo(mPaper.id, new Callback<PaperInfoResult>() {
             @Override
             public void onResponse(Call<PaperInfoResult> call, Response<PaperInfoResult> response) {
+                if (isDestroyed()) {
+                    return;
+                }
                 mPaper = response.body().wallpaper;
                 mGlideManager = Glide.with(PaperActivity.this);
                 mGlideManager.load(response.body().wallpaper.url_image).asBitmap()

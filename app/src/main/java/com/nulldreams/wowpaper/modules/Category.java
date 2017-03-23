@@ -48,4 +48,12 @@ public class Category implements Parcelable {
         dest.writeString(name);
         dest.writeString(url);
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj != null && obj instanceof Category) {
+            return ((Category) obj).id == id;
+        }
+        return false;
+    }
 }

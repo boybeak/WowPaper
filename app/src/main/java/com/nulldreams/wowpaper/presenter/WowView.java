@@ -12,6 +12,8 @@ import java.util.List;
 
 public interface WowView extends ViewImpl {
 
+    void onItemChanged(Category category, boolean userAction);
+
     void onNavListLoading ();
     void onNavListPrepared (List<Category> categoryList);
     void onNavListFailed ();
@@ -19,4 +21,6 @@ public interface WowView extends ViewImpl {
     void onPaperListLoading (int page);
     void onPaperListPrepared (List<Paper> paperList, int page);
     void onPaperListFailed ();
+
+    void onLockDragLayout (boolean needLock);
 }

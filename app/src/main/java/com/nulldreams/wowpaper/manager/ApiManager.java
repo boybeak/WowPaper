@@ -6,6 +6,7 @@ import com.google.gson.GsonBuilder;
 import com.nulldreams.base.manager.AbsManager;
 import com.nulldreams.wowpaper.modules.CategoryResult;
 import com.nulldreams.wowpaper.modules.CollectionResult;
+import com.nulldreams.wowpaper.modules.CountResult;
 import com.nulldreams.wowpaper.modules.GroupResult;
 import com.nulldreams.wowpaper.modules.Paper;
 import com.nulldreams.wowpaper.modules.PaperInfoResult;
@@ -112,6 +113,10 @@ public class ApiManager extends AbsManager {
 
     public void getGroups(Callback<GroupResult> callback) {
         mApi.getGroups(mApiKey).enqueue(callback);
+    }
+
+    public void getQueryCount (Callback<CountResult> callback) {
+        mApi.getQueryCount(mApiKey).enqueue(callback);
     }
 
     public void downloadPaper (Paper paper, String outputPath) {

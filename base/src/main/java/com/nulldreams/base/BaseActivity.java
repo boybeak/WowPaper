@@ -1,7 +1,10 @@
 package com.nulldreams.base;
 
 import android.content.pm.PackageManager;
+import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 
@@ -17,6 +20,24 @@ public class BaseActivity extends AppCompatActivity {
 
     private PermissionCallback mPermissionCallback = null;
     private int mPermissionRequestCode = 0;
+
+    private boolean isDestroyed;
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        isDestroyed = false;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        isDestroyed = true;
+    }
+
+    public boolean isDestroyed() {
+        return isDestroyed;
+    }
 
     public void requestPermission (String permission, @NonNull PermissionCallback callback) {
         requestPermissions(new String[]{permission}, callback);
