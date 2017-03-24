@@ -19,6 +19,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
@@ -98,7 +99,14 @@ public class MainActivity extends WowActivity {
 
         setSupportActionBar(mTb);
 
-        mToggle = new ActionBarDrawerToggle(this, mDl, mTb, R.string.title_drawer_open, R.string.title_drawer_close);
+        mToggle = new ActionBarDrawerToggle(this, mDl, mTb, R.string.title_drawer_open, R.string.title_drawer_close) {
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+                super.onDrawerSlide(drawerView, slideOffset);
+                mTb.setAlpha(1.0f - slideOffset);
+                Log.v(TAG, "onDrawerSlide slideOffset=" + slideOffset);
+            }
+        };
         mDl.addDrawerListener(mToggle);
         mToggle.syncState();
         //getSupportActionBar().setDisplayHomeAsUpEnabled(true);

@@ -25,6 +25,7 @@
         </activity>
         <activity
             android:name=".activity.PaperActivity"
+            android:screenOrientation="portrait"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_paper"
             android:theme="@style/MainTheme" />
@@ -33,7 +34,11 @@
             android:name=".activity.SettingsActivity"
             android:label="@string/title_activity_settings"
             android:theme="@style/SettingsTheme" />
-        <activity android:name=".activity.CategoryActivity"></activity>
+        <activity android:name=".activity.CategoryActivity" />
+
+        <service
+            android:name=".service.WowPaperService"
+            android:exported="false"/>
     </application>
 
 </manifest>

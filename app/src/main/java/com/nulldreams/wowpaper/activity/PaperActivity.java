@@ -32,7 +32,6 @@ import com.nulldreams.adapter.DelegateAdapter;
 import com.nulldreams.adapter.DelegateListParser;
 import com.nulldreams.adapter.impl.LayoutImpl;
 import com.nulldreams.base.animation.DefaultAnimatorListener;
-import com.nulldreams.base.event.PermissionCallback;
 import com.nulldreams.base.utils.Intents;
 import com.nulldreams.wowpaper.R;
 import com.nulldreams.wowpaper.WowApp;
@@ -41,8 +40,8 @@ import com.nulldreams.wowpaper.manager.ApiManager;
 import com.nulldreams.wowpaper.modules.Category;
 import com.nulldreams.wowpaper.modules.Paper;
 import com.nulldreams.wowpaper.modules.PaperInfoResult;
+import com.nulldreams.wowpaper.service.WowPaperService;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -266,8 +265,10 @@ public class PaperActivity extends WowActivity {
                     Toast.makeText(PaperActivity.this, R.string.toast_wallpaper_downloading, Toast.LENGTH_SHORT).show();
                     return true;
                 }
+
                 if (WowApp.checkWallpaperPermission(PaperActivity.this)) {
-                    try {
+                    WowPaperService.setWallpaper(this, mPaper);
+                    /*try {
                         WallpaperManager.getInstance(PaperActivity.this).setBitmap(mBmp);
                         WallpaperManager.getInstance(PaperActivity.this).suggestDesiredDimensions(
                                 (int)(mPaper.width * mScale), mScreenHeight);
@@ -276,7 +277,7 @@ public class PaperActivity extends WowActivity {
                         e.printStackTrace();
                         Toast.makeText(PaperActivity.this, R.string.toast_set_wallpaper_failed, Toast.LENGTH_SHORT).show();
                         Log.w(TAG, "set wall paper failed with a IOException");
-                    }
+                    }*/
                 } else {
                     new AlertDialog.Builder(PaperActivity.this)
                             .setMessage(R.string.dialog_msg_device_wallpaper_not_allowed)
