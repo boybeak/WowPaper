@@ -37,10 +37,10 @@ public class ActivityPresenter implements PresenterImpl {
     public void stop (Activity activity) {
 
     }
-    public void saveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+    public void saveInstanceState(Bundle outState) {
 
     }
-    public void restoreInstanceState(Bundle savedInstanceState, PersistableBundle persistentState) {
+    public void restoreInstanceState(Bundle savedInstanceState) {
 
     }
     public void destroy (Activity activity) {

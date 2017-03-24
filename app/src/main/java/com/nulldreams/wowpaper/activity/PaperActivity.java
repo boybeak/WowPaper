@@ -135,6 +135,18 @@ public class PaperActivity extends WowActivity {
         mTb.setSubtitle(getString(R.string.text_size, mPaper.width, mPaper.height) + "  " + Formatter.formatFileSize(this, mPaper.file_size));
 
         mPb.setVisibility(View.VISIBLE);
+        mGlideManager = Glide.with(PaperActivity.this);
+        mGlideManager.load(mPaper.url_image).asBitmap()
+                .into(new SimpleTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                        mPb.setVisibility(View.GONE);
+                        mBmp = resource;
+                        mPaperIv.setImage(ImageSource.bitmap(resource));
+                        mPositionThumbIv.setImageBitmap(Bitmap.createScaledBitmap(
+                                resource, mThumbWidth, mThumbHeight, true));
+                    }
+                });
         ApiManager.getInstance(this).getPaperInfo(mPaper.id, new Callback<PaperInfoResult>() {
             @Override
             public void onResponse(Call<PaperInfoResult> call, Response<PaperInfoResult> response) {
@@ -142,18 +154,7 @@ public class PaperActivity extends WowActivity {
                     return;
                 }
                 mPaper = response.body().wallpaper;
-                mGlideManager = Glide.with(PaperActivity.this);
-                mGlideManager.load(response.body().wallpaper.url_image).asBitmap()
-                        .into(new SimpleTarget<Bitmap>() {
-                            @Override
-                            public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-                                mPb.setVisibility(View.GONE);
-                                mBmp = resource;
-                                mPaperIv.setImage(ImageSource.bitmap(resource));
-                                mPositionThumbIv.setImageBitmap(Bitmap.createScaledBitmap(
-                                        resource, mThumbWidth, mThumbHeight, true));
-                            }
-                        });
+
                 mInfoAdapter.add(response.body(), new DelegateListParser<PaperInfoResult>() {
                     @Override
                     public List<LayoutImpl> parse(DelegateAdapter adapter, PaperInfoResult data) {

@@ -233,6 +233,9 @@ public class PaperListFragment extends AbsPagerFragment implements SwipeRefreshL
             @Override
             public void onFailure(Call<PaperResult> call, Throwable t) {
                 isLoading = false;
+                if (!isResumed()) {
+                    return;
+                }
                 if (mSrl.isRefreshing()) {
                     mSrl.setRefreshing(false);
                 }

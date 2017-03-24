@@ -38,7 +38,9 @@ public abstract class WowPresenter extends ActivityPresenter {
 
     @Override
     public void create(Activity activity, Bundle savedInstanceState) {
-        loadNavList();
+        if (savedInstanceState == null) {
+            loadNavList();
+        }
         if (mCategory != null) {
             selectItem(mCategory, false);
         }
@@ -102,6 +104,10 @@ public abstract class WowPresenter extends ActivityPresenter {
                 mView.onPaperListFailed();
             }
         });
+    }
+
+    public int getPage () {
+        return mPage;
     }
 
     @Override

@@ -8,6 +8,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -48,6 +49,8 @@ import java.util.List;
 
 public class PaperListActivity extends WowActivity implements SwipeRefreshLayout.OnRefreshListener,
         WowView{
+
+    private static final String TAG = PaperListActivity.class.getSimpleName();
 
     private DrawerLayout mDl;
     private Toolbar mTb;
@@ -145,6 +148,11 @@ public class PaperListActivity extends WowActivity implements SwipeRefreshLayout
             mRv.scrollToPosition(position);
             mCategory = savedInstanceState.getParcelable("style");
             mType = savedInstanceState.getString("type");
+
+            ArrayList<Category> categories = savedInstanceState.getParcelableArrayList("categories");
+
+            onNavListPrepared(categories);
+
         } else {
             mCategory = getIntent().getParcelableExtra("style");
             mType = getIntent().getStringExtra("type");
@@ -193,17 +201,24 @@ public class PaperListActivity extends WowActivity implements SwipeRefreshLayout
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+    public void onSaveInstanceState(Bundle outState) {
         if (mAdapter != null && !mAdapter.isEmpty()) {
             ArrayList<Paper> papers = mAdapter.getDataSourceArrayList(new SimpleFilter<Paper>(Paper.class));
             final int position = ((GridLayoutManager)mRv.getLayoutManager()).findFirstVisibleItemPosition();
             outState.putParcelableArrayList("papers", papers);
             outState.putInt("position", position);
         }
-        //outState.putInt("page", mPage);
+        outState.putInt("page", mPresenter.getPage());
         outState.putParcelable("style", mCategory);
         outState.putString("type", mType);
-        super.onSaveInstanceState(outState, outPersistentState);
+
+        if (mNavAdapter != null && !mNavAdapter.isEmpty()) {
+            ArrayList<Category> categories
+                    = mNavAdapter.getDataSourceArrayList(new SimpleFilter<Category>(Category.class));
+            outState.putParcelableArrayList("categories", categories);
+        }
+
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -300,7 +315,7 @@ public class PaperListActivity extends WowActivity implements SwipeRefreshLayout
             @Override
             public LayoutImpl parse(DelegateAdapter adapter, Category data) {
                 TagStyleDelegate tagStyleDelegate = new TagStyleDelegate(data);
-                tagStyleDelegate.setSelected(data.equals(mPresenter.getCategory()));
+                tagStyleDelegate.setSelected(data.equals(mCategory));
                 return tagStyleDelegate;
             }
         });
