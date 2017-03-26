@@ -1,7 +1,9 @@
 package com.nulldreams.wowpaper.modules;
 
+import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.text.format.Formatter;
 
 /**
  * Created by gaoyunfei on 2017/3/17.
@@ -84,5 +86,9 @@ public class Paper implements Parcelable{
         dest.writeString(user_name);
         dest.writeString(collection);
         dest.writeString(group);
+    }
+
+    public String getInfo (Context context) {
+        return width + "×" + height + "  " + Formatter.formatFileSize(context, file_size);
     }
 }

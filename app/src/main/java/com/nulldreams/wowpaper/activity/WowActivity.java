@@ -1,8 +1,15 @@
 package com.nulldreams.wowpaper.activity;
 
 import android.view.View;
+import android.widget.Toast;
 
 import com.nulldreams.base.BaseActivity;
+import com.nulldreams.wowpaper.R;
+import com.nulldreams.wowpaper.event.PaperSetResult;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 /**
  * Created by gaoyunfei on 2017/3/21.
@@ -22,5 +29,24 @@ public class WowActivity extends BaseActivity {
         /*if (hasFocus && getWindow().getDecorView().getSystemUiVisibility() != uiVisibility()) {
             getWindow().getDecorView().setSystemUiVisibility(uiVisibility());
         }*/
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onWallpaperResult (PaperSetResult result) {
+        Toast.makeText(this,
+                result.success ? R.string.toast_set_wallpaper_success : R.string.toast_set_wallpaper_failed,
+                Toast.LENGTH_SHORT).show();
     }
 }

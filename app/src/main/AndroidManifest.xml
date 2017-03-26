@@ -25,9 +25,9 @@
         </activity>
         <activity
             android:name=".activity.PaperActivity"
-            android:screenOrientation="portrait"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_paper"
+            android:screenOrientation="portrait"
             android:theme="@style/MainTheme" />
         <activity android:name=".activity.PaperListActivity" />
         <activity
@@ -36,9 +36,19 @@
             android:theme="@style/SettingsTheme" />
         <activity android:name=".activity.CategoryActivity" />
 
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.nulldreams.wowpaper"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/paths" />
+        </provider>
+
         <service
-            android:name=".service.WowPaperService"
-            android:exported="false"/>
+            android:name=".service.PaperService"
+            android:exported="false"></service>
     </application>
 
 </manifest>

@@ -3,7 +3,6 @@ package com.nulldreams.wowpaper.activity;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.app.WallpaperManager;
 import android.graphics.Bitmap;
 import android.graphics.PointF;
 import android.support.v7.app.AlertDialog;
@@ -12,7 +11,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.format.Formatter;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -40,10 +38,18 @@ import com.nulldreams.wowpaper.manager.ApiManager;
 import com.nulldreams.wowpaper.modules.Category;
 import com.nulldreams.wowpaper.modules.Paper;
 import com.nulldreams.wowpaper.modules.PaperInfoResult;
-import com.nulldreams.wowpaper.service.WowPaperService;
+import com.nulldreams.wowpaper.service.PaperService;
 
+import org.xutils.common.task.PriorityExecutor;
+import org.xutils.http.RequestParams;
+import org.xutils.x;
+import org.xutils.common.Callback.ProgressCallback;
+import org.xutils.common.Callback.Cancelable;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executor;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -56,6 +62,8 @@ import retrofit2.Response;
 public class PaperActivity extends WowActivity {
 
     private static final String TAG = PaperActivity.class.getSimpleName();
+
+    private final static int MAX_DOWNLOAD_THREAD = 2; // 有效的值范围[1, 3], 设置为3时, 可能阻塞图片加载.
 
     private Paper mPaper;
 
@@ -87,14 +95,53 @@ public class PaperActivity extends WowActivity {
         }
     };
 
-    private Bitmap mBmp = null;
-
     private Animator mSetBtnAnim;
     private AnimatorSet mPositionAnim;
 
     private int mThumbScale = 8;
 
-    private RequestManager mGlideManager = null;
+    //private RequestManager mGlideManager = null;
+
+    private File mPaperFile = null;
+
+    private final Executor executor = new PriorityExecutor(MAX_DOWNLOAD_THREAD, true);
+
+    private ProgressCallback<File> mDownloadCallback = new ProgressCallback<File>() {
+        @Override
+        public void onWaiting() {
+
+        }
+
+        @Override
+        public void onStarted() {
+
+        }
+
+        @Override
+        public void onLoading(long total, long current, boolean isDownloading) {
+
+        }
+
+        @Override
+        public void onSuccess(File result) {
+            showWallpaper(result);
+        }
+
+        @Override
+        public void onError(Throwable ex, boolean isOnCallback) {
+        }
+
+        @Override
+        public void onCancelled(CancelledException cex) {
+        }
+
+        @Override
+        public void onFinished() {
+
+        }
+    };
+
+    private Cancelable mCancelable = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -131,21 +178,10 @@ public class PaperActivity extends WowActivity {
         mScale = mScreenHeight * 1.0f / mPaper.height;
 
         setTitle(mPaper.name);
-        mTb.setSubtitle(getString(R.string.text_size, mPaper.width, mPaper.height) + "  " + Formatter.formatFileSize(this, mPaper.file_size));
+        mTb.setSubtitle(mPaper.getInfo(this));
 
         mPb.setVisibility(View.VISIBLE);
-        mGlideManager = Glide.with(PaperActivity.this);
-        mGlideManager.load(mPaper.url_image).asBitmap()
-                .into(new SimpleTarget<Bitmap>() {
-                    @Override
-                    public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-                        mPb.setVisibility(View.GONE);
-                        mBmp = resource;
-                        mPaperIv.setImage(ImageSource.bitmap(resource));
-                        mPositionThumbIv.setImageBitmap(Bitmap.createScaledBitmap(
-                                resource, mThumbWidth, mThumbHeight, true));
-                    }
-                });
+        downloadPicture(mPaper);
         ApiManager.getInstance(this).getPaperInfo(mPaper.id, new Callback<PaperInfoResult>() {
             @Override
             public void onResponse(Call<PaperInfoResult> call, Response<PaperInfoResult> response) {
@@ -261,23 +297,13 @@ public class PaperActivity extends WowActivity {
         }
         switch (item.getItemId()) {
             case R.id.paper_set:
-                if (mBmp == null) {
+                if (mPaperFile == null || !mPaperFile.exists()) {
                     Toast.makeText(PaperActivity.this, R.string.toast_wallpaper_downloading, Toast.LENGTH_SHORT).show();
                     return true;
                 }
 
                 if (WowApp.checkWallpaperPermission(PaperActivity.this)) {
-                    WowPaperService.setWallpaper(this, mPaper);
-                    /*try {
-                        WallpaperManager.getInstance(PaperActivity.this).setBitmap(mBmp);
-                        WallpaperManager.getInstance(PaperActivity.this).suggestDesiredDimensions(
-                                (int)(mPaper.width * mScale), mScreenHeight);
-                        Toast.makeText(PaperActivity.this, R.string.toast_set_wallpaper_success, Toast.LENGTH_SHORT).show();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        Toast.makeText(PaperActivity.this, R.string.toast_set_wallpaper_failed, Toast.LENGTH_SHORT).show();
-                        Log.w(TAG, "set wall paper failed with a IOException");
-                    }*/
+                    PaperService.setWallpaper(PaperActivity.this, mPaperFile.getAbsolutePath(), (int)(mScale * mPaper.width), mScreenHeight);
                 } else {
                     new AlertDialog.Builder(PaperActivity.this)
                             .setMessage(R.string.dialog_msg_device_wallpaper_not_allowed)
@@ -309,6 +335,39 @@ public class PaperActivity extends WowActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    private void downloadPicture (Paper paper) {
+        File paperFile = getTargetFile(paper);
+        if (paperFile.exists() && paperFile.length() == paper.file_size) {
+            showWallpaper(paperFile);
+        } else {
+            RequestParams params = new RequestParams(paper.url_image);
+            params.setAutoRename(true);
+            params.setAutoResume(true);
+            params.setSaveFilePath(paperFile.getAbsolutePath());
+            params.setExecutor(executor);
+            params.setCancelFast(true);
+            mCancelable= x.http().get(params, mDownloadCallback);
+        }
+    }
+
+    private File getTargetFile (Paper paper) {
+        File cacheDir = new File(getCacheDir(), "images");
+        return new File(cacheDir, "." + paper.id);
+    }
+
+    private void showWallpaper (File result) {
+        mPaperFile = result;
+        Glide.with(PaperActivity.this).load(result).asBitmap().into(new SimpleTarget<Bitmap>() {
+            @Override
+            public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                mPb.setVisibility(View.GONE);
+                mPaperIv.setImage(ImageSource.bitmap(resource));
+                mPositionThumbIv.setImageBitmap(Bitmap.createScaledBitmap(
+                        resource, mThumbWidth, mThumbHeight, true));
+            }
+        });
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -316,8 +375,11 @@ public class PaperActivity extends WowActivity {
         /*if (mBmp != null && !mBmp.isRecycled()) {
             mBmp.recycle();
         }*/
-        if (mGlideManager != null) {
+        /*if (mGlideManager != null) {
             mGlideManager.onDestroy();
+        }*/
+        if (mCancelable != null && !mCancelable.isCancelled() && mPaperFile == null) {
+            mCancelable.cancel();
         }
         System.gc();
     }

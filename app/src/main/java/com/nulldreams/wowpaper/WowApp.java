@@ -7,6 +7,8 @@ import android.os.Build;
 
 import com.nulldreams.base.CrashHandler;
 
+import org.xutils.x;
+
 /**
  * Created by gaoyunfei on 2017/3/18.
  */
@@ -26,5 +28,8 @@ public class WowApp extends Application {
     public void onCreate() {
         super.onCreate();
 //        CrashHandler.getInstance(this).install();
+
+        x.Ext.init(this);
+        x.Ext.setDebug(BuildConfig.DEBUG);
     }
 }
