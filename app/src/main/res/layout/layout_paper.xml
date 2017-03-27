@@ -14,9 +14,12 @@
         android:layout_height="wrap_content"
         android:textAppearance="@style/TextAppearance.AppCompat.Caption"
         android:textColor="@android:color/white"
-        android:background="@color/colorHalfBlack"
+        android:background="@drawable/bg_half_black_gradient"
         android:gravity="left"
         android:layout_alignBottom="@+id/paper_thumb"
-        android:padding="@dimen/margin_small"
+        android:paddingTop="@dimen/margin_tiny"
+        android:paddingBottom="@dimen/margin_tiny"
+        android:paddingLeft="@dimen/margin_middle"
+        android:paddingRight="@dimen/margin_middle"
         />
 </RelativeLayout>

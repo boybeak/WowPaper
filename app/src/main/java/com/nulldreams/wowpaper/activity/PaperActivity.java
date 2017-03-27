@@ -5,12 +5,16 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.graphics.Bitmap;
 import android.graphics.PointF;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.format.Formatter;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -114,12 +118,12 @@ public class PaperActivity extends WowActivity {
 
         @Override
         public void onStarted() {
-
+            mPb.setVisibility(View.VISIBLE);
         }
 
         @Override
         public void onLoading(long total, long current, boolean isDownloading) {
-
+            mPb.setProgress((int) (current * 100f / total));
         }
 
         @Override
@@ -180,7 +184,6 @@ public class PaperActivity extends WowActivity {
         setTitle(mPaper.name);
         mTb.setSubtitle(mPaper.getInfo(this));
 
-        mPb.setVisibility(View.VISIBLE);
         downloadPicture(mPaper);
         ApiManager.getInstance(this).getPaperInfo(mPaper.id, new Callback<PaperInfoResult>() {
             @Override
@@ -237,13 +240,13 @@ public class PaperActivity extends WowActivity {
             }
         });
         mPaperIv.setOnImageEventListener(new SubsamplingScaleImageView.DefaultOnImageEventListener(){
+
             @Override
             public void onReady() {
                 mPaperIv.setScaleAndCenter(mScale,
                         new PointF(mPaper.width / 2, mPaper.height / 2));
                 mCenterX = mPaperIv.getCenter().x;
                 mCenterY = mPaperIv.getCenter().y;
-
             }
         });
         mPaperIv.setOnStateChangedListener(new SubsamplingScaleImageView.DefaultOnStateChangedListener(){
@@ -296,8 +299,12 @@ public class PaperActivity extends WowActivity {
             return true;
         }
         switch (item.getItemId()) {
+            case R.id.paper_like:
+                item.setChecked(!item.isChecked());
+                Toast.makeText(this, "" + item.isChecked(), Toast.LENGTH_SHORT).show();
+                return true;
             case R.id.paper_set:
-                if (mPaperFile == null || !mPaperFile.exists()) {
+                if (mPaperFile == null || !mPaperFile.exists() || mPaper.file_size != mPaperFile.length()) {
                     Toast.makeText(PaperActivity.this, R.string.toast_wallpaper_downloading, Toast.LENGTH_SHORT).show();
                     return true;
                 }
@@ -330,7 +337,7 @@ public class PaperActivity extends WowActivity {
 
                     }
                 });*/
-                break;
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -338,8 +345,10 @@ public class PaperActivity extends WowActivity {
     private void downloadPicture (Paper paper) {
         File paperFile = getTargetFile(paper);
         if (paperFile.exists() && paperFile.length() == paper.file_size) {
+            Log.v(TAG, "downloadPicture IF");
             showWallpaper(paperFile);
         } else {
+            Log.v(TAG, "downloadPicture ELSE");
             RequestParams params = new RequestParams(paper.url_image);
             params.setAutoRename(true);
             params.setAutoResume(true);
@@ -352,18 +361,58 @@ public class PaperActivity extends WowActivity {
 
     private File getTargetFile (Paper paper) {
         File cacheDir = new File(getCacheDir(), "images");
-        return new File(cacheDir, "." + paper.id);
+        return new File(cacheDir, "" + paper.id);
     }
 
     private void showWallpaper (File result) {
         mPaperFile = result;
+        //Uri uri = FileProvider.getUriForFile(this, "com.nulldreams.wowpaper", mPaperFile);
         Glide.with(PaperActivity.this).load(result).asBitmap().into(new SimpleTarget<Bitmap>() {
+
+            @Override
+            public void onStart() {
+                super.onStart();
+                Log.v(TAG, "showWallpaper onStart");
+            }
+
+            @Override
+            public void onStop() {
+                super.onStop();
+                Log.v(TAG, "showWallpaper onStop");
+            }
+
+            @Override
+            public void onLoadStarted(Drawable placeholder) {
+                super.onLoadStarted(placeholder);
+                Log.v(TAG, "showWallpaper onLoadStarted");
+            }
+
             @Override
             public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                Log.v(TAG, "showWallpaper onResourceReady");
                 mPb.setVisibility(View.GONE);
                 mPaperIv.setImage(ImageSource.bitmap(resource));
                 mPositionThumbIv.setImageBitmap(Bitmap.createScaledBitmap(
                         resource, mThumbWidth, mThumbHeight, true));
+            }
+
+            @Override
+            public void onLoadCleared(Drawable placeholder) {
+                super.onLoadCleared(placeholder);
+                Log.v(TAG, "showWallpaper onLoadCleared");
+            }
+
+            @Override
+            public void onDestroy() {
+                super.onDestroy();
+                Log.v(TAG, "showWallpaper onDestroy");
+            }
+
+            @Override
+            public void onLoadFailed(Exception e, Drawable errorDrawable) {
+                super.onLoadFailed(e, errorDrawable);
+                Log.v(TAG, "showWallpaper onLoadFailed e=" + e.getMessage());
+                e.printStackTrace();
             }
         });
     }

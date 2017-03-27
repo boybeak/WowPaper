@@ -40,6 +40,10 @@
 
     <string name="pref_key_abyss">Abyss</string>
     <string name="pref_key_count">Api Usage</string>
+    <string name="pref_key_show_info_grid">grid_info_show_or_not</string>
+
+    <string name="pref_title_show_info_grid">Show info in grid</string>
+
     <string name="pref_summary">All wallpaper data powered by Wallpaper Abyss(https://wall.alphacoders.com)</string>
 
 </resources>

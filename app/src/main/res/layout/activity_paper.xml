@@ -4,18 +4,19 @@
     android:layout_height="match_parent"
     tools:context="com.nulldreams.wowpaper.activity.PaperActivity"
     >
-    <ProgressBar
-        android:id="@+id/paper_progress_bar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        style="@style/Widget.AppCompat.ProgressBar"
-        android:layout_centerInParent="true"
-        android:visibility="gone"
-        />
     <com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
         android:id="@+id/paper_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+    <ProgressBar
+        android:id="@+id/paper_progress_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_centerInParent="true"
+        android:visibility="gone"
+        android:max="100"
+        />
     <View
         android:id="@+id/paper_mask"
         android:layout_width="match_parent"

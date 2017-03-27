@@ -89,6 +89,6 @@ public class Paper implements Parcelable{
     }
 
     public String getInfo (Context context) {
-        return width + "×" + height + "  " + Formatter.formatFileSize(context, file_size);
+        return width + "×" + height + "  " + Formatter.formatFileSize(context, file_size) + "  " + file_type;
     }
 }

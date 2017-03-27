@@ -54,20 +54,20 @@ public class PaperService extends IntentService {
     }
 
     private void handleSetWallpaper(String path, int width, int height) {
-        Bitmap bitmap = BitmapFactory.decodeFile(path);
-        Bitmap bmp = Bitmap.createScaledBitmap(bitmap, width, height, true);
-        bitmap.recycle();
+
         PaperSetResult result = new PaperSetResult();
         try {
+            Bitmap bitmap = BitmapFactory.decodeFile(path);
+            Bitmap bmp = Bitmap.createScaledBitmap(bitmap, width, height, true);
+            bitmap.recycle();
             WallpaperManager.getInstance(this).setBitmap(bmp);
             WallpaperManager.getInstance(this).suggestDesiredDimensions(width, height);
             result.success = true;
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             result.success = false;
         }
         EventBus.getDefault().post(result);
-        Log.v(TAG, "handleSetWallpaper bmp.width=" + bmp.getWidth() + " bmp.height=" + bmp.getHeight());
     }
 
     public static int calculateInSampleSize(
