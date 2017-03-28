@@ -58,6 +58,9 @@ public class MainActivity extends WowActivity {
                     It.newInstance().putExtra("type", TagStyleDelegate.STYLE_COLLECTION)
                             .startActivity(MainActivity.this, PaperListActivity.class);
                     break;
+                case R.id.nav_like:
+                    It.newInstance().startActivity(MainActivity.this, LikeActivity.class);
+                    break;
                 /*case R.id.nav_tag:
                     It.newInstance().putExtra("type", TagStyleDelegate.STYLE_COLLECTION)
                             .startActivity(MainActivity.this, PaperListActivity.class);

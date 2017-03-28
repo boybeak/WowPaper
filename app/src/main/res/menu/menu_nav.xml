@@ -10,6 +10,11 @@
         android:title="@string/title_menu_collection"
         android:icon="@drawable/ic_pound"
         />
+    <item
+        android:id="@+id/nav_like"
+        android:title="@string/title_menu_like"
+        android:icon="@drawable/ic_heart_outline"
+        />
     <!--<item
         android:id="@+id/nav_tag"
         android:title="@string/title_menu_tag"

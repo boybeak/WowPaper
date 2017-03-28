@@ -48,7 +48,9 @@
 
         <service
             android:name=".service.PaperService"
-            android:exported="false"/>
+            android:exported="false" />
+
+        <activity android:name=".activity.LikeActivity"></activity>
     </application>
 
 </manifest>

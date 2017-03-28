@@ -6,7 +6,6 @@
         android:title="@string/title_menu_share"
         android:icon="@drawable/ic_heart_sel"
         android:checkable="true"
-        android:checked="true"
         app:showAsAction="ifRoom"
         />
     <item

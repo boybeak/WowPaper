@@ -91,8 +91,6 @@ public class PaperListActivity extends WowActivity implements SwipeRefreshLayout
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_paper_list);
 
-        final int spanCount = getResources().getInteger(R.integer.span_count);
-
         mDl = (DrawerLayout)findViewById(R.id.paper_list_dl);
 
         mTb = (Toolbar)findViewById(R.id.paper_list_tb);
@@ -104,6 +102,7 @@ public class PaperListActivity extends WowActivity implements SwipeRefreshLayout
         mSrl.setProgressViewOffset(false, 0, UiHelper.getActionBarSize(this));
 
         mRv = (RecyclerView)findViewById(R.id.paper_list_rv);
+        final int spanCount = getResources().getInteger(R.integer.span_count);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, spanCount);
         gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override

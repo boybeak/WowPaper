@@ -39,6 +39,7 @@ import com.nulldreams.wowpaper.R;
 import com.nulldreams.wowpaper.WowApp;
 import com.nulldreams.wowpaper.adapter.delegate.TagStyleDelegate;
 import com.nulldreams.wowpaper.manager.ApiManager;
+import com.nulldreams.wowpaper.manager.LikeManager;
 import com.nulldreams.wowpaper.modules.Category;
 import com.nulldreams.wowpaper.modules.Paper;
 import com.nulldreams.wowpaper.modules.PaperInfoResult;
@@ -184,7 +185,6 @@ public class PaperActivity extends WowActivity {
         setTitle(mPaper.name);
         mTb.setSubtitle(mPaper.getInfo(this));
 
-        downloadPicture(mPaper);
         ApiManager.getInstance(this).getPaperInfo(mPaper.id, new Callback<PaperInfoResult>() {
             @Override
             public void onResponse(Call<PaperInfoResult> call, Response<PaperInfoResult> response) {
@@ -277,18 +277,17 @@ public class PaperActivity extends WowActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setHomeButtonEnabled(true);
         }
-    }
-
-    @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
 
         initPositionLayout();
+        downloadPicture(mPaper);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_paper, menu);
+        MenuItem item = menu.findItem(R.id.paper_like);
+        item.setChecked(LikeManager.getInstance(this).isLiked(mPaper.id));
+        item.setIcon(item.isChecked() ? R.drawable.ic_heart : R.drawable.ic_heart_outline);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -301,7 +300,15 @@ public class PaperActivity extends WowActivity {
         switch (item.getItemId()) {
             case R.id.paper_like:
                 item.setChecked(!item.isChecked());
-                Toast.makeText(this, "" + item.isChecked(), Toast.LENGTH_SHORT).show();
+                if (item.isChecked()) {
+                    item.setIcon(R.drawable.ic_heart);
+                    LikeManager.getInstance(this).save(mPaper);
+                } else {
+                    item.setIcon(R.drawable.ic_heart_outline);
+                    LikeManager.getInstance(this).delete(mPaper);
+                }
+
+                //Toast.makeText(this, "" + item.isChecked(), Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.paper_set:
                 if (mPaperFile == null || !mPaperFile.exists() || mPaper.file_size != mPaperFile.length()) {
