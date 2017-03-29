@@ -1,7 +1,6 @@
 package com.nulldreams.wowpaper.manager;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.nulldreams.base.manager.AbsManager;
 import com.nulldreams.wowpaper.BuildConfig;
@@ -11,6 +10,7 @@ import org.xutils.DbManager;
 import org.xutils.ex.DbException;
 import org.xutils.x;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -33,8 +33,12 @@ public class LikeManager extends AbsManager
 
     private DbManager.DaoConfig mConfig = null;
 
+    private List<Callback> mCallbacks = null;
+
     private LikeManager(Context context) {
         super(context);
+
+        mCallbacks = new ArrayList<>();
 
         mConfig = new DbManager.DaoConfig()
                 .setDbName("like.db")
@@ -84,6 +88,9 @@ public class LikeManager extends AbsManager
         try {
             DbManager manager = x.getDb(mConfig);
             manager.saveOrUpdate(paper);
+            for (Callback callback : mCallbacks) {
+                callback.onLikeEvent(true, paper);
+            }
         } catch (DbException e) {
             e.printStackTrace();
         }
@@ -93,6 +100,9 @@ public class LikeManager extends AbsManager
         try {
             DbManager manager = x.getDb(mConfig);
             manager.deleteById(Paper.class, paper.id);
+            for (Callback callback : mCallbacks) {
+                callback.onLikeEvent(false, paper);
+            }
         } catch (DbException e) {
             e.printStackTrace();
         }
@@ -106,5 +116,22 @@ public class LikeManager extends AbsManager
     @Override
     public void onUpgrade(DbManager db, int oldVersion, int newVersion) {
 
+    }
+
+    public void registerCallback (Callback callback) {
+        if (mCallbacks.contains(callback)) {
+            return;
+        }
+        mCallbacks.add(callback);
+    }
+
+    public void unregisterCallback (Callback callback) {
+        if (mCallbacks.contains(callback)) {
+            mCallbacks.remove(callback);
+        }
+    }
+
+    public static interface Callback {
+        public void onLikeEvent (boolean like, Paper paper);
     }
 }

@@ -4,13 +4,36 @@
     <Preference
         android:key="@string/pref_key_abyss"
         android:title="@string/text_powered_by"
-        android:summary="@string/pref_summary"
-        />
+        android:summary="@string/pref_summary_abyss"
+        >
+        <intent android:action="android.intent.action.VIEW"
+            android:data="https://wall.alphacoders.com" />
+    </Preference>
     <SwitchPreference
         android:key="@string/pref_key_show_info_grid"
         android:title="@string/pref_title_show_info_grid"
         android:checked="true"
+        android:summary="@string/pref_summary_show_info_grid"
         />
+    <Preference
+        android:key="@string/pref_key_original_pic_cache"
+        android:title="@string/pref_title_original_pic_cache"
+        android:summary="@string/pref_summary_abyss"
+        />
+    <Preference
+        android:key="@string/pref_key_glide_pic_cache"
+        android:title="@string/pref_title_glide_pic_cache"
+        android:summary="@string/pref_summary_glide_pic_cache"
+        />
+    <EditTextPreference
+        android:key="demo"
+        android:title="abc"
+        android:hint="feedback"
+        android:imeOptions="actionSend"
+        >
+        <intent android:action="android.intent.action.SEND"
+            android:data="boybeak@gmail.com" />
+    </EditTextPreference>
     <Preference
         android:key="@string/pref_key_count"
         android:title="@string/pref_key_count"

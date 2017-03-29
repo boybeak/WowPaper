@@ -34,6 +34,7 @@ public class PaperHolder extends AbsViewHolder<PaperDelegate> {
         Paper paper = paperDelegate.getSource();
         Glide.with(context).load(paper.getThumb350()).crossFade().placeholder(R.drawable.bg_paper_place_holder).into(thumbIv);
         infoTv.setText(paper.getInfo(context));
+        infoTv.setVisibility(paperDelegate.isShowInfo() ? View.VISIBLE : View.GONE);
     }
 
     @Override

@@ -1,7 +1,9 @@
 package com.nulldreams.wowpaper.fragment;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
@@ -13,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.nulldreams.adapter.DelegateAction;
 import com.nulldreams.adapter.DelegateAdapter;
 import com.nulldreams.adapter.DelegateFilter;
 import com.nulldreams.adapter.DelegateParser;
@@ -65,6 +68,24 @@ public class PaperListFragment extends AbsPagerFragment implements SwipeRefreshL
                 return;
             }
             loadData();
+        }
+    };
+
+    private SharedPreferences.OnSharedPreferenceChangeListener mPrefListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+        @Override
+        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+            if (key.equals(getString(R.string.pref_key_show_info_grid))) {
+                final boolean show = sharedPreferences.getBoolean(key, true);
+                mAdapter.actionWith(new DelegateAction() {
+                    @Override
+                    public void onAction(LayoutImpl impl) {
+                        if (impl instanceof PaperDelegate) {
+                            ((PaperDelegate)impl).setShowInfo(show);
+                        }
+                    }
+                });
+                mAdapter.notifyDataSetChanged();
+            }
         }
     };
 
@@ -140,6 +161,10 @@ public class PaperListFragment extends AbsPagerFragment implements SwipeRefreshL
                 }
             });
         }
+
+        PreferenceManager.getDefaultSharedPreferences(getContext())
+                .registerOnSharedPreferenceChangeListener(mPrefListener);
+
     }
 
     @Override
@@ -176,6 +201,8 @@ public class PaperListFragment extends AbsPagerFragment implements SwipeRefreshL
             mSrl.setRefreshing(false);
         }
         mSrl.setOnRefreshListener(null);
+        PreferenceManager.getDefaultSharedPreferences(getContext())
+                .unregisterOnSharedPreferenceChangeListener(mPrefListener);
     }
 
     @Override
@@ -202,6 +229,7 @@ public class PaperListFragment extends AbsPagerFragment implements SwipeRefreshL
                     mAdapter.clear();
                 }
                 final int countBefore = mAdapter.getItemCount();
+                final boolean show = PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean(getString(R.string.pref_key_show_info_grid), true);
                 mAdapter.addAllAtFirst(new DelegateFilter() {
                     @Override
                     public boolean accept(DelegateAdapter adapter, LayoutImpl impl) {
@@ -211,7 +239,7 @@ public class PaperListFragment extends AbsPagerFragment implements SwipeRefreshL
                     @Override
                     public LayoutImpl parse(DelegateAdapter adapter, Paper data) {
                         PaperDelegate delegate = new PaperDelegate(data);
-                        //delegate.putInt("width", mPaperWidth);
+                        delegate.setShowInfo(show);
                         return delegate;
                     }
                 });

@@ -270,4 +270,12 @@ public class Paper implements Parcelable{
     public String toString() {
         return new Gson().toJson(this).toString();
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj != null && obj instanceof Paper) {
+            return ((Paper) obj).id == id;
+        }
+        return false;
+    }
 }

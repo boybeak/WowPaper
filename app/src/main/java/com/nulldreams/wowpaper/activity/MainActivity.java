@@ -68,6 +68,9 @@ public class MainActivity extends WowActivity {
                 case R.id.nav_settings:
                     startActivity(new Intent(MainActivity.this, SettingsActivity.class));
                     break;
+                case R.id.nav_about:
+                    It.newInstance().startActivity(MainActivity.this, AboutActivity.class);
+                    break;
             }
             mDl.closeDrawers();
             return true;

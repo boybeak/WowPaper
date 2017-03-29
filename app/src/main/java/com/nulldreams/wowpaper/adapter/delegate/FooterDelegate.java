@@ -25,6 +25,10 @@ public class FooterDelegate extends AnnotationDelegate<Integer> {
     @Retention(RetentionPolicy.SOURCE)
     public @interface State{}
 
+    public FooterDelegate () {
+        this(STATE_NONE);
+    }
+
     public FooterDelegate(Integer s) {
         super(s);
     }

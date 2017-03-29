@@ -16,6 +16,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <meta-data
+            android:name="com.nulldreams.wowpaper.modules.glide.MyGlideModule"
+            android:value="GlideModule" />
+
         <activity android:name=".activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -50,7 +54,11 @@
             android:name=".service.PaperService"
             android:exported="false" />
 
-        <activity android:name=".activity.LikeActivity"></activity>
+        <activity android:name=".activity.LikeActivity" />
+        <activity
+            android:name=".activity.AboutActivity"
+            android:label="@string/title_activity_about"
+            android:theme="@style/SettingsTheme"/>
     </application>
 
 </manifest>

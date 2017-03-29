@@ -1,6 +1,8 @@
 package com.nulldreams.wowpaper.activity;
 
+import android.content.SharedPreferences;
 import android.os.PersistableBundle;
+import android.preference.PreferenceManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.os.Bundle;
@@ -78,13 +80,35 @@ public class PaperListActivity extends WowActivity implements SwipeRefreshLayout
     private DelegateParser<Paper> mPaperParser = new DelegateParser<Paper>() {
         @Override
         public LayoutImpl parse(DelegateAdapter adapter, Paper data) {
-            return new PaperDelegate(data);
+            PaperDelegate delegate = new PaperDelegate(data);
+            delegate.setShowInfo(showInfo);
+            return delegate;
+        }
+    };
+
+    private SharedPreferences.OnSharedPreferenceChangeListener mPrefListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+        @Override
+        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+            if (key.equals(getString(R.string.pref_key_show_info_grid))) {
+                final boolean show = sharedPreferences.getBoolean(key, true);
+                mAdapter.actionWith(new DelegateAction() {
+                    @Override
+                    public void onAction(LayoutImpl impl) {
+                        if (impl instanceof PaperDelegate) {
+                            ((PaperDelegate)impl).setShowInfo(show);
+                        }
+                    }
+                });
+                mAdapter.notifyDataSetChanged();
+            }
         }
     };
 
     private FooterDelegate mFooter;
 
     private WowPresenter mPresenter;
+
+    private boolean showInfo = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -176,6 +200,11 @@ public class PaperListActivity extends WowActivity implements SwipeRefreshLayout
 
         mPresenter.create(this, savedInstanceState);
 
+        showInfo = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(
+                getString(R.string.pref_key_show_info_grid), true
+        );
+        PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(mPrefListener);
+
     }
 
     @Override
@@ -243,6 +272,8 @@ public class PaperListActivity extends WowActivity implements SwipeRefreshLayout
         mPresenter.destroy(this);
         mRv.removeOnScrollListener(mBottomListener);
         mSrl.setOnRefreshListener(null);
+
+        PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(mPrefListener);
     }
 
     @Override
@@ -333,6 +364,7 @@ public class PaperListActivity extends WowActivity implements SwipeRefreshLayout
             mSrl.setRefreshing(false);
         }
         final int countBefore = mAdapter.getItemCount();
+
         mAdapter.addAllAtFirst(new DelegateFilter() {
             @Override
             public boolean accept(DelegateAdapter adapter, LayoutImpl impl) {

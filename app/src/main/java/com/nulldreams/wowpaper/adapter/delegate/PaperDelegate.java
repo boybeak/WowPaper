@@ -17,7 +17,17 @@ import com.nulldreams.wowpaper.modules.Paper;
 )
 public class PaperDelegate extends AnnotationDelegate<Paper> {
 
+    private boolean showInfo = true;
+
     public PaperDelegate(Paper paper) {
         super(paper);
+    }
+
+    public boolean isShowInfo() {
+        return showInfo;
+    }
+
+    public void setShowInfo(boolean showInfo) {
+        this.showInfo = showInfo;
     }
 }

@@ -367,8 +367,7 @@ public class PaperActivity extends WowActivity {
     }
 
     private File getTargetFile (Paper paper) {
-        File cacheDir = new File(getCacheDir(), "images");
-        return new File(cacheDir, "" + paper.id);
+        return new File(WowApp.getPaperCacheDir(this), "" + paper.id);
     }
 
     private void showWallpaper (File result) {

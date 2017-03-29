@@ -6,15 +6,10 @@ import android.content.Intent;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.util.Log;
-import android.widget.Toast;
 
-import com.nulldreams.wowpaper.R;
-import com.nulldreams.wowpaper.event.PaperSetResult;
+import com.nulldreams.wowpaper.event.PaperSetEvent;
 
 import org.greenrobot.eventbus.EventBus;
-
-import java.io.IOException;
 
 public class PaperService extends IntentService {
 
@@ -55,7 +50,7 @@ public class PaperService extends IntentService {
 
     private void handleSetWallpaper(String path, int width, int height) {
 
-        PaperSetResult result = new PaperSetResult();
+        PaperSetEvent result = new PaperSetEvent();
         try {
             Bitmap bitmap = BitmapFactory.decodeFile(path);
             Bitmap bmp = Bitmap.createScaledBitmap(bitmap, width, height, true);

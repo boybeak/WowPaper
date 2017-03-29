@@ -5,7 +5,7 @@ import android.widget.Toast;
 
 import com.nulldreams.base.BaseActivity;
 import com.nulldreams.wowpaper.R;
-import com.nulldreams.wowpaper.event.PaperSetResult;
+import com.nulldreams.wowpaper.event.PaperSetEvent;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -44,7 +44,7 @@ public class WowActivity extends BaseActivity {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onWallpaperResult (PaperSetResult result) {
+    public void onWallpaperResult (PaperSetEvent result) {
         Toast.makeText(this,
                 result.success ? R.string.toast_set_wallpaper_success : R.string.toast_set_wallpaper_failed,
                 Toast.LENGTH_SHORT).show();
