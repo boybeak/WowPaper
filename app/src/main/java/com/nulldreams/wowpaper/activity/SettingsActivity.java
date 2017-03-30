@@ -107,14 +107,16 @@ public class SettingsActivity extends AppCompatPreferenceActivity
         File cacheDir = WowApp.getPaperCacheDir(this);
         File[] files = cacheDir.listFiles();
         long length = 0;
+        int count = 0;
         if (files != null) {
+            count = files.length;
             for (File file : files) {
                 length += file.length();
             }
         }
         String fileSize = Formatter.formatFileSize(this, length);
         preferenceScreen.findPreference(getString(R.string.pref_key_original_pic_cache)).setSummary(
-                getString(R.string.pref_summary_original_pic_cache, files.length, fileSize)
+                getString(R.string.pref_summary_original_pic_cache, count, fileSize)
         );
     }
 
@@ -132,7 +134,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity
         File cacheDir = WowApp.getGlideCacheDir(this);
         File[] files = cacheDir.listFiles();
         long length = 0;
+        int count = 0;
         if (files != null) {
+            count = files.length;
             for (File file : files) {
                 length += file.length();
             }
@@ -140,7 +144,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity
         String fileSize = Formatter.formatFileSize(this, length);
         String totalSize = Formatter.formatFileSize(this, MyGlideModule.CACHE_SIZE);
         preferenceScreen.findPreference(getString(R.string.pref_key_glide_pic_cache)).setSummary(
-                getString(R.string.pref_summary_glide_pic_cache, files.length, fileSize, totalSize)
+                getString(R.string.pref_summary_glide_pic_cache, count, fileSize, totalSize)
         );
     }
 
