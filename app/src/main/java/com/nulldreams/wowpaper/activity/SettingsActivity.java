@@ -107,8 +107,10 @@ public class SettingsActivity extends AppCompatPreferenceActivity
         File cacheDir = WowApp.getPaperCacheDir(this);
         File[] files = cacheDir.listFiles();
         long length = 0;
-        for (File file : files) {
-            length += file.length();
+        if (files != null) {
+            for (File file : files) {
+                length += file.length();
+            }
         }
         String fileSize = Formatter.formatFileSize(this, length);
         preferenceScreen.findPreference(getString(R.string.pref_key_original_pic_cache)).setSummary(
@@ -119,8 +121,10 @@ public class SettingsActivity extends AppCompatPreferenceActivity
     private void clearPaperCache() {
         File cacheDir = WowApp.getPaperCacheDir(this);
         File[] files = cacheDir.listFiles();
-        for (File file : files) {
-            file.delete();
+        if (files != null) {
+            for (File file : files) {
+                file.delete();
+            }
         }
     }
 
@@ -128,8 +132,10 @@ public class SettingsActivity extends AppCompatPreferenceActivity
         File cacheDir = WowApp.getGlideCacheDir(this);
         File[] files = cacheDir.listFiles();
         long length = 0;
-        for (File file : files) {
-            length += file.length();
+        if (files != null) {
+            for (File file : files) {
+                length += file.length();
+            }
         }
         String fileSize = Formatter.formatFileSize(this, length);
         String totalSize = Formatter.formatFileSize(this, MyGlideModule.CACHE_SIZE);
@@ -141,8 +147,10 @@ public class SettingsActivity extends AppCompatPreferenceActivity
     private void clearGlideCache() {
         File cacheDir = WowApp.getGlideCacheDir(this);
         File[] files = cacheDir.listFiles();
-        for (File file : files) {
-            file.delete();
+        if (files != null) {
+            for (File file : files) {
+                file.delete();
+            }
         }
     }
 
