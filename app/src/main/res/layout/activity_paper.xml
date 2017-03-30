@@ -8,22 +8,13 @@
         android:id="@+id/paper_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-    <ProgressBar
-        android:id="@+id/paper_progress_bar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-        android:layout_centerInParent="true"
-        android:visibility="gone"
-        android:max="100"
-        />
-    <View
+    <ImageView
         android:id="@+id/paper_mask"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_centerVertical="true"
-        android:background="#882e77c1"
+        android:background="@android:color/transparent"
         android:visibility="gone"
         />
     <FrameLayout
@@ -48,6 +39,7 @@
             android:layout_height="match_parent"
             android:layout_gravity="center_horizontal"
             android:background="@color/colorPlaceHolder"
+            android:visibility="gone"
             />
     </FrameLayout>
     <android.support.v7.widget.RecyclerView
@@ -60,6 +52,15 @@
         android:fadingEdge="none"
         android:requiresFadingEdge="none"
         android:overScrollMode="never"
+        />
+    <android.support.v4.widget.ContentLoadingProgressBar
+        android:id="@+id/paper_progress_bar"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_above="@+id/paper_info_rv"
+        android:visibility="gone"
+        android:max="100"
         />
     <android.support.v7.widget.Toolbar
         android:id="@+id/paper_tb"

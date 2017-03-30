@@ -8,6 +8,7 @@ import android.graphics.PointF;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.v4.content.FileProvider;
+import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -72,14 +73,13 @@ public class PaperActivity extends WowActivity {
 
     private Paper mPaper;
 
-    private ProgressBar mPb;
+    private ContentLoadingProgressBar mPb;
     private SubsamplingScaleImageView mPaperIv;
-    private View mMaskView;
 
     private Toolbar mTb;
     private View mPositionLayout, mPositionScreen;
     private RecyclerView mInfoRv;
-    private ImageView mPositionThumbIv;
+    private ImageView mPositionThumbIv, mMaskIv;
 
     private int mScreenWidth, mScreenHeight, mThumbWidth, mThumbHeight;
 
@@ -153,7 +153,7 @@ public class PaperActivity extends WowActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_paper);
 
-        mPb = (ProgressBar)findViewById(R.id.paper_progress_bar);
+        mPb = (ContentLoadingProgressBar)findViewById(R.id.paper_progress_bar);
 
         mTb = (Toolbar)findViewById(R.id.paper_tb);
         setSupportActionBar(mTb);
@@ -161,7 +161,7 @@ public class PaperActivity extends WowActivity {
         mPaperIv = (SubsamplingScaleImageView)findViewById(R.id.paper_image);
         mPaperIv.setZoomEnabled(false);
 
-        mMaskView = findViewById(R.id.paper_mask);
+        mMaskIv = (ImageView) findViewById(R.id.paper_mask);
 
         mInfoRv = (RecyclerView) findViewById(R.id.paper_info_rv);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, true);
@@ -243,6 +243,7 @@ public class PaperActivity extends WowActivity {
 
             @Override
             public void onReady() {
+                mMaskIv.setVisibility(View.GONE);
                 mPaperIv.setScaleAndCenter(mScale,
                         new PointF(mPaper.width / 2, mPaper.height / 2));
                 mCenterX = mPaperIv.getCenter().x;
@@ -458,14 +459,29 @@ public class PaperActivity extends WowActivity {
         screenParams.height = height8;
         mPositionScreen.setLayoutParams(screenParams);
 
-        Glide.with(this).load(mPaper.getThumb350()).into(mPositionThumbIv);
+        Glide.with(this).load(mPaper.getThumb350()).asBitmap().placeholder(R.drawable.bg_paper_place_holder).into(new SimpleTarget<Bitmap>() {
+            @Override
+            public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                mPositionThumbIv.setImageBitmap(resource);
+                mPositionScreen.setVisibility(View.VISIBLE);
+                if (mPaperFile == null) {
+                    mMaskIv.setVisibility(View.VISIBLE);
+                    mMaskIv.setImageBitmap(resource);
+                }
+            }
+
+            @Override
+            public void onLoadStarted(Drawable placeholder) {
+                mPositionThumbIv.setImageDrawable(placeholder);
+            }
+        });
 
         mPositionThumbIv.setOnClickListener(mClickListener);
 
         int currentHeight = (int)(mPaper.height * 1f * mScreenWidth / mPaper.width);
-        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)mMaskView.getLayoutParams();
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)mMaskIv.getLayoutParams();
         params.height = currentHeight;
-        mMaskView.setLayoutParams(params);
+        mMaskIv.setLayoutParams(params);
 
     }
 

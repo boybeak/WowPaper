@@ -10,6 +10,8 @@ import com.google.gson.Gson;
 import org.xutils.db.annotation.Column;
 import org.xutils.db.annotation.Table;
 
+import java.sql.Date;
+
 /**
  * Created by gaoyunfei on 2017/3/17.
  */
@@ -36,6 +38,7 @@ public class Paper implements Parcelable{
     @Column(name = "user_name") public String user_name;
     @Column(name = "collection") public String collection;
     @Column(name = "group") public String group;
+    @Column(name = "saveAt") public Date saveAt;
 
     public Paper () {
 
@@ -264,6 +267,14 @@ public class Paper implements Parcelable{
 
     public void setGroup(String group) {
         this.group = group;
+    }
+
+    public Date getSaveAt() {
+        return saveAt;
+    }
+
+    public void setSaveAt(Date saveAt) {
+        this.saveAt = saveAt;
     }
 
     @Override

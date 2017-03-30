@@ -25,6 +25,8 @@ public class FooterDelegate extends AnnotationDelegate<Integer> {
     @Retention(RetentionPolicy.SOURCE)
     public @interface State{}
 
+    private CharSequence staticMsg;
+
     public FooterDelegate () {
         this(STATE_NONE);
     }
@@ -39,5 +41,13 @@ public class FooterDelegate extends AnnotationDelegate<Integer> {
 
     public @State int getState () {
         return getSource();
+    }
+
+    public CharSequence getStaticMsg() {
+        return staticMsg;
+    }
+
+    public void setStaticMsg(CharSequence staticMsg) {
+        this.staticMsg = staticMsg;
     }
 }

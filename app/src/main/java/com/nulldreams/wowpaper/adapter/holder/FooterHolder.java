@@ -2,6 +2,7 @@ package com.nulldreams.wowpaper.adapter.holder;
 
 import android.content.Context;
 import android.support.v7.widget.GridLayoutManager;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -48,6 +49,9 @@ public class FooterHolder extends AbsViewHolder<FooterDelegate> {
                 progressBar.setVisibility(View.GONE);
                 msgTv.setText(R.string.text_failed);
                 break;
+        }
+        if (!TextUtils.isEmpty(footerDelegate.getStaticMsg())) {
+            msgTv.setText(footerDelegate.getStaticMsg());
         }
     }
 }

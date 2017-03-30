@@ -1,7 +1,6 @@
 package com.nulldreams.wowpaper.activity;
 
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
@@ -144,6 +143,7 @@ public class LikeActivity extends WowActivity implements LikeManager.Callback{
         mRv.setAdapter(mAdapter);
 
         mFooter = new FooterDelegate();
+        mFooter.setStaticMsg(getString(R.string.text_like_will_lost_when_uninstalled));
         LikeManager.getInstance(this).registerCallback(this);
 
         PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(mPrefListener);

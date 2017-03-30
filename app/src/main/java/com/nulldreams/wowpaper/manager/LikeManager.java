@@ -10,6 +10,7 @@ import org.xutils.DbManager;
 import org.xutils.ex.DbException;
 import org.xutils.x;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,7 +78,7 @@ public class LikeManager extends AbsManager
     public List<Paper> findAll () {
         try {
             DbManager manager = x.getDb(mConfig);
-            return manager.findAll(Paper.class);
+            return manager.selector(Paper.class).orderBy("saveAt", true).findAll();
         } catch (DbException e) {
             e.printStackTrace();
         }
@@ -86,6 +87,9 @@ public class LikeManager extends AbsManager
 
     public void save (Paper paper) {
         try {
+            if (paper.getSaveAt() == null) {
+                paper.setSaveAt(new Date(System.currentTimeMillis()));
+            }
             DbManager manager = x.getDb(mConfig);
             manager.saveOrUpdate(paper);
             for (Callback callback : mCallbacks) {
