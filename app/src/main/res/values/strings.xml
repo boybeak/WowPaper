@@ -16,6 +16,7 @@
 
     <string name="title_menu_set_wallpaper">Set As Wallpaper</string>
     <string name="title_menu_share">Share</string>
+    <string name="title_menu_filter">Filter</string>
     <string name="title_menu_category">Categories</string>
     <string name="title_menu_group">Groups</string>
     <string name="title_menu_collection">Collections</string>

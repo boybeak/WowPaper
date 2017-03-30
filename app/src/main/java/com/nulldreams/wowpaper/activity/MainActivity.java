@@ -118,6 +118,12 @@ public class MainActivity extends WowActivity {
         //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         //getSupportActionBar().setHomeButtonEnabled(true);
 //        uiVisibility();
+        mTb.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPagers[mVp.getCurrentItem()].actionCommand(1, null);
+            }
+        });
     }
 
     @Override

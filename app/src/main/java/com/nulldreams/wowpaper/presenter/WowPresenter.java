@@ -53,7 +53,7 @@ public abstract class WowPresenter extends ActivityPresenter {
 
     abstract void loadNavList ();
 
-    abstract boolean needLockDrawerLayout ();
+    public abstract boolean needLockDrawerLayout ();
 
     public void loadPaperList () {
         loadPaperList(mCategory);

@@ -24,7 +24,7 @@ public class TagPresenter extends WowPresenter {
     }
 
     @Override
-    boolean needLockDrawerLayout() {
+    public boolean needLockDrawerLayout() {
         return true;
     }
 }

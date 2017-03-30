@@ -91,9 +91,11 @@ public abstract class Intents {
     }
 
     public static void emailTo (Context context, String email, String subject, String text) {
-        Intent intent = new Intent(Intent.ACTION_SEND);
-        intent.setType("text/plain");
-        intent.putExtra(Intent.EXTRA_EMAIL, email);
+        Intent intent = new Intent(Intent.ACTION_SENDTO);
+        intent.setData(Uri.parse("mailto:"));
+        intent.putExtra(Intent.EXTRA_EMAIL, new String[]{email});
+        intent.putExtra(Intent.EXTRA_CC, email);
+        intent.putExtra(Intent.EXTRA_BCC, email);
         intent.putExtra(Intent.EXTRA_SUBJECT, subject);
         intent.putExtra(Intent.EXTRA_TEXT, text);
 

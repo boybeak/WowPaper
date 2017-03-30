@@ -53,7 +53,7 @@ public class CollectionPresenter extends WowPresenter {
     }
 
     @Override
-    boolean needLockDrawerLayout() {
+    public boolean needLockDrawerLayout() {
         return false;
     }
 }

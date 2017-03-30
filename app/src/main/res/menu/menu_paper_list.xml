@@ -5,6 +5,14 @@
         android:id="@+id/paper_list_share"
         android:title="@string/title_menu_share"
         android:icon="@drawable/ic_share_variant"
-        app:showAsAction="always"
+        android:visible="false"
+        app:showAsAction="ifRoom"
+        />
+    <item
+        android:id="@+id/paper_list_filter"
+        android:title="@string/title_menu_filter"
+        android:icon="@drawable/ic_filter_variant"
+        android:visible="false"
+        app:showAsAction="ifRoom"
         />
 </menu>

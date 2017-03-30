@@ -52,7 +52,7 @@ public class CategoryPresenter extends WowPresenter {
     }
 
     @Override
-    boolean needLockDrawerLayout() {
+    public boolean needLockDrawerLayout() {
         return false;
     }
 }

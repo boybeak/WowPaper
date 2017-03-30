@@ -9,6 +9,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.nulldreams.adapter.DelegateAction;
 import com.nulldreams.adapter.DelegateAdapter;
@@ -119,6 +120,12 @@ public class LikeActivity extends WowActivity implements LikeManager.Callback{
             getSupportActionBar().setDisplayShowHomeEnabled(true);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
+        mTb.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mRv.scrollToPosition(0);
+            }
+        });
 
         final int spanCount = getResources().getInteger(R.integer.span_count);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, spanCount);

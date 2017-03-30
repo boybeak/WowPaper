@@ -51,7 +51,7 @@ public class GroupPresenter extends WowPresenter {
     }
 
     @Override
-    boolean needLockDrawerLayout() {
+    public boolean needLockDrawerLayout() {
         return false;
     }
 }

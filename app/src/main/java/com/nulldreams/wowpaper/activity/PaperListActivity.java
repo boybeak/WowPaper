@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.flexbox.FlexDirection;
@@ -29,6 +30,7 @@ import com.nulldreams.adapter.widget.OnScrollBottomListener;
 import com.nulldreams.base.utils.Intents;
 import com.nulldreams.base.utils.UiHelper;
 import com.nulldreams.wowpaper.R;
+import com.nulldreams.wowpaper.WowHelper;
 import com.nulldreams.wowpaper.adapter.decoration.PaperDecoration;
 import com.nulldreams.wowpaper.adapter.delegate.FooterDelegate;
 import com.nulldreams.wowpaper.adapter.delegate.PaperDelegate;
@@ -119,11 +121,17 @@ public class PaperListActivity extends WowActivity implements SwipeRefreshLayout
 
         mTb = (Toolbar)findViewById(R.id.paper_list_tb);
         setSupportActionBar(mTb);
+        mTb.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mRv.scrollToPosition(0);
+            }
+        });
 
         mSrl = (SwipeRefreshLayout)findViewById(R.id.paper_list_srl);
         mSrl.setColorSchemeResources(R.color.colorAccent);
         mSrl.setOnRefreshListener(this);
-        mSrl.setProgressViewOffset(false, 0, UiHelper.getActionBarSize(this));
+        mSrl.setProgressViewOffset(false, 0, WowHelper.getSrlOffset(this));
 
         mRv = (RecyclerView)findViewById(R.id.paper_list_rv);
         final int spanCount = getResources().getInteger(R.integer.span_count);
@@ -233,14 +241,17 @@ public class PaperListActivity extends WowActivity implements SwipeRefreshLayout
                     = mNavAdapter.getDataSourceArrayList(new SimpleFilter<Category>(Category.class));
             outState.putParcelableArrayList("categories", categories);
         }
-
         super.onSaveInstanceState(outState);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_paper_list, menu);
         if (mCategory != null && !TextUtils.isEmpty(mCategory.url)) {
-            getMenuInflater().inflate(R.menu.menu_paper_list, menu);
+            menu.findItem(R.id.paper_list_share).setVisible(true);
+        }
+        if (!mPresenter.needLockDrawerLayout()) {
+            menu.findItem(R.id.paper_list_filter).setVisible(true);
         }
         return super.onCreateOptionsMenu(menu);
     }
@@ -261,6 +272,9 @@ public class PaperListActivity extends WowActivity implements SwipeRefreshLayout
                 } catch (Exception e) {
                     Toast.makeText(this, R.string.toast_no_app_response, Toast.LENGTH_SHORT).show();
                 }
+                return true;
+            case R.id.paper_list_filter:
+                mDl.openDrawer(Gravity.RIGHT | Gravity.END);
                 return true;
         }
         return super.onOptionsItemSelected(item);

@@ -25,15 +25,6 @@
         android:title="@string/pref_title_glide_pic_cache"
         android:summary="@string/pref_summary_glide_pic_cache"
         />
-    <EditTextPreference
-        android:key="demo"
-        android:title="abc"
-        android:hint="feedback"
-        android:imeOptions="actionSend"
-        >
-        <intent android:action="android.intent.action.SEND"
-            android:data="boybeak@gmail.com" />
-    </EditTextPreference>
     <Preference
         android:key="@string/pref_key_count"
         android:title="@string/pref_key_count"

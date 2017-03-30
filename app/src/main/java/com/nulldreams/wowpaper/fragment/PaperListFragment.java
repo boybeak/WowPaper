@@ -25,6 +25,7 @@ import com.nulldreams.adapter.widget.OnScrollBottomListener;
 import com.nulldreams.base.fragment.AbsPagerFragment;
 import com.nulldreams.base.utils.UiHelper;
 import com.nulldreams.wowpaper.R;
+import com.nulldreams.wowpaper.WowHelper;
 import com.nulldreams.wowpaper.adapter.decoration.PaperDecoration;
 import com.nulldreams.wowpaper.adapter.delegate.FooterDelegate;
 import com.nulldreams.wowpaper.adapter.delegate.PaperDelegate;
@@ -111,7 +112,7 @@ public class PaperListFragment extends AbsPagerFragment implements SwipeRefreshL
         mSrl = (SwipeRefreshLayout)view.findViewById(R.id.paper_list_srl);
         mSrl.setOnRefreshListener(this);
         mSrl.setColorSchemeResources(R.color.colorAccent);
-        mSrl.setProgressViewOffset(false, 0, UiHelper.getActionBarSize(getContext()));
+        mSrl.setProgressViewOffset(false, 0, WowHelper.getSrlOffset(getContext()));
 
         mRv = (RecyclerView)view.findViewById(R.id.paper_list_rv);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), spanCount);
@@ -192,6 +193,13 @@ public class PaperListFragment extends AbsPagerFragment implements SwipeRefreshL
             outState.putString("method", mMethod);
         }
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void actionCommand(int command, Bundle bundle) {
+        if (command == 1) {
+            mRv.scrollToPosition(0);
+        }
     }
 
     @Override
