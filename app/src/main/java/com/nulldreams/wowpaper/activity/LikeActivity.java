@@ -1,5 +1,8 @@
 package com.nulldreams.wowpaper.activity;
 
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
+import android.content.ComponentName;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -7,14 +10,19 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CompoundButton;
+import android.widget.Switch;
+import android.widget.Toast;
 
 import com.nulldreams.adapter.DelegateAction;
 import com.nulldreams.adapter.DelegateAdapter;
 import com.nulldreams.adapter.DelegateFilter;
 import com.nulldreams.adapter.DelegateParser;
 import com.nulldreams.adapter.impl.LayoutImpl;
+import com.nulldreams.base.utils.BuildHelper;
 import com.nulldreams.base.utils.WeakAsyncTask;
 import com.nulldreams.wowpaper.R;
 import com.nulldreams.wowpaper.adapter.decoration.PaperDecoration;
@@ -159,9 +167,31 @@ public class LikeActivity extends WowActivity implements LikeManager.Callback{
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_like, menu);
+        Switch switchItem = (Switch)menu.findItem(R.id.like_switch).getActionView().findViewById(R.id.switch_item);
+        switchItem.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                Toast.makeText(LikeActivity.this, "switch " + isChecked, Toast.LENGTH_SHORT).show();
+            }
+        });
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             onBackPressed();
+            return true;
+        } else if (item.getItemId() == R.id.like_switch) {
+
+            if (BuildHelper.api21AndAbove()) {
+                /*JobInfo info = new JobInfo.Builder(1, new ComponentName(getPackageName(), ))
+                        .
+                        .build();
+                new JobScheduler().schedule()*/
+            }
             return true;
         }
         return super.onOptionsItemSelected(item);
