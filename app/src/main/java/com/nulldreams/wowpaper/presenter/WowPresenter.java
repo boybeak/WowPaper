@@ -5,7 +5,7 @@ import android.os.Bundle;
 
 import com.nulldreams.base.mvp.ActivityPresenter;
 import com.nulldreams.wowpaper.manager.ApiManager;
-import com.nulldreams.wowpaper.modules.Category;
+import com.nulldreams.wowpaper.modules.Filter;
 import com.nulldreams.wowpaper.modules.PaperResult;
 
 import retrofit2.Call;
@@ -19,19 +19,19 @@ import retrofit2.Response;
 public abstract class WowPresenter extends ActivityPresenter {
 
     private WowView mView;
-    private Category mCategory;
+    private Filter mFilter;
     private String mType;
 
     private int mPage = 1;
 
-    public WowPresenter (Activity activity, WowView view, Category category, String type) {
-        this (activity, view, category, type, 1);
+    public WowPresenter (Activity activity, WowView view, Filter filter, String type) {
+        this (activity, view, filter, type, 1);
     }
 
-    public WowPresenter (Activity activity, WowView view, Category category, String type, int startPage) {
+    public WowPresenter (Activity activity, WowView view, Filter filter, String type, int startPage) {
         super(activity);
         mView = view;
-        mCategory = category;
+        mFilter = filter;
         mType = type;
         mPage = startPage;
     }
@@ -41,8 +41,8 @@ public abstract class WowPresenter extends ActivityPresenter {
         if (savedInstanceState == null) {
             loadNavList();
         }
-        if (mCategory != null) {
-            selectItem(mCategory, false);
+        if (mFilter != null) {
+            selectItem(mFilter, false);
         }
         mView.onLockDragLayout(needLockDrawerLayout());
     }
@@ -56,7 +56,11 @@ public abstract class WowPresenter extends ActivityPresenter {
     public abstract boolean needLockDrawerLayout ();
 
     public void loadPaperList () {
-        loadPaperList(mCategory);
+        loadPaperList(mFilter);
+    }
+
+    public Filter getCurrentCategory () {
+        return mFilter;
     }
 
     public void reloadPaperList () {
@@ -64,20 +68,20 @@ public abstract class WowPresenter extends ActivityPresenter {
         loadPaperList();
     }
 
-    public Category getCategory () {
-        return mCategory;
+    public Filter getCategory () {
+        return mFilter;
     }
 
-    public void selectItem (Category category) {
-        selectItem(category, true);
+    public void selectItem (Filter filter) {
+        selectItem(filter, true);
     }
 
-    protected void selectItem(Category category, boolean userAction) {
-        if ((category == null || category.equals(mCategory)) && userAction) {
+    protected void selectItem(Filter filter, boolean userAction) {
+        if ((filter == null || filter.equals(mFilter)) && userAction) {
             return;
         }
-        mCategory = category;
-        getWowView().onItemChanged(category, userAction);
+        mFilter = filter;
+        getWowView().onItemChanged(filter, userAction);
         //loadNavList();
         //reloadPaperList();
     }
@@ -86,13 +90,13 @@ public abstract class WowPresenter extends ActivityPresenter {
         loadPaperList();
     }
 
-    protected void loadPaperList (Category category) {
+    protected void loadPaperList (Filter filter) {
         mView.onPaperListLoading(mPage);
-        doPaperList(category);
+        doPaperList(filter);
     }
 
-    protected void doPaperList (Category category) {
-        ApiManager.getInstance(getActivity()).getWallpapersWithId(mType, category.id, mPage, new Callback<PaperResult>() {
+    protected void doPaperList (Filter filter) {
+        ApiManager.getInstance(getActivity()).getWallpapersWithId(mType, filter.id, mPage, new Callback<PaperResult>() {
             @Override
             public void onResponse(Call<PaperResult> call, Response<PaperResult> response) {
                 mView.onPaperListPrepared(response.body().wallpapers, mPage);

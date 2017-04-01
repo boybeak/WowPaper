@@ -1,6 +1,5 @@
 package com.nulldreams.wowpaper.adapter.delegate;
 
-import android.support.annotation.IntDef;
 import android.support.annotation.StringDef;
 
 import com.nulldreams.adapter.AbsDelegate;
@@ -9,7 +8,7 @@ import com.nulldreams.adapter.annotation.DelegateInfo;
 import com.nulldreams.wowpaper.R;
 import com.nulldreams.wowpaper.adapter.event.TagStyleClick;
 import com.nulldreams.wowpaper.adapter.holder.TagStyleHolder;
-import com.nulldreams.wowpaper.modules.Category;
+import com.nulldreams.wowpaper.modules.Filter;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -22,7 +21,7 @@ import java.lang.annotation.RetentionPolicy;
         holderClass = TagStyleHolder.class,
         onClick = TagStyleClick.class
 )
-public class TagStyleDelegate extends AnnotationDelegate<Category> {
+public class TagStyleDelegate extends AnnotationDelegate<Filter> {
 
     public static final String KEY_STYLE = "style";
 
@@ -40,8 +39,8 @@ public class TagStyleDelegate extends AnnotationDelegate<Category> {
 
     private boolean isSelected = false;
 
-    public TagStyleDelegate(Category category) {
-        super(category);
+    public TagStyleDelegate(Filter filter) {
+        super(filter);
     }
 
     public AbsDelegate setStyle (@Style String style) {

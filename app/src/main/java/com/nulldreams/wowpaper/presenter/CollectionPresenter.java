@@ -3,8 +3,8 @@ package com.nulldreams.wowpaper.presenter;
 import android.app.Activity;
 
 import com.nulldreams.wowpaper.manager.ApiManager;
-import com.nulldreams.wowpaper.modules.Category;
-import com.nulldreams.wowpaper.modules.CategoryResult;
+import com.nulldreams.wowpaper.manager.FilterManager;
+import com.nulldreams.wowpaper.modules.Filter;
 import com.nulldreams.wowpaper.modules.CollectionResult;
 
 import java.util.List;
@@ -20,22 +20,34 @@ import retrofit2.Response;
 public class CollectionPresenter extends WowPresenter {
 
 
-    public CollectionPresenter(Activity activity, WowView view, Category category, String type) {
-        super(activity, view, category, type);
+    public CollectionPresenter(Activity activity, WowView view, Filter filter, String type) {
+        super(activity, view, filter, type);
     }
 
-    public CollectionPresenter(Activity activity, WowView view, Category category, String type, int startPage) {
-        super(activity, view, category, type, startPage);
+    public CollectionPresenter(Activity activity, WowView view, Filter filter, String type, int startPage) {
+        super(activity, view, filter, type, startPage);
     }
 
     @Override
     void loadNavList() {
         getWowView().onNavListLoading();
+        final List<Filter> filters = FilterManager.getInstance(getActivity()).getCollections();
+        if (filters != null && !filters.isEmpty()) {
+            if (getWowView() != null) {
+                getWowView().onNavListPrepared(filters);
+                if (getCategory() == null) {
+                    selectItem(filters.get(0));
+                }
+            }
+        }
         ApiManager.getInstance(getActivity()).getCollections(new Callback<CollectionResult>() {
             @Override
             public void onResponse(Call<CollectionResult> call, Response<CollectionResult> response) {
+                if (filters != null && !filters.isEmpty()) {
+                    return;
+                }
                 if (getWowView() != null) {
-                    List<Category> categories = response.body().collections;
+                    List<Filter> categories = response.body().collections;
                     getWowView().onNavListPrepared(categories);
                     if (categories != null && !categories.isEmpty() && getCategory() == null) {
                         selectItem(categories.get(0));

@@ -4,12 +4,11 @@ import android.content.Context;
 import android.view.View;
 import android.widget.TextView;
 
-import com.google.android.flexbox.FlexboxLayoutManager;
 import com.nulldreams.adapter.AbsViewHolder;
 import com.nulldreams.adapter.DelegateAdapter;
 import com.nulldreams.wowpaper.R;
 import com.nulldreams.wowpaper.adapter.delegate.TagStyleDelegate;
-import com.nulldreams.wowpaper.modules.Category;
+import com.nulldreams.wowpaper.modules.Filter;
 
 /**
  * Created by gaoyunfei on 2017/3/18.
@@ -27,30 +26,30 @@ public class TagStyleHolder extends AbsViewHolder<TagStyleDelegate> {
 
     @Override
     public void onBindView(Context context, TagStyleDelegate tagStyleDelegate, int position, DelegateAdapter adapter) {
-        Category category = tagStyleDelegate.getSource();
+        Filter filter = tagStyleDelegate.getSource();
 
         switch (tagStyleDelegate.getStyle()) {
             case TagStyleDelegate.STYLE_NONE:
-                textTv.setText(category.name);
+                textTv.setText(filter.name);
                 break;
             case TagStyleDelegate.STYLE_USER:
-                textTv.setText("@" + category.name);
+                textTv.setText("@" + filter.name);
                 break;
             case TagStyleDelegate.STYLE_CATEGORY:
-                textTv.setText("\"" + category.name + "\"");
+                textTv.setText("\"" + filter.name + "\"");
                 break;
             case TagStyleDelegate.STYLE_SUB_CATEGORY:
-                textTv.setText("'" + category.name + "'");
+                textTv.setText("'" + filter.name + "'");
                 break;
             case TagStyleDelegate.STYLE_COLLECTION:
             case TagStyleDelegate.STYLE_GROUP:
-                textTv.setText("#" + category.name + "#");
+                textTv.setText("#" + filter.name + "#");
                 break;
             case TagStyleDelegate.STYLE_TAG:
-                textTv.setText("*" + category.name + "*");
+                textTv.setText("*" + filter.name + "*");
                 break;
             default:
-                textTv.setText(category.name);
+                textTv.setText(filter.name);
                 break;
         }
 

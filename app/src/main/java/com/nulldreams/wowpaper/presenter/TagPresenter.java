@@ -2,7 +2,7 @@ package com.nulldreams.wowpaper.presenter;
 
 import android.app.Activity;
 
-import com.nulldreams.wowpaper.modules.Category;
+import com.nulldreams.wowpaper.modules.Filter;
 
 /**
  * Created by boybe on 2017/3/23.
@@ -10,12 +10,12 @@ import com.nulldreams.wowpaper.modules.Category;
 
 public class TagPresenter extends WowPresenter {
 
-    public TagPresenter(Activity activity, WowView view, Category category, String type) {
-        super(activity, view, category, type);
+    public TagPresenter(Activity activity, WowView view, Filter filter, String type) {
+        super(activity, view, filter, type);
     }
 
-    public TagPresenter(Activity activity, WowView view, Category category, String type, int startPage) {
-        super(activity, view, category, type, startPage);
+    public TagPresenter(Activity activity, WowView view, Filter filter, String type, int startPage) {
+        super(activity, view, filter, type, startPage);
     }
 
     @Override

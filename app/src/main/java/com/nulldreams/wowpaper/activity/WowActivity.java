@@ -1,15 +1,16 @@
 package com.nulldreams.wowpaper.activity;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
 import android.widget.Toast;
 
 import com.nulldreams.base.BaseActivity;
+import com.nulldreams.wowpaper.Finals;
 import com.nulldreams.wowpaper.R;
-import com.nulldreams.wowpaper.event.PaperSetEvent;
-
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 /**
  * Created by gaoyunfei on 2017/3/21.
@@ -23,6 +24,15 @@ public class WowActivity extends BaseActivity {
         return uiOptions;
     }
 
+    private BroadcastReceiver mWowReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            boolean success = intent.getBooleanExtra(Finals.KEY_BOOL_RESULT, false);
+            Toast.makeText(WowActivity.this, success ? R.string.toast_set_wallpaper_success : R.string.toast_set_wallpaper_failed,
+                    Toast.LENGTH_SHORT).show();
+        }
+    };
+
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
@@ -34,19 +44,14 @@ public class WowActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        EventBus.getDefault().register(this);
+        LocalBroadcastManager.getInstance(this).registerReceiver(mWowReceiver,
+                new IntentFilter(Finals.ACTION_WOW_PAPER_SET));
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        EventBus.getDefault().unregister(this);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mWowReceiver);
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onWallpaperResult (PaperSetEvent result) {
-        Toast.makeText(this,
-                result.success ? R.string.toast_set_wallpaper_success : R.string.toast_set_wallpaper_failed,
-                Toast.LENGTH_SHORT).show();
-    }
 }

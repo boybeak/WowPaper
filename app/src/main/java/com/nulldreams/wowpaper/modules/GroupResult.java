@@ -7,5 +7,5 @@ import java.util.ArrayList;
  */
 
 public class GroupResult extends Result {
-    public ArrayList<Category> groups;
+    public ArrayList<Filter> groups;
 }

@@ -10,5 +10,5 @@ import java.util.ArrayList;
 
 public class SubCategoryResult extends Result {
     @SerializedName("sub-categories")
-    public ArrayList<Category> sub_categories;
+    public ArrayList<Filter> sub_categories;
 }

@@ -1,8 +1,12 @@
 package com.nulldreams.wowpaper.activity;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.os.PersistableBundle;
 import android.preference.PreferenceManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.os.Bundle;
@@ -10,7 +14,6 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -28,14 +31,14 @@ import com.nulldreams.adapter.SimpleFilter;
 import com.nulldreams.adapter.impl.LayoutImpl;
 import com.nulldreams.adapter.widget.OnScrollBottomListener;
 import com.nulldreams.base.utils.Intents;
-import com.nulldreams.base.utils.UiHelper;
+import com.nulldreams.wowpaper.Finals;
 import com.nulldreams.wowpaper.R;
 import com.nulldreams.wowpaper.WowHelper;
 import com.nulldreams.wowpaper.adapter.decoration.PaperDecoration;
 import com.nulldreams.wowpaper.adapter.delegate.FooterDelegate;
 import com.nulldreams.wowpaper.adapter.delegate.PaperDelegate;
 import com.nulldreams.wowpaper.adapter.delegate.TagStyleDelegate;
-import com.nulldreams.wowpaper.modules.Category;
+import com.nulldreams.wowpaper.modules.Filter;
 import com.nulldreams.wowpaper.modules.Paper;
 import com.nulldreams.wowpaper.presenter.CategoryPresenter;
 import com.nulldreams.wowpaper.presenter.CollectionPresenter;
@@ -43,10 +46,6 @@ import com.nulldreams.wowpaper.presenter.GroupPresenter;
 import com.nulldreams.wowpaper.presenter.TagPresenter;
 import com.nulldreams.wowpaper.presenter.WowPresenter;
 import com.nulldreams.wowpaper.presenter.WowView;
-
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,7 +60,7 @@ public class PaperListActivity extends WowActivity implements SwipeRefreshLayout
     private RecyclerView mRv, mNavRv;
     private DelegateAdapter mAdapter, mNavAdapter;
 
-    private Category mCategory;
+    private Filter mFilter;
     private String mType;
 
     //private int mPage = 1;
@@ -103,6 +102,14 @@ public class PaperListActivity extends WowActivity implements SwipeRefreshLayout
                 });
                 mAdapter.notifyDataSetChanged();
             }
+        }
+    };
+
+    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Filter filter = intent.getParcelableExtra(Finals.KEY_FILTER);
+            onCategorySelected(filter);
         }
     };
 
@@ -177,32 +184,32 @@ public class PaperListActivity extends WowActivity implements SwipeRefreshLayout
 
             final int position = savedInstanceState.getInt("position");
             mRv.scrollToPosition(position);
-            mCategory = savedInstanceState.getParcelable("style");
+            mFilter = savedInstanceState.getParcelable("style");
             mType = savedInstanceState.getString("type");
 
-            ArrayList<Category> categories = savedInstanceState.getParcelableArrayList("categories");
+            ArrayList<Filter> categories = savedInstanceState.getParcelableArrayList("categories");
 
             onNavListPrepared(categories);
 
         } else {
-            mCategory = getIntent().getParcelableExtra("style");
+            mFilter = getIntent().getParcelableExtra("style");
             mType = getIntent().getStringExtra("type");
         }
 
         switch (mType) {
             case TagStyleDelegate.STYLE_CATEGORY:
-                mPresenter = new CategoryPresenter(this, this, mCategory, mType, page);
+                mPresenter = new CategoryPresenter(this, this, mFilter, mType, page);
                 break;
             case TagStyleDelegate.STYLE_GROUP:
-                mPresenter = new GroupPresenter(this, this, mCategory, mType, page);
+                mPresenter = new GroupPresenter(this, this, mFilter, mType, page);
                 break;
             case TagStyleDelegate.STYLE_COLLECTION:
-                mPresenter = new CollectionPresenter(this, this, mCategory, mType, page);
+                mPresenter = new CollectionPresenter(this, this, mFilter, mType, page);
                 break;
             case TagStyleDelegate.STYLE_TAG:
             case TagStyleDelegate.STYLE_USER:
             case TagStyleDelegate.STYLE_SUB_CATEGORY:
-                mPresenter = new TagPresenter(this, this, mCategory, mType, page);
+                mPresenter = new TagPresenter(this, this, mFilter, mType, page);
                 break;
         }
 
@@ -212,7 +219,7 @@ public class PaperListActivity extends WowActivity implements SwipeRefreshLayout
                 getString(R.string.pref_key_show_info_grid), true
         );
         PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(mPrefListener);
-
+        LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter(Finals.ACTION_FILTER_SELECT));
     }
 
     @Override
@@ -233,12 +240,12 @@ public class PaperListActivity extends WowActivity implements SwipeRefreshLayout
             outState.putInt("position", position);
         }
         outState.putInt("page", mPresenter.getPage());
-        outState.putParcelable("style", mCategory);
+        outState.putParcelable("style", mFilter);
         outState.putString("type", mType);
 
         if (mNavAdapter != null && !mNavAdapter.isEmpty()) {
-            ArrayList<Category> categories
-                    = mNavAdapter.getDataSourceArrayList(new SimpleFilter<Category>(Category.class));
+            ArrayList<Filter> categories
+                    = mNavAdapter.getDataSourceArrayList(new SimpleFilter<Filter>(Filter.class));
             outState.putParcelableArrayList("categories", categories);
         }
         super.onSaveInstanceState(outState);
@@ -247,7 +254,7 @@ public class PaperListActivity extends WowActivity implements SwipeRefreshLayout
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_paper_list, menu);
-        if (mCategory != null && !TextUtils.isEmpty(mCategory.url)) {
+        if (mFilter != null && !TextUtils.isEmpty(mFilter.url)) {
             menu.findItem(R.id.paper_list_share).setVisible(true);
         }
         if (!mPresenter.needLockDrawerLayout()) {
@@ -264,11 +271,11 @@ public class PaperListActivity extends WowActivity implements SwipeRefreshLayout
         }
         switch (item.getItemId()) {
             case R.id.paper_list_share:
-                if (TextUtils.isEmpty(mCategory.url)) {
+                if (TextUtils.isEmpty(mFilter.url)) {
                     return true;
                 }
                 try {
-                    Intents.shareText(this, R.string.title_dialog_share, mCategory.url);
+                    Intents.shareText(this, R.string.title_dialog_share, mFilter.url);
                 } catch (Exception e) {
                     Toast.makeText(this, R.string.toast_no_app_response, Toast.LENGTH_SHORT).show();
                 }
@@ -288,27 +295,27 @@ public class PaperListActivity extends WowActivity implements SwipeRefreshLayout
         mSrl.setOnRefreshListener(null);
 
         PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(mPrefListener);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mReceiver);
     }
 
     @Override
     public void onRefresh() {
-        if (isLoading) {
+        if (isLoading || mPresenter.getCurrentCategory() == null) {
             mSrl.setRefreshing(false);
             return;
         }
         mPresenter.reloadPaperList();
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onCategorySelected (Category category) {
-        mPresenter.selectItem(category);
+    public void onCategorySelected (Filter filter) {
+        mPresenter.selectItem(filter);
         mDl.closeDrawers();
     }
 
     @Override
-    public void onItemChanged(Category category, boolean userAction) {
-        mCategory = category;
-        setTitle(category.name);
+    public void onItemChanged(Filter filter, boolean userAction) {
+        mFilter = filter;
+        setTitle(filter.name);
         mNavAdapter.actionWith(new DelegateAction() {
             @Override
             public void onAction(LayoutImpl impl) {
@@ -341,13 +348,13 @@ public class PaperListActivity extends WowActivity implements SwipeRefreshLayout
     }
 
     @Override
-    public void onNavListPrepared(List<Category> categoryList) {
+    public void onNavListPrepared(List<Filter> filterList) {
         mNavAdapter.clear();
-        mNavAdapter.addAll(categoryList, new DelegateParser<Category>() {
+        mNavAdapter.addAll(filterList, new DelegateParser<Filter>() {
             @Override
-            public LayoutImpl parse(DelegateAdapter adapter, Category data) {
+            public LayoutImpl parse(DelegateAdapter adapter, Filter data) {
                 TagStyleDelegate tagStyleDelegate = new TagStyleDelegate(data);
-                tagStyleDelegate.setSelected(data.equals(mCategory));
+                tagStyleDelegate.setSelected(data.equals(mFilter));
                 return tagStyleDelegate;
             }
         });

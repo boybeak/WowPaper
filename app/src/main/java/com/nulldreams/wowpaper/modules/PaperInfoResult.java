@@ -8,5 +8,5 @@ import java.util.List;
 
 public class PaperInfoResult extends Result {
     public Paper wallpaper;
-    public List<Category> tags;
+    public List<Filter> tags;
 }

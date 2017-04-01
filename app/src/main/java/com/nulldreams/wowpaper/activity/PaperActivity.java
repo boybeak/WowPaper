@@ -6,27 +6,22 @@ import android.animation.ObjectAnimator;
 import android.graphics.Bitmap;
 import android.graphics.PointF;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
-import android.support.v4.content.FileProvider;
 import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.format.Formatter;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.davemorrissey.labs.subscaleview.ImageSource;
@@ -41,7 +36,7 @@ import com.nulldreams.wowpaper.WowApp;
 import com.nulldreams.wowpaper.adapter.delegate.TagStyleDelegate;
 import com.nulldreams.wowpaper.manager.ApiManager;
 import com.nulldreams.wowpaper.manager.LikeManager;
-import com.nulldreams.wowpaper.modules.Category;
+import com.nulldreams.wowpaper.modules.Filter;
 import com.nulldreams.wowpaper.modules.Paper;
 import com.nulldreams.wowpaper.modules.PaperInfoResult;
 import com.nulldreams.wowpaper.service.PaperService;
@@ -197,35 +192,35 @@ public class PaperActivity extends WowActivity {
                     @Override
                     public List<LayoutImpl> parse(DelegateAdapter adapter, PaperInfoResult data) {
                         List<LayoutImpl> delegates = new ArrayList<LayoutImpl>();
-                        List<Category> tags = data.tags;
+                        List<Filter> tags = data.tags;
                         if (tags != null && !tags.isEmpty()) {
-                            for (Category tag : tags) {
+                            for (Filter tag : tags) {
                                 delegates.add(new TagStyleDelegate(tag).setStyle(TagStyleDelegate.STYLE_TAG));
                             }
                         }
                         if (mPaper.user_id > 0) {
                             delegates.add(new TagStyleDelegate(
-                                    new Category(mPaper.user_id, mPaper.user_name))
+                                    new Filter(mPaper.user_id, mPaper.user_name))
                                     .setStyle(TagStyleDelegate.STYLE_USER));
                         }
                         if (mPaper.category_id > 0) {
                             mInfoAdapter.add(new TagStyleDelegate(
-                                    new Category(mPaper.category_id, mPaper.category))
+                                    new Filter(mPaper.category_id, mPaper.category))
                                     .setStyle(TagStyleDelegate.STYLE_CATEGORY));
                         }
                         if (mPaper.sub_category_id > 0) {
                             mInfoAdapter.add(new TagStyleDelegate(
-                                    new Category(mPaper.sub_category_id, mPaper.sub_category))
+                                    new Filter(mPaper.sub_category_id, mPaper.sub_category))
                                     .setStyle(TagStyleDelegate.STYLE_SUB_CATEGORY));
                         }
                         if (mPaper.collection_id > 0) {
                             mInfoAdapter.add(new TagStyleDelegate(
-                                    new Category(mPaper.collection_id, mPaper.collection))
+                                    new Filter(mPaper.collection_id, mPaper.collection))
                                     .setStyle(TagStyleDelegate.STYLE_COLLECTION));
                         }
                         if (mPaper.group_id > 0) {
                             mInfoAdapter.add(new TagStyleDelegate(
-                                    new Category(mPaper.group_id, mPaper.group))
+                                    new Filter(mPaper.group_id, mPaper.group))
                                     .setStyle(TagStyleDelegate.STYLE_GROUP));
                         }
                         return delegates;

@@ -1,6 +1,8 @@
 package com.nulldreams.wowpaper.manager;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.google.gson.GsonBuilder;
 import com.nulldreams.base.manager.AbsManager;
@@ -25,7 +27,9 @@ import java.util.Properties;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Call;
 import retrofit2.Callback;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -34,6 +38,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 
 public class ApiManager extends AbsManager {
+
+    private static final String TAG = ApiManager.class.getSimpleName();
 
     public static final String WOW_TYPE_NEWEST = "newest",
             WOW_TYPE_HIGHEST_RATED = "highest_rated";
@@ -99,16 +105,46 @@ public class ApiManager extends AbsManager {
         mApi.getPaperInfo(mApiKey, id).enqueue(callback);
     }
 
-    public void getCategories(Callback<CategoryResult> callback) {
-        mApi.getCategories(mApiKey).enqueue(callback);
+    public void getCategories(final Callback<CategoryResult> callback) {
+        mApi.getCategories(mApiKey).enqueue(new Callback<CategoryResult>() {
+            @Override
+            public void onResponse(Call<CategoryResult> call, Response<CategoryResult> response) {
+                FilterManager.getInstance(getContext()).saveCategories(response.body().categories);
+                if (callback != null) {
+                    callback.onResponse(call, response);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<CategoryResult> call, Throwable t) {
+                if (callback != null) {
+                    callback.onFailure(call, t);
+                }
+            }
+        });
     }
 
     public void getSubCategories(int id, Callback<SubCategoryResult> callback) {
         mApi.getSubCategories(mApiKey, id).enqueue(callback);
     }
 
-    public void getCollections(Callback<CollectionResult> callback) {
-        mApi.getCollections(mApiKey).enqueue(callback);
+    public void getCollections(final Callback<CollectionResult> callback) {
+        mApi.getCollections(mApiKey).enqueue(new Callback<CollectionResult>() {
+            @Override
+            public void onResponse(Call<CollectionResult> call, Response<CollectionResult> response) {
+                FilterManager.getInstance(getContext()).saveCollections(response.body().collections);
+                if (callback != null) {
+                    callback.onResponse(call, response);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<CollectionResult> call, Throwable t) {
+                if (callback != null) {
+                    callback.onFailure(call, t);
+                }
+            }
+        });
     }
 
     public void getGroups(Callback<GroupResult> callback) {

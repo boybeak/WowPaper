@@ -1,7 +1,7 @@
 package com.nulldreams.wowpaper.presenter;
 
 import com.nulldreams.base.mvp.ViewImpl;
-import com.nulldreams.wowpaper.modules.Category;
+import com.nulldreams.wowpaper.modules.Filter;
 import com.nulldreams.wowpaper.modules.Paper;
 
 import java.util.List;
@@ -12,10 +12,10 @@ import java.util.List;
 
 public interface WowView extends ViewImpl {
 
-    void onItemChanged(Category category, boolean userAction);
+    void onItemChanged(Filter filter, boolean userAction);
 
     void onNavListLoading ();
-    void onNavListPrepared (List<Category> categoryList);
+    void onNavListPrepared (List<Filter> filterList);
     void onNavListFailed ();
 
     void onPaperListLoading (int page);

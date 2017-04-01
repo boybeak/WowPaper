@@ -7,5 +7,5 @@ import java.util.ArrayList;
  */
 
 public class CollectionResult extends Result {
-    public ArrayList<Category> collections;
+    public ArrayList<Filter> collections;
 }

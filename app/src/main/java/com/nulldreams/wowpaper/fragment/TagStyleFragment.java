@@ -22,7 +22,7 @@ import com.nulldreams.wowpaper.R;
 import com.nulldreams.wowpaper.adapter.delegate.TagStyleDelegate;
 import com.nulldreams.wowpaper.adapter.delegate.TitleDelegate;
 import com.nulldreams.wowpaper.manager.ApiManager;
-import com.nulldreams.wowpaper.modules.Category;
+import com.nulldreams.wowpaper.modules.Filter;
 import com.nulldreams.wowpaper.modules.CategoryResult;
 import com.nulldreams.wowpaper.modules.CollectionResult;
 import com.nulldreams.wowpaper.modules.GroupResult;
@@ -51,7 +51,7 @@ public class TagStyleFragment extends AbsPagerFragment implements SwipeRefreshLa
 
     private DelegateAdapter mAdapter;
 
-    private ArrayList<Category> mCategories, mCollections, mGroups;
+    private ArrayList<Filter> mCategories, mCollections, mGroups;
 
     @Override
     public CharSequence getTitle(Context context, Bundle bundle) {
@@ -85,9 +85,9 @@ public class TagStyleFragment extends AbsPagerFragment implements SwipeRefreshLa
             if (mCategories != null && !mCategories.isEmpty()) {
                 mAdapter.clear();
                 mAdapter.add(new TitleDelegate(getString(R.string.title_category)));
-                mAdapter.addAll(mCategories, new DelegateParser<Category>() {
+                mAdapter.addAll(mCategories, new DelegateParser<Filter>() {
                     @Override
-                    public LayoutImpl parse(DelegateAdapter adapter, Category data) {
+                    public LayoutImpl parse(DelegateAdapter adapter, Filter data) {
                         return new TagStyleDelegate(data).setStyle(TagStyleDelegate.STYLE_CATEGORY);
                     }
                 });
@@ -201,14 +201,14 @@ public class TagStyleFragment extends AbsPagerFragment implements SwipeRefreshLa
         });
     }
 
-    private synchronized void addDataList (String title, List<Category> categories, @TagStyleDelegate.Style final String style) {
+    private synchronized void addDataList (String title, List<Filter> categories, @TagStyleDelegate.Style final String style) {
         if (categories == null || categories.isEmpty()) {
             return;
         }
         mAdapter.add(new TitleDelegate(title));
-        mAdapter.addAll(categories, new DelegateParser<Category>() {
+        mAdapter.addAll(categories, new DelegateParser<Filter>() {
             @Override
-            public LayoutImpl parse(DelegateAdapter adapter, Category data) {
+            public LayoutImpl parse(DelegateAdapter adapter, Filter data) {
                 return new TagStyleDelegate(data).setStyle(style);
             }
         });

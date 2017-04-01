@@ -15,7 +15,7 @@ import java.sql.Date;
 /**
  * Created by gaoyunfei on 2017/3/17.
  */
-@Table(name = "paper")
+@Table(name = "papers")
 public class Paper implements Parcelable{
 
     @Column(name = "id", isId = true, autoGen = false) public int id;

@@ -6,10 +6,9 @@ import android.content.Intent;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.support.v4.content.LocalBroadcastManager;
 
-import com.nulldreams.wowpaper.event.PaperSetEvent;
-
-import org.greenrobot.eventbus.EventBus;
+import com.nulldreams.wowpaper.Finals;
 
 public class PaperService extends IntentService {
 
@@ -49,20 +48,19 @@ public class PaperService extends IntentService {
     }
 
     private void handleSetWallpaper(String path, int width, int height) {
-
-        PaperSetEvent result = new PaperSetEvent();
+        boolean success = false;
         try {
             Bitmap bitmap = BitmapFactory.decodeFile(path);
             Bitmap bmp = Bitmap.createScaledBitmap(bitmap, width, height, true);
             bitmap.recycle();
             WallpaperManager.getInstance(this).setBitmap(bmp);
             WallpaperManager.getInstance(this).suggestDesiredDimensions(width, height);
-            result.success = true;
+            success = true;
         } catch (Exception e) {
             e.printStackTrace();
-            result.success = false;
         }
-        EventBus.getDefault().post(result);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(
+                new Intent(Finals.ACTION_WOW_PAPER_SET).putExtra(Finals.KEY_BOOL_RESULT, success));
     }
 
     public static int calculateInSampleSize(
