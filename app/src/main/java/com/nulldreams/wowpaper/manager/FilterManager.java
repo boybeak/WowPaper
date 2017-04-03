@@ -56,7 +56,7 @@ public class FilterManager extends AbsManager
 
     public List<Filter> getCategories () {
         try {
-            return x.getDb(mCategoryConfig).findAll(Filter.class);
+            return x.getDb(mCategoryConfig).selector(Filter.class).orderBy("name").findAll();
         } catch (DbException e) {
             e.printStackTrace();
         }
@@ -73,7 +73,7 @@ public class FilterManager extends AbsManager
 
     public List<Filter> getCollections () {
         try {
-            return x.getDb(mCollectionConfig).findAll(Filter.class);
+            return x.getDb(mCollectionConfig).selector(Filter.class).orderBy("name").findAll();
         } catch (DbException e) {
             e.printStackTrace();
         }

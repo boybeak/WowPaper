@@ -10,5 +10,5 @@ public class Finals {
                         ACTION_FILTER_SELECT =
             "com.nulldreams.wowpaper.action.ACTION_FILTER_SELECT";
     public static final String KEY_BOOL_RESULT = "is_success",
-            KEY_FILTER = "filter";
+            KEY_FILTER = "filter", KEY_PAPER_ID = "paper_id";
 }

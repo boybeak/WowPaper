@@ -8,7 +8,9 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/like_rv"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:paddingLeft="@dimen/grid_padding_horizontal"
+        android:paddingRight="@dimen/grid_padding_horizontal"/>
     <android.support.v7.widget.Toolbar
         android:id="@+id/like_toolbar"
         style="@style/ToolbarStyle"/>

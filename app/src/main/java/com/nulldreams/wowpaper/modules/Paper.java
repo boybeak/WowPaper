@@ -1,15 +1,18 @@
 package com.nulldreams.wowpaper.modules;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.format.Formatter;
 
 import com.google.gson.Gson;
+import com.nulldreams.wowpaper.WowApp;
 
 import org.xutils.db.annotation.Column;
 import org.xutils.db.annotation.Table;
 
+import java.io.File;
 import java.sql.Date;
 
 /**
@@ -288,5 +291,28 @@ public class Paper implements Parcelable{
             return ((Paper) obj).id == id;
         }
         return false;
+    }
+
+    /*public float getScaleWithScreen (Context context) {
+        Resources resources = context.getResources();
+        //final int screenWid = resources.getDisplayMetrics().widthPixels;
+        final int screenHei = resources.getDisplayMetrics().heightPixels;
+        return screenHei * 1.0f / height;
+    }*/
+    public int[] getTargetSize (Context context) {
+        Resources resources = context.getResources();
+        final int screenWid = resources.getDisplayMetrics().widthPixels;
+        final int screenHei = resources.getDisplayMetrics().heightPixels;
+        final float scale = screenHei * 1.0f / height;
+        final int targetWid = (int)(scale * width);
+        int[] size = new int[2];
+        size[0] = targetWid;
+        size[1] = screenHei;
+        return size;
+    }
+
+    public boolean checkFile (Context context) {
+        File file = new File(WowApp.getPaperCacheDir(context), id + "");
+        return file.exists() && file.length() == file_size;
     }
 }

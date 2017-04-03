@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="title_activity_settings">设置</string>
+    <string name="title_activity_about">关于</string>
+    <string name="dialog_msg_device_wallpaper_not_allowed">该设备无法设置壁纸</string>
+    <string name="pref_key_feedback">反馈</string>
+    <string name="pref_summary_glide_pic_cache">共%1$d张图片, 共占用 %2$s/%3$s 空间, 点击进行清理.</string>
+    <string name="pref_summary_original_pic_cache">共%1$d张图片, 共占用%2$s空间, 点击进行清理.</string>
+    <string name="pref_summary_show_info_grid">列表中显示图片宽高, 文件尺寸等信息.</string>
+    <string name="pref_title_feedback">反馈</string>
+    <string name="pref_title_glide_pic_cache">缩略图缓存</string>
+    <string name="pref_title_original_pic_cache">壁纸缓存</string>
+    <string name="pref_title_show_info_grid">壁纸信息</string>
+    <string name="pref_title_wow_source_code">源代码</string>
+    <string name="text_like_will_lost_when_uninstalled">卸载该应用后, 收藏壁纸将被删除.</string>
+    <string name="text_set_wallpaper">设置壁纸</string>
+    <string name="title_category">分类</string>
+    <string name="title_collection">合集</string>
+    <string name="title_dialog_share">分享壁纸:</string>
+    <string name="title_group">分组</string>
+    <string name="title_high_rate">最佳</string>
+    <string name="title_menu_about">关于</string>
+    <string name="title_menu_auto_change">自动更换</string>
+    <string name="title_menu_category">分类</string>
+    <string name="title_menu_collection">合集</string>
+    <string name="title_menu_filter">筛选</string>
+    <string name="title_menu_group">分组</string>
+    <string name="title_menu_like">收藏</string>
+    <string name="title_menu_set_wallpaper">设为壁纸</string>
+    <string name="title_menu_settings">设置</string>
+    <string name="title_menu_share">分享</string>
+    <string name="title_menu_tag">标签</string>
+    <string name="title_newest">最新</string>
+    <string name="toast_load_data_failed">家在失败</string>
+    <string name="title_tag_style">类别</string>
+    <string name="toast_no_app_response">无应用响应此操作</string>
+    <string name="toast_set_wallpaper_failed">壁纸设置失败</string>
+    <string name="toast_set_wallpaper_success">壁纸设置成功</string>
+    <string name="toast_wallpaper_downloading">壁纸正在下载中, 请稍后</string>
+    <string name="pref_summary_abyss" translatable="false">所有壁纸数据由Wallpaper Abyss(https://wall.alphacoders.com)提供</string>
+</resources>

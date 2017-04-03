@@ -2,7 +2,9 @@ package com.nulldreams.wowpaper.activity;
 
 import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
+import android.app.job.JobService;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -10,6 +12,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,6 +33,7 @@ import com.nulldreams.wowpaper.adapter.delegate.FooterDelegate;
 import com.nulldreams.wowpaper.adapter.delegate.PaperDelegate;
 import com.nulldreams.wowpaper.manager.LikeManager;
 import com.nulldreams.wowpaper.modules.Paper;
+import com.nulldreams.wowpaper.service.SwitchService;
 
 import org.xutils.view.annotation.ViewInject;
 import org.xutils.x;
@@ -168,14 +172,26 @@ public class LikeActivity extends WowActivity implements LikeManager.Callback{
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_like, menu);
+        /*getMenuInflater().inflate(R.menu.menu_like, menu);
         Switch switchItem = (Switch)menu.findItem(R.id.like_switch).getActionView().findViewById(R.id.switch_item);
         switchItem.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                Toast.makeText(LikeActivity.this, "switch " + isChecked, Toast.LENGTH_SHORT).show();
+                if (isChecked) {
+                    if (BuildHelper.api21AndAbove()) {
+                        JobInfo info = new JobInfo.Builder(100, new ComponentName(LikeActivity.this, SwitchService.class))
+                                .setPeriodic(30 * 60 * 1000)
+                                .setPersisted(true)
+                                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED)
+                                .build();
+                        JobScheduler scheduler = (JobScheduler)getSystemService(Context.JOB_SCHEDULER_SERVICE);
+                        scheduler.cancelAll();
+                        int schedule = scheduler.schedule(info);
+                        Log.v(TAG, "schedule " + schedule);
+                    }
+                }
             }
-        });
+        });*/
         return super.onCreateOptionsMenu(menu);
     }
 
