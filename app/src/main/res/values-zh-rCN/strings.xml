@@ -31,11 +31,12 @@
     <string name="title_menu_share">分享</string>
     <string name="title_menu_tag">标签</string>
     <string name="title_newest">最新</string>
-    <string name="toast_load_data_failed">家在失败</string>
+    <string name="toast_load_data_failed">加载失败</string>
     <string name="title_tag_style">类别</string>
     <string name="toast_no_app_response">无应用响应此操作</string>
     <string name="toast_set_wallpaper_failed">壁纸设置失败</string>
     <string name="toast_set_wallpaper_success">壁纸设置成功</string>
     <string name="toast_wallpaper_downloading">壁纸正在下载中, 请稍后</string>
     <string name="pref_summary_abyss" translatable="false">所有壁纸数据由Wallpaper Abyss(https://wall.alphacoders.com)提供</string>
+    <string name="title_menu_home">首页</string>
 </resources>

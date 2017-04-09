@@ -10,7 +10,7 @@ import com.nulldreams.base.utils.UiHelper;
 
 public class WowHelper {
     public static int getSrlOffset (Context context) {
-        return UiHelper.getActionBarSize(context)
+        return UiHelper.getActionBarSize(context) + UiHelper.getStatusBarHeight(context)
                 + context.getResources().getDimensionPixelOffset(R.dimen.margin_big);
     }
 }

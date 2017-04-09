@@ -6,6 +6,7 @@ import android.animation.ObjectAnimator;
 import android.graphics.Bitmap;
 import android.graphics.PointF;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.Nullable;
 import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
@@ -31,6 +32,7 @@ import com.nulldreams.adapter.DelegateListParser;
 import com.nulldreams.adapter.impl.LayoutImpl;
 import com.nulldreams.base.animation.DefaultAnimatorListener;
 import com.nulldreams.base.utils.Intents;
+import com.nulldreams.wowpaper.DeviceInfo;
 import com.nulldreams.wowpaper.R;
 import com.nulldreams.wowpaper.WowApp;
 import com.nulldreams.wowpaper.adapter.delegate.TagStyleDelegate;
@@ -173,8 +175,8 @@ public class PaperActivity extends WowActivity {
 
         mPaper = getIntent().getParcelableExtra(Paper.class.getSimpleName());
 
-        mScreenWidth = getResources().getDisplayMetrics().widthPixels;
-        mScreenHeight = getResources().getDisplayMetrics().heightPixels;
+        mScreenWidth = DeviceInfo.getDeviceWidth(this);
+        mScreenHeight = DeviceInfo.getDeviceHeight(this);
         mScale = mScreenHeight * 1.0f / mPaper.height;
 
         setTitle(mPaper.name);
@@ -276,6 +278,12 @@ public class PaperActivity extends WowActivity {
 
         initPositionLayout();
         downloadPicture(mPaper);
+    }
+
+    @Override
+    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        fullscreen();
     }
 
     @Override

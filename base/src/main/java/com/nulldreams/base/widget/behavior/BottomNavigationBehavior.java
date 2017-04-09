@@ -16,7 +16,7 @@
  *
  */
 
-package com.nulldreams.base.behavior;
+package com.nulldreams.base.widget.behavior;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -26,13 +26,10 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewCompat;
-import android.support.v4.view.ViewConfigurationCompat;
 import android.support.v4.view.ViewPropertyAnimatorCompat;
 import android.support.v4.view.animation.LinearOutSlowInInterpolator;
-import android.support.v4.widget.ScrollerCompat;
 import android.util.AttributeSet;
 import android.view.View;
-import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.animation.Interpolator;
 
@@ -134,9 +131,6 @@ public final class BottomNavigationBehavior<V extends View> extends VerticalScro
 
     @Override
     public void onDirectionNestedPreScroll(CoordinatorLayout coordinatorLayout, V child, View target, int dx, int dy, int[] consumed, @ScrollDirection int scrollDirection) {
-        if (Math.abs(dy) < ViewConfiguration.get(target.getContext()).getScaledTouchSlop()) {
-            return;
-        }
         handleDirection(child, scrollDirection);
     }
 

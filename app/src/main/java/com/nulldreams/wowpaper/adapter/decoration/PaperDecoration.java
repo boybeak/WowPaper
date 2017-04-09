@@ -19,10 +19,12 @@ public class PaperDecoration extends RecyclerView.ItemDecoration {
 
     private static final String TAG = PaperDecoration.class.getSimpleName();
 
+    private int statusBarHeight;
     private int offset;
     private int gap;
 
     public PaperDecoration(Context context) {
+        statusBarHeight = UiHelper.getStatusBarHeight(context);
         offset = UiHelper.getActionBarSize(context);
         gap = context.getResources().getDimensionPixelSize(R.dimen.grid_gap_width);
     }
@@ -35,8 +37,6 @@ public class PaperDecoration extends RecyclerView.ItemDecoration {
         GridLayoutManager gridLayoutManager = (GridLayoutManager)parent.getLayoutManager();
         GridLayoutManager.LayoutParams params = (GridLayoutManager.LayoutParams)view.getLayoutParams();
 
-        //Log.v(TAG, "getItemOffsets spanSize=" + params.getSpanSize() + " " + gridLayoutManager.getSpanCount());
-
         final int spanIndex = params.getSpanIndex();
         final int rowIndex = position / gridLayoutManager.getSpanCount();
         int l, r, t, b;
@@ -48,12 +48,11 @@ public class PaperDecoration extends RecyclerView.ItemDecoration {
         r = gap;
 
         if (rowIndex == 0) {
-            t = gap * 2 + offset;
+            t = gap * 2 + offset + statusBarHeight;
         } else {
             t = 0;
         }
         b = gap;
-        Log.v(TAG, "getItemOffsets position=" + position + " spanIndex=" + spanIndex + " rowIndex=" + rowIndex + " (l, t, r, b)=(" + l + ", " + t + ", " + r + ", " + b + ")");
         outRect.set(l, t, r, b);
     }
 }

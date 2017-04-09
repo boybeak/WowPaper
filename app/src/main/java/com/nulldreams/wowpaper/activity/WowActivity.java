@@ -1,5 +1,6 @@
 package com.nulldreams.wowpaper.activity;
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -17,12 +18,6 @@ import com.nulldreams.wowpaper.R;
  */
 
 public class WowActivity extends BaseActivity {
-    private int uiVisibility () {
-        int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                | View.SYSTEM_UI_FLAG_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
-        return uiOptions;
-    }
 
     private BroadcastReceiver mWowReceiver = new BroadcastReceiver() {
         @Override
@@ -36,9 +31,16 @@ public class WowActivity extends BaseActivity {
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-        /*if (hasFocus && getWindow().getDecorView().getSystemUiVisibility() != uiVisibility()) {
-            getWindow().getDecorView().setSystemUiVisibility(uiVisibility());
-        }*/
+    }
+
+    @SuppressLint("InlinedApi")
+    protected void fullscreen () {
+        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
+                | View.SYSTEM_UI_FLAG_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
     }
 
     @Override

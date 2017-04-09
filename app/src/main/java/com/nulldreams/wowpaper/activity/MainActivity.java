@@ -1,205 +1,199 @@
 package com.nulldreams.wowpaper.activity;
 
-import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.drawable.Drawable;
-import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.NavigationView;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.design.widget.BottomNavigationView;
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
+import android.widget.LinearLayout;
 
-import com.nulldreams.base.content.It;
 import com.nulldreams.base.fragment.AbsPagerFragment;
+import com.nulldreams.base.utils.BuildHelper;
+import com.nulldreams.base.utils.UiHelper;
+import com.nulldreams.wowpaper.DeviceInfo;
 import com.nulldreams.wowpaper.R;
-import com.nulldreams.wowpaper.adapter.delegate.TagStyleDelegate;
-import com.nulldreams.wowpaper.fragment.PaperListFragment;
-import com.nulldreams.wowpaper.manager.ApiManager;
+import com.nulldreams.wowpaper.fragment.HomeFragment;
+import com.nulldreams.wowpaper.fragment.LikeFragment;
 
-public class MainActivity extends WowActivity {
+import org.xutils.view.annotation.ViewInject;
+import org.xutils.x;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class MainActivity extends WowActivity
+        implements BottomNavigationView.OnNavigationItemReselectedListener,
+        BottomNavigationView.OnNavigationItemSelectedListener{
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    private DrawerLayout mDl;
-    private NavigationView mNavView;
-    private TabLayout mTabLayout;
-    private ViewPager mVp;
+    @ViewInject(value = R.id.main_tb)
     private Toolbar mTb;
+    @ViewInject(value = R.id.main_bottom_nav)
+    private BottomNavigationView mBottomNav;
+    @ViewInject(value = R.id.main_nav_place_holder)
+    private View mNavPlaceHolderView;
+    @ViewInject(value = R.id.main_status_bar_place_holder)
+    private View mStatusPlaceHolderView;
 
-    private ImageView mHeaderCover;
+    private HomeFragment mHomeFragment;
+    private LikeFragment mLikeFragment;
 
-    private ActionBarDrawerToggle mToggle;
+    private AbsPagerFragment mLastFragment;
+    private int mLastFragmentIndex = 0;
 
-    private AbsPagerFragment[] mPagers;
-
-    private NavigationView.OnNavigationItemSelectedListener mNavListener = new NavigationView.OnNavigationItemSelectedListener() {
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-            switch (menuItem.getItemId()) {
-                case R.id.nav_category:
-                    It.newInstance().putExtra("type", TagStyleDelegate.STYLE_CATEGORY)
-                            .startActivity(MainActivity.this, PaperListActivity.class);
-                    break;
-                case R.id.nav_collection:
-                    It.newInstance().putExtra("type", TagStyleDelegate.STYLE_COLLECTION)
-                            .startActivity(MainActivity.this, PaperListActivity.class);
-                    break;
-                case R.id.nav_like:
-                    It.newInstance().startActivity(MainActivity.this, LikeActivity.class);
-                    break;
-                /*case R.id.nav_tag:
-                    It.newInstance().putExtra("type", TagStyleDelegate.STYLE_COLLECTION)
-                            .startActivity(MainActivity.this, PaperListActivity.class);
-                    break;*/
-                case R.id.nav_settings:
-                    startActivity(new Intent(MainActivity.this, SettingsActivity.class));
-                    break;
-                case R.id.nav_about:
-                    It.newInstance().startActivity(MainActivity.this, AboutActivity.class);
-                    break;
-            }
-            mDl.closeDrawers();
-            return true;
-        }
-    };
+    private List<AbsPagerFragment> mFragments = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mDl = (DrawerLayout)findViewById(R.id.main_drawer);
-        mNavView = (NavigationView)findViewById(R.id.main_nav);
-        mTabLayout = (TabLayout)findViewById(R.id.main_tab_layout);
-        mVp = (ViewPager)findViewById(R.id.main_vp);
-        mTb = (Toolbar)findViewById(R.id.main_tb);
+        x.view().inject(this);
 
-        mHeaderCover = (ImageView) mNavView.getHeaderView(0).findViewById(R.id.nav_header_cover);
-        mNavView.setNavigationItemSelectedListener(mNavListener);
-
-        mPagers = new AbsPagerFragment[] {
-                //TagStyleFragment.newInstance(),
-                PaperListFragment.newInstance(getString(R.string.title_newest),
-                        ApiManager.WOW_TYPE_NEWEST),
-                /*PaperListFragment.newInstance(getString(R.string.title_high_rate),
-                        ApiManager.WOW_TYPE_HIGHEST_RATED)*/
-        };
-
-        mVp.setAdapter(new PaperAdapter(getSupportFragmentManager()));
-        mVp.setCurrentItem(1);
-        mTabLayout.setupWithViewPager(mVp);
+        mFragments = new ArrayList<>();
+        mHomeFragment = new HomeFragment();
+        mLikeFragment = new LikeFragment();
+        mFragments.add(mHomeFragment);
+        mFragments.add(mLikeFragment);
 
         setSupportActionBar(mTb);
 
-        mToggle = new ActionBarDrawerToggle(this, mDl, mTb, R.string.title_drawer_open, R.string.title_drawer_close) {
-            @Override
-            public void onDrawerSlide(View drawerView, float slideOffset) {
-                super.onDrawerSlide(drawerView, slideOffset);
-                mTb.setAlpha(1.0f - slideOffset);
-                Log.v(TAG, "onDrawerSlide slideOffset=" + slideOffset);
+        mBottomNav.setOnNavigationItemReselectedListener(this);
+        mBottomNav.setOnNavigationItemSelectedListener(this);
+
+        LinearLayout.LayoutParams statusParams = (LinearLayout.LayoutParams)mStatusPlaceHolderView.getLayoutParams();
+        statusParams.height = UiHelper.getStatusBarHeight(this);
+        mStatusPlaceHolderView.setLayoutParams(statusParams);
+
+        if (BuildHelper.api21AndAbove() && hasVirtualNavBar()) {
+            int navSize = UiHelper.getNavigationBarSize(this);
+            ViewGroup.LayoutParams params = mNavPlaceHolderView.getLayoutParams();
+            if (params == null) {
+                params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, navSize);
+            } else {
+                params.height = navSize;
             }
-        };
-        mDl.addDrawerListener(mToggle);
-        mToggle.syncState();
-        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        //getSupportActionBar().setHomeButtonEnabled(true);
-//        uiVisibility();
-        mTb.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPagers[mVp.getCurrentItem()].actionCommand(1, null);
-            }
-        });
+            mNavPlaceHolderView.setLayoutParams(params);
+        }
+
+    }
+
+    private boolean hasVirtualNavBar () {
+        return DeviceInfo.getDeviceHeight(this) > getResources().getDisplayMetrics().heightPixels;
     }
 
     @Override
     public void onBackPressed() {
-        if (mDl.isDrawerOpen(Gravity.LEFT|Gravity.START)) {
-            mDl.closeDrawers();
-            return;
-        }
         super.onBackPressed();
     }
 
     @Override
-    public void onPostCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
-        super.onPostCreate(savedInstanceState, persistentState);
-        mToggle.syncState();
+    public void onPostCreate(@Nullable Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        mBottomNav.setSelectedItemId(R.id.nav_home);
+
+        Log.v(TAG, "navigation_hidden=" + (getResources().getConfiguration().navigationHidden == Configuration.NAVIGATIONHIDDEN_YES));
     }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        mToggle.onConfigurationChanged(newConfig);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (mToggle.onOptionsItemSelected(item)) {
-            return true;
-        }
         return super.onOptionsItemSelected(item);
     }
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-        if (hasFocus) {
-            Drawable wallpaper = this.getWallpaper();
-            if (wallpaper != null) {
-                mHeaderCover.setImageDrawable(wallpaper);
-            }
-        }
+
+        /*getWindow().getDecorView().setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+        );*/
+//        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mDl.removeDrawerListener(mToggle);
     }
 
-    private class PaperAdapter extends FragmentStatePagerAdapter {
-
-        public PaperAdapter(FragmentManager fm) {
-            super(fm);
+    @Override
+    public void onNavigationItemReselected(@NonNull MenuItem item) {
+        AbsPagerFragment fragment = null;
+        switch (item.getItemId()) {
+            case R.id.nav_home:
+                fragment = mHomeFragment;
+                break;
+            case R.id.nav_like:
+                fragment = mLikeFragment;
+                break;
         }
-
-        @Override
-        public Fragment getItem(int position) {
-            Log.v(TAG, "TAG getItem");
-            return mPagers[position];
+        if (fragment == null) {
+            return;
         }
+        if (fragment.isAdded()) {
 
-        @Override
-        public Object instantiateItem(ViewGroup container, int position) {
-            AbsPagerFragment fragment = (AbsPagerFragment)super.instantiateItem(container, position);
-            mPagers[position] = fragment;
-            return fragment;
-        }
-
-        @Override
-        public int getCount() {
-            return mPagers.length;
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return mPagers[position].getTitle(MainActivity.this, null);
+        } else {
+            showFragment(fragment, item);
         }
     }
 
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        AbsPagerFragment fragment = null;
+        switch (item.getItemId()) {
+            case R.id.nav_home:
+                fragment = mHomeFragment;
+                break;
+            case R.id.nav_like:
+                fragment = mLikeFragment;
+                break;
+        }
+        showFragment(fragment, item);
+        return fragment != null;
+    }
+
+    private void showFragment (AbsPagerFragment fragment, MenuItem item) {
+        if (fragment == null) {
+            return;
+        }
+        mTb.setTitle(item.getTitle());
+        FragmentTransaction transaction
+                = getSupportFragmentManager().beginTransaction();
+        transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+        /*int index = mFragments.indexOf(fragment);
+
+        if (index > mLastFragmentIndex) {
+            transaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left);
+        } else if (index < mLastFragmentIndex) {
+            transaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right);
+        }*/
+        if (fragment.isAdded()) {
+            transaction.show(fragment);
+        } else {
+            transaction.add(R.id.main_fragment_container, fragment);
+        }
+
+        if (mLastFragment != null) {
+            transaction.hide(mLastFragment);
+        }
+
+        transaction.commitNow();
+        mLastFragment = fragment;
+        mLastFragmentIndex = mFragments.indexOf(mLastFragment);
+    }
 }

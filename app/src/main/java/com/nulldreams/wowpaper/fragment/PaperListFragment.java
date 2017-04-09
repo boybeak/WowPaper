@@ -7,12 +7,13 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Toast;
 
 import com.nulldreams.adapter.DelegateAction;
@@ -23,7 +24,6 @@ import com.nulldreams.adapter.SimpleFilter;
 import com.nulldreams.adapter.impl.LayoutImpl;
 import com.nulldreams.adapter.widget.OnScrollBottomListener;
 import com.nulldreams.base.fragment.AbsPagerFragment;
-import com.nulldreams.base.utils.UiHelper;
 import com.nulldreams.wowpaper.R;
 import com.nulldreams.wowpaper.WowHelper;
 import com.nulldreams.wowpaper.adapter.decoration.PaperDecoration;
@@ -34,6 +34,7 @@ import com.nulldreams.wowpaper.modules.Paper;
 import com.nulldreams.wowpaper.modules.PaperResult;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -43,18 +44,19 @@ import retrofit2.Response;
  * Created by gaoyunfei on 2017/3/18.
  */
 
-public class PaperListFragment extends AbsPagerFragment implements SwipeRefreshLayout.OnRefreshListener {
+public abstract class PaperListFragment extends AbsPagerFragment
+        implements SwipeRefreshLayout.OnRefreshListener, Callback<PaperResult> {
 
     private static final String TAG = PaperListFragment.class.getSimpleName();
 
-    public static PaperListFragment newInstance (String title, String method) {
+    /*public static PaperListFragment newInstance (String title, String method) {
         PaperListFragment fragment = new PaperListFragment();
         fragment.setTitle(title);
         fragment.setMethod(method);
         return fragment;
-    }
+    }*/
 
-    private String mTitle, mMethod;
+    private String mTitle;
 
     private SwipeRefreshLayout mSrl;
     private RecyclerView mRv;
@@ -68,7 +70,7 @@ public class PaperListFragment extends AbsPagerFragment implements SwipeRefreshL
             if (isLoading) {
                 return;
             }
-            loadData();
+            loadPaperList();
         }
     };
 
@@ -91,6 +93,14 @@ public class PaperListFragment extends AbsPagerFragment implements SwipeRefreshL
     };
 
     private FooterDelegate mFooter = null;
+
+    /*@Override
+    public Animation onCreateAnimation(int transit, boolean enter, int nextAnim) {
+        if (enter) {
+            return AnimationUtils.loadAnimation(getContext(), android.R.anim.fade_in);
+        }
+        return AnimationUtils.loadAnimation(getContext(), android.R.anim.fade_out);
+    }*/
 
     @Override
     public CharSequence getTitle(Context context, Bundle bundle) {
@@ -132,12 +142,15 @@ public class PaperListFragment extends AbsPagerFragment implements SwipeRefreshL
         mRv.setAdapter(mAdapter);
 
         mFooter = new FooterDelegate(FooterDelegate.STATE_NONE);
+        if (!TextUtils.isEmpty(getStaticFooterMsg())){
+            mFooter.setStaticMsg(getStaticFooterMsg());
+        }
 
         if (savedInstanceState != null) {
             ArrayList<Paper> papers = savedInstanceState.getParcelableArrayList("papers");
             int position = savedInstanceState.getInt("position");
             mPage = savedInstanceState.getInt("page");
-            mMethod = savedInstanceState.getString("method");
+            //mMethod = savedInstanceState.getString("method");
             if (papers != null && !papers.isEmpty()) {
                 final int countBefore = mAdapter.getItemCount();
                 mAdapter.addAll(papers, new DelegateParser<Paper>() {
@@ -158,7 +171,7 @@ public class PaperListFragment extends AbsPagerFragment implements SwipeRefreshL
                 @Override
                 public void run() {
                     mSrl.setRefreshing(true);
-                    loadData();
+                    loadPaperList();
                 }
             });
         }
@@ -166,6 +179,10 @@ public class PaperListFragment extends AbsPagerFragment implements SwipeRefreshL
         PreferenceManager.getDefaultSharedPreferences(getContext())
                 .registerOnSharedPreferenceChangeListener(mPrefListener);
 
+    }
+
+    public CharSequence getStaticFooterMsg () {
+        return null;
     }
 
     @Override
@@ -176,7 +193,7 @@ public class PaperListFragment extends AbsPagerFragment implements SwipeRefreshL
                 @Override
                 public void run() {
                     mSrl.setRefreshing(true);
-                    loadData();
+                    loadPaperList();
                 }
             });
         }
@@ -190,7 +207,7 @@ public class PaperListFragment extends AbsPagerFragment implements SwipeRefreshL
             GridLayoutManager layoutManager = (GridLayoutManager)mRv.getLayoutManager();
             outState.putInt("position", layoutManager.findFirstVisibleItemPosition());
             outState.putInt("page", mPage);
-            outState.putString("method", mMethod);
+            //outState.putString("method", mMethod);
         }
         super.onSaveInstanceState(outState);
     }
@@ -219,81 +236,87 @@ public class PaperListFragment extends AbsPagerFragment implements SwipeRefreshL
         mRv.removeOnScrollListener(mBottomListener);
     }
 
-    private void loadData () {
+    @Override
+    public void onResponse(Call<PaperResult> call, Response<PaperResult> response) {
+        onPaperList(response.body().wallpapers);
+    }
+
+    protected void onPaperList (List<Paper> paperList) {
+        isLoading = false;
+
+        if (mSrl.isRefreshing()) {
+            mSrl.setRefreshing(false);
+        }
+        if (mPage == 1) {
+            mAdapter.clear();
+        }
+        final int countBefore = mAdapter.getItemCount();
+        final boolean show = PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean(getString(R.string.pref_key_show_info_grid), true);
+        mAdapter.addAllAtFirst(new DelegateFilter() {
+            @Override
+            public boolean accept(DelegateAdapter adapter, LayoutImpl impl) {
+                return impl == mFooter;
+            }
+        }, paperList, new DelegateParser<Paper>() {
+            @Override
+            public LayoutImpl parse(DelegateAdapter adapter, Paper data) {
+                PaperDelegate delegate = new PaperDelegate(data);
+                delegate.setShowInfo(show);
+                return delegate;
+            }
+        });
+        mFooter.setState(FooterDelegate.STATE_SUCCESS);
+        mAdapter.addIfNotExist(mFooter);
+        final int count = mAdapter.getItemCount() - countBefore;
+        if (mPage == 1) {
+            mAdapter.notifyDataSetChanged();
+        } else {
+            if (count == 0) {
+                mAdapter.notifyItemChanged(mAdapter.getItemCount() - 1);
+            } else {
+                mAdapter.notifyItemRangeInserted(countBefore, count);
+            }
+        }
+        mPage++;
+    }
+
+    @Override
+    public void onFailure(Call<PaperResult> call, Throwable t) {
+        isLoading = false;
+        if (!isResumed()) {
+            return;
+        }
+        if (mSrl.isRefreshing()) {
+            mSrl.setRefreshing(false);
+        }
+        mAdapter.addIfNotExist(mFooter);
+        mFooter.setState(FooterDelegate.STATE_FAILED);
+        mAdapter.notifyItemChanged(mAdapter.getItemCount() - 1);
+        Toast.makeText(getContext(), R.string.toast_load_data_failed, Toast.LENGTH_SHORT).show();
+    }
+
+    private void loadPaperList () {
         isLoading = true;
         if (mAdapter.endWith(mFooter)) {
             mFooter.setState(FooterDelegate.STATE_LOADING);
             mAdapter.notifyItemChanged(mAdapter.getItemCount() - 1);
         }
-        ApiManager.getInstance(getContext()).getWallpapers(mPage, mMethod, new Callback<PaperResult>() {
-            @Override
-            public void onResponse(Call<PaperResult> call, Response<PaperResult> response) {
-                isLoading = false;
-
-                if (mSrl.isRefreshing()) {
-                    mSrl.setRefreshing(false);
-                }
-                if (mPage == 1) {
-                    mAdapter.clear();
-                }
-                final int countBefore = mAdapter.getItemCount();
-                final boolean show = PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean(getString(R.string.pref_key_show_info_grid), true);
-                mAdapter.addAllAtFirst(new DelegateFilter() {
-                    @Override
-                    public boolean accept(DelegateAdapter adapter, LayoutImpl impl) {
-                        return impl == mFooter;
-                    }
-                }, response.body().wallpapers, new DelegateParser<Paper>() {
-                    @Override
-                    public LayoutImpl parse(DelegateAdapter adapter, Paper data) {
-                        PaperDelegate delegate = new PaperDelegate(data);
-                        delegate.setShowInfo(show);
-                        return delegate;
-                    }
-                });
-                mFooter.setState(FooterDelegate.STATE_SUCCESS);
-                mAdapter.addIfNotExist(mFooter);
-                final int count = mAdapter.getItemCount() - countBefore;
-                if (mPage == 1) {
-                    mAdapter.notifyDataSetChanged();
-                } else {
-                    if (count == 0) {
-                        mAdapter.notifyItemChanged(mAdapter.getItemCount() - 1);
-                    } else {
-                        mAdapter.notifyItemRangeInserted(countBefore, count);
-                    }
-                }
-                mPage++;
-            }
-
-            @Override
-            public void onFailure(Call<PaperResult> call, Throwable t) {
-                isLoading = false;
-                if (!isResumed()) {
-                    return;
-                }
-                if (mSrl.isRefreshing()) {
-                    mSrl.setRefreshing(false);
-                }
-                mAdapter.addIfNotExist(mFooter);
-                mFooter.setState(FooterDelegate.STATE_FAILED);
-                mAdapter.notifyItemChanged(mAdapter.getItemCount() - 1);
-                Toast.makeText(getContext(), R.string.toast_load_data_failed, Toast.LENGTH_SHORT).show();
-            }
-        });
+        loadPaperList(mPage);
     }
+
+    protected abstract void loadPaperList (int page);
 
     public void setTitle (String title) {
         mTitle = title;
     }
 
-    public void setMethod (String method) {
+    /*public void setMethod (String method) {
         mMethod = method;
-    }
+    }*/
 
     @Override
     public void onRefresh() {
         mPage = 1;
-        loadData();
+        loadPaperList();
     }
 }

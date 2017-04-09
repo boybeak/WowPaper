@@ -1,4 +1,4 @@
-package com.nulldreams.base.behavior;
+package com.nulldreams.base.widget.behavior;
 
 import android.content.Context;
 import android.support.design.widget.CoordinatorLayout;

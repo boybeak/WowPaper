@@ -7,8 +7,8 @@
     <uses-permission android:name="android.permission.SET_WALLPAPER_HINTS" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:name=".WowApp"
@@ -21,20 +21,26 @@
         <meta-data
             android:name="com.nulldreams.wowpaper.modules.glide.MyGlideModule"
             android:value="GlideModule" />
-
-        <activity android:name=".activity.MainActivity">
+        <activity
+            android:name=".activity.HelloActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="landscape"
+            >
+            <!--android:theme="@style/FullscreenTheme"-->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".activity.MainActivity"
+            android:theme="@style/MainTheme"/>
         <activity
             android:name=".activity.PaperActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_paper"
             android:screenOrientation="portrait"
-            android:theme="@style/MainTheme" />
+             />
         <activity android:name=".activity.PaperListActivity" />
         <activity
             android:name=".activity.SettingsActivity"
@@ -66,7 +72,7 @@
             android:name=".service.SwitchService"
             android:enabled="true"
             android:exported="true"
-            android:permission="android.permission.BIND_JOB_SERVICE"/>
+            android:permission="android.permission.BIND_JOB_SERVICE" />
     </application>
 
 </manifest>

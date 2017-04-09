@@ -10,4 +10,6 @@
 
     <color name="colorIcon">@android:color/white</color>
 
+    <color name="black_overlay">#66000000</color>
+
 </resources>

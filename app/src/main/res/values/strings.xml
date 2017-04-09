@@ -25,6 +25,7 @@
     <string name="title_menu_settings">Settings</string>
     <string name="title_menu_about">About</string>
     <string name="title_menu_auto_change">Auto Change</string>
+    <string name="title_menu_home">Home</string>
 
     <string name="title_dialog_share">Share Wallpaper:</string>
 
@@ -62,5 +63,9 @@
     <string name="pref_summary_original_pic_cache">%1$d pictures %2$s space, click to clear.</string>
     <string name="pref_summary_glide_pic_cache">%1$d pictures %2$s/%3$s space, click to clear.</string>
     <string name="pref_summary_wow_source_code" translatable="false">https://github.com/boybeak/WowPaper</string>
+
+    <string name="title_activity_hello">HelloActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
 
 </resources>
