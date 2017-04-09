@@ -22,6 +22,8 @@ public class HelloActivity extends SplashActivity {
 
         setContentView(R.layout.activity_hello);
 
+        Log.v(TAG, "heightDpi=" + getResources().getConfiguration().screenHeightDp);
+
     }
 
 

@@ -83,6 +83,10 @@ public class MainActivity extends WowActivity
             mNavPlaceHolderView.setLayoutParams(params);
         }
 
+        float scrHei = getResources().getConfiguration().screenHeightDp * getResources().getDisplayMetrics().density;
+        Log.v(TAG, "heightDpi=" + getResources().getConfiguration().screenHeightDp);
+        Log.v(TAG, "height=" + (scrHei + UiHelper.getStatusBarHeight(this) + UiHelper.getNavigationBarSize(this)));
+
     }
 
     private boolean hasVirtualNavBar () {
