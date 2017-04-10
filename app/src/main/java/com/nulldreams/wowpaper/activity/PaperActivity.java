@@ -32,7 +32,7 @@ import com.nulldreams.adapter.DelegateListParser;
 import com.nulldreams.adapter.impl.LayoutImpl;
 import com.nulldreams.base.animation.DefaultAnimatorListener;
 import com.nulldreams.base.utils.Intents;
-import com.nulldreams.wowpaper.DeviceInfo;
+import com.nulldreams.base.utils.UiHelper;
 import com.nulldreams.wowpaper.R;
 import com.nulldreams.wowpaper.WowApp;
 import com.nulldreams.wowpaper.adapter.delegate.TagStyleDelegate;
@@ -175,8 +175,8 @@ public class PaperActivity extends WowActivity {
 
         mPaper = getIntent().getParcelableExtra(Paper.class.getSimpleName());
 
-        mScreenWidth = DeviceInfo.getDeviceWidth(this);
-        mScreenHeight = DeviceInfo.getDeviceHeight(this);
+        mScreenWidth = UiHelper.getPortraitRealWidth(this);
+        mScreenHeight = UiHelper.getPortraitRealHeight(this);
         mScale = mScreenHeight * 1.0f / mPaper.height;
 
         setTitle(mPaper.name);

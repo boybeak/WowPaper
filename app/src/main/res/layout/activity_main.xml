@@ -26,7 +26,6 @@
             android:id="@+id/main_status_bar_place_holder"
             android:layout_width="match_parent"
             android:layout_height="25dp"
-            android:background="@android:color/holo_blue_light"
             />
         <android.support.v7.widget.Toolbar
             android:id="@+id/main_tb"
@@ -41,7 +40,7 @@
         android:background="@color/colorHalfBlack"
         app:layout_anchorGravity="bottom"
         app:layout_anchor="@+id/main_fragment_container"
-        app:layout_behavior="com.nulldreams.base.widget.behavior.BottomNavigationBehavior"
+        app:layout_behavior="com.nulldreams.base.widget.behavior.BottomHideBehavior"
         >
         <android.support.design.widget.BottomNavigationView
             android:id="@+id/main_bottom_nav"

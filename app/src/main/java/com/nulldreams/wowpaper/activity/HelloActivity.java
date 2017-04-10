@@ -1,15 +1,12 @@
 package com.nulldreams.wowpaper.activity;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 
 import com.nulldreams.base.activity.SplashActivity;
 import com.nulldreams.base.content.It;
-import com.nulldreams.wowpaper.DeviceInfo;
 import com.nulldreams.wowpaper.R;
 
 public class HelloActivity extends SplashActivity {
@@ -45,6 +42,7 @@ public class HelloActivity extends SplashActivity {
 
     @Override
     public Intent getNextActivityIntent() {
+        Log.v(TAG, "getNextActivityIntent " + getResources().getDisplayMetrics().heightPixels);
         return It.newInstance().setClass(this, MainActivity.class);
     }
 

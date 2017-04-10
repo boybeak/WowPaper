@@ -1,10 +1,12 @@
 package com.nulldreams.wowpaper.activity;
 
 import android.content.res.Configuration;
+import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -16,7 +18,6 @@ import android.widget.LinearLayout;
 import com.nulldreams.base.fragment.AbsPagerFragment;
 import com.nulldreams.base.utils.BuildHelper;
 import com.nulldreams.base.utils.UiHelper;
-import com.nulldreams.wowpaper.DeviceInfo;
 import com.nulldreams.wowpaper.R;
 import com.nulldreams.wowpaper.fragment.HomeFragment;
 import com.nulldreams.wowpaper.fragment.LikeFragment;
@@ -46,9 +47,8 @@ public class MainActivity extends WowActivity
     private LikeFragment mLikeFragment;
 
     private AbsPagerFragment mLastFragment;
-    private int mLastFragmentIndex = 0;
 
-    private List<AbsPagerFragment> mFragments = null;
+    private List<Fragment> mFragments = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,8 +58,18 @@ public class MainActivity extends WowActivity
         x.view().inject(this);
 
         mFragments = new ArrayList<>();
-        mHomeFragment = new HomeFragment();
-        mLikeFragment = new LikeFragment();
+        if (savedInstanceState != null) {
+            mHomeFragment = (HomeFragment) getSupportFragmentManager()
+                    .findFragmentByTag(HomeFragment.class.getName());
+            mLikeFragment = (LikeFragment) getSupportFragmentManager()
+                    .findFragmentByTag(LikeFragment.class.getName());
+        }
+        if (mHomeFragment == null) {
+            mHomeFragment = new HomeFragment();
+        }
+        if (mLikeFragment == null) {
+            mLikeFragment = new LikeFragment();
+        }
         mFragments.add(mHomeFragment);
         mFragments.add(mLikeFragment);
 
@@ -90,7 +100,7 @@ public class MainActivity extends WowActivity
     }
 
     private boolean hasVirtualNavBar () {
-        return DeviceInfo.getDeviceHeight(this) > getResources().getDisplayMetrics().heightPixels;
+        return UiHelper.getRealHeight(this) > getResources().getDisplayMetrics().heightPixels;
     }
 
     @Override
@@ -101,38 +111,35 @@ public class MainActivity extends WowActivity
     @Override
     public void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        mBottomNav.setSelectedItemId(R.id.nav_home);
+        int mLastSelectId = -1;
+        if (savedInstanceState != null) {
+            mLastSelectId = savedInstanceState.getInt("nav_last_select_id", -1);
+        }
+        Log.v(TAG, "onPostCreate mLastSelectId=" + mLastSelectId);
 
-        Log.v(TAG, "navigation_hidden=" + (getResources().getConfiguration().navigationHidden == Configuration.NAVIGATIONHIDDEN_YES));
+        switch (mLastSelectId) {
+            case R.id.nav_home:
+                mLastFragment = mHomeFragment;
+                mBottomNav.setSelectedItemId(mLastSelectId);
+                break;
+            case R.id.nav_category:
+                break;
+            case R.id.nav_collection:
+                break;
+            case R.id.nav_like:
+                mLastFragment = mLikeFragment;
+                mBottomNav.setSelectedItemId(mLastSelectId);
+                break;
+            default:
+                mBottomNav.setSelectedItemId(R.id.nav_home);
+                break;
+        }
     }
 
     @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-
-        /*getWindow().getDecorView().setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-        );*/
-//        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putInt("nav_last_select_id", mBottomNav.getSelectedItemId());
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -189,15 +196,14 @@ public class MainActivity extends WowActivity
         if (fragment.isAdded()) {
             transaction.show(fragment);
         } else {
-            transaction.add(R.id.main_fragment_container, fragment);
+            transaction.add(R.id.main_fragment_container, fragment, fragment.getClass().getName());
         }
-
+        Log.v(TAG, "showFragment mLastFragment=" + mLastFragment);
         if (mLastFragment != null) {
             transaction.hide(mLastFragment);
         }
 
         transaction.commitNow();
         mLastFragment = fragment;
-        mLastFragmentIndex = mFragments.indexOf(mLastFragment);
     }
 }
