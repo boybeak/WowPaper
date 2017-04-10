@@ -4,7 +4,7 @@
         <attr name="widthRatio" format="integer"/>
         <attr name="heightRatio" format="integer"/>
     </declare-styleable>
-    <declare-styleable name="BottomNavigationBehavior_Params">
-        <attr name="tabLayoutId" format="reference"/>
+    <declare-styleable name="FloatNavigationView">
+        <attr name="menu" format="reference"/>
     </declare-styleable>
 </resources>

@@ -1,7 +1,5 @@
 package com.nulldreams.wowpaper.activity;
 
-import android.content.res.Configuration;
-import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
