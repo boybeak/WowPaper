@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -45,6 +46,8 @@ import com.nulldreams.wowpaper.service.PaperService;
 
 import org.xutils.common.task.PriorityExecutor;
 import org.xutils.http.RequestParams;
+import org.xutils.view.annotation.Event;
+import org.xutils.view.annotation.ViewInject;
 import org.xutils.x;
 import org.xutils.common.Callback.ProgressCallback;
 import org.xutils.common.Callback.Cancelable;
@@ -70,13 +73,20 @@ public class PaperActivity extends WowActivity {
 
     private Paper mPaper;
 
-    private ContentLoadingProgressBar mPb;
-    private SubsamplingScaleImageView mPaperIv;
+    @ViewInject(R.id.paper_progress_bar) private ContentLoadingProgressBar mPb;
+    @ViewInject(R.id.paper_pb) private ContentLoadingProgressBar mCirclePb;
+    @ViewInject(R.id.paper_image) private SubsamplingScaleImageView mPaperIv;
 
-    private Toolbar mTb;
-    private View mPositionLayout, mPositionScreen;
-    private RecyclerView mInfoRv;
-    private ImageView mPositionThumbIv, mMaskIv;
+    @ViewInject(R.id.paper_tb) private Toolbar mTb;
+    @ViewInject(R.id.paper_position_layout) private View mPositionLayout;
+    @ViewInject(R.id.paper_position_screen) private View mPositionScreen;
+    @ViewInject(R.id.paper_info_rv) private RecyclerView mInfoRv;
+    @ViewInject(R.id.paper_position_thumb) private ImageView mPositionThumbIv;
+    @ViewInject(R.id.paper_mask) private ImageView mMaskIv;
+    @ViewInject(R.id.paper_like_btn) private ImageView mLikeBtn;
+    @ViewInject(R.id.paper_share_btn) private ImageView mShareBtn;
+    @ViewInject(R.id.paper_set_btn) private ImageView mSetBtn;
+    @ViewInject(R.id.paper_menu_layout) private FrameLayout mMenuLayout;
 
     private int mScreenWidth, mScreenHeight, mThumbWidth, mThumbHeight;
 
@@ -85,20 +95,7 @@ public class PaperActivity extends WowActivity {
 
     private DelegateAdapter mInfoAdapter;
 
-    private View.OnClickListener mClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            final int id = v.getId();
-            if (id == mPositionThumbIv.getId()) {
-                if (mPaperIv.isReady()) {
-                    mPaperIv.animateCenter(new PointF(mCenterX, mCenterY)).start();
-                }
-            }
-        }
-    };
-
-    private Animator mSetBtnAnim;
-    private AnimatorSet mPositionAnim;
+    private AnimatorSet mSetBtnAnim, mPositionAnim;
 
     private int mThumbScale = 8;
 
@@ -150,17 +147,12 @@ public class PaperActivity extends WowActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_paper);
 
-        mPb = (ContentLoadingProgressBar)findViewById(R.id.paper_progress_bar);
+        x.view().inject(this);
 
-        mTb = (Toolbar)findViewById(R.id.paper_tb);
         setSupportActionBar(mTb);
 
-        mPaperIv = (SubsamplingScaleImageView)findViewById(R.id.paper_image);
         mPaperIv.setZoomEnabled(false);
 
-        mMaskIv = (ImageView) findViewById(R.id.paper_mask);
-
-        mInfoRv = (RecyclerView) findViewById(R.id.paper_info_rv);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, true);
         layoutManager.setStackFromEnd(true);
         mInfoRv.setLayoutManager(layoutManager);
@@ -168,10 +160,6 @@ public class PaperActivity extends WowActivity {
         helper.attachToRecyclerView(mInfoRv);*/
         mInfoAdapter = new DelegateAdapter(this);
         mInfoRv.setAdapter(mInfoAdapter);
-
-        mPositionLayout = findViewById(R.id.paper_position_layout);
-        mPositionScreen = findViewById(R.id.paper_position_screen);
-        mPositionThumbIv = (ImageView)findViewById(R.id.paper_position_thumb);
 
         mPaper = getIntent().getParcelableExtra(Paper.class.getSimpleName());
 
@@ -182,6 +170,7 @@ public class PaperActivity extends WowActivity {
         setTitle(mPaper.name);
         mTb.setSubtitle(mPaper.getInfo(this));
 
+        mCirclePb.setVisibility(View.VISIBLE);
         ApiManager.getInstance(this).getPaperInfo(mPaper.id, new Callback<PaperInfoResult>() {
             @Override
             public void onResponse(Call<PaperInfoResult> call, Response<PaperInfoResult> response) {
@@ -281,18 +270,11 @@ public class PaperActivity extends WowActivity {
     }
 
     @Override
-    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        fullscreen();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_paper, menu);
-        MenuItem item = menu.findItem(R.id.paper_like);
-        item.setChecked(LikeManager.getInstance(this).isLiked(mPaper.id));
-        item.setIcon(item.isChecked() ? R.drawable.ic_heart : R.drawable.ic_heart_outline);
-        return super.onCreateOptionsMenu(menu);
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus) {
+            fullscreen();
+        }
     }
 
     @Override
@@ -301,23 +283,37 @@ public class PaperActivity extends WowActivity {
             onBackPressed();
             return true;
         }
-        switch (item.getItemId()) {
-            case R.id.paper_like:
-                item.setChecked(!item.isChecked());
-                if (item.isChecked()) {
-                    item.setIcon(R.drawable.ic_heart);
-                    LikeManager.getInstance(this).save(mPaper);
-                } else {
-                    item.setIcon(R.drawable.ic_heart_outline);
-                    LikeManager.getInstance(this).delete(mPaper);
-                }
+        return super.onOptionsItemSelected(item);
+    }
 
-                //Toast.makeText(this, "" + item.isChecked(), Toast.LENGTH_SHORT).show();
-                return true;
-            case R.id.paper_set:
+    @Override
+    protected void onWallpaperSetStart() {
+        mCirclePb.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    protected void onWallpaperSetEnd(boolean success) {
+        super.onWallpaperSetEnd(success);
+        mCirclePb.setVisibility(View.INVISIBLE);
+    }
+
+    @Event(value = {
+            R.id.paper_position_thumb,
+            R.id.paper_set_btn,
+            R.id.paper_like_btn,
+            R.id.paper_share_btn
+    })
+    private void onClick (View view) {
+        switch (view.getId()) {
+            case R.id.paper_position_thumb:
+                if (mPaperIv.isReady()) {
+                    mPaperIv.animateCenter(new PointF(mCenterX, mCenterY)).start();
+                }
+                break;
+            case R.id.paper_set_btn:
                 if (mPaperFile == null || !mPaperFile.exists() || mPaper.file_size != mPaperFile.length()) {
                     Toast.makeText(PaperActivity.this, R.string.toast_wallpaper_downloading, Toast.LENGTH_SHORT).show();
-                    return true;
+                    return;
                 }
 
                 if (WowApp.checkWallpaperPermission(PaperActivity.this)) {
@@ -328,29 +324,24 @@ public class PaperActivity extends WowActivity {
                             .setPositiveButton(android.R.string.ok, null)
                             .show();
                 }
-                return true;
-            case R.id.paper_share:
+                break;
+            case R.id.paper_like_btn:
+                view.setSelected(!view.isSelected());
+                if (view.isSelected()) {
+                    LikeManager.getInstance(this).save(mPaper);
+                } else {
+                    LikeManager.getInstance(this).delete(mPaper);
+                }
+                break;
+            case R.id.paper_share_btn:
                 try {
                     Intents.shareText(PaperActivity.this, R.string.title_dialog_share, mPaper.url_page);
                 } catch (Exception e) {
                     e.printStackTrace();
                     Toast.makeText(PaperActivity.this, R.string.toast_no_app_response, Toast.LENGTH_SHORT).show();
                 }
-                /*requestPermissions(new String[]{
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                        Manifest.permission.READ_EXTERNAL_STORAGE}, new PermissionCallback() {
-                    @Override
-                    public void onGranted() {
-                    }
-
-                    @Override
-                    public void onDenied() {
-
-                    }
-                });*/
-                return true;
+                break;
         }
-        return super.onOptionsItemSelected(item);
     }
 
     private void downloadPicture (Paper paper) {
@@ -401,6 +392,8 @@ public class PaperActivity extends WowActivity {
             public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
                 Log.v(TAG, "showWallpaper onResourceReady");
                 mPb.setVisibility(View.GONE);
+                mCirclePb.setVisibility(View.INVISIBLE);
+                expandMenu();
                 mPaperIv.setImage(ImageSource.bitmap(resource));
                 mPositionThumbIv.setImageBitmap(Bitmap.createScaledBitmap(
                         resource, mThumbWidth, mThumbHeight, true));
@@ -479,7 +472,7 @@ public class PaperActivity extends WowActivity {
             }
         });
 
-        mPositionThumbIv.setOnClickListener(mClickListener);
+//        mPositionThumbIv.setOnClickListener(mClickListener);
 
         int currentHeight = (int)(mPaper.height * 1f * mScreenWidth / mPaper.width);
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)mMaskIv.getLayoutParams();
@@ -494,14 +487,20 @@ public class PaperActivity extends WowActivity {
         }
         ObjectAnimator animator = ObjectAnimator.ofFloat(
                 mTb, "alpha", 0f, 1f);
-        animator.addListener(new DefaultAnimatorListener(){
+        ObjectAnimator menuLayoutAnim = ObjectAnimator.ofFloat(
+                mMenuLayout, "alpha", 0f, 1f);
+        AnimatorSet set = new AnimatorSet();
+        set.play(animator).with(menuLayoutAnim);
+        set.addListener(new DefaultAnimatorListener(){
             @Override
             public void onAnimationStart(Animator animation) {
                 mTb.setVisibility(View.VISIBLE);
+                mMenuLayout.setVisibility(View.VISIBLE);
+                mMenuLayout.setEnabled(true);
             }
         });
-        animator.start();
-        mSetBtnAnim = animator;
+        set.start();
+        mSetBtnAnim = set;
     }
 
     private void animHideSetBtn () {
@@ -510,15 +509,21 @@ public class PaperActivity extends WowActivity {
         }
         ObjectAnimator animator = ObjectAnimator.ofFloat(
                 mTb, "alpha", 1f, 0f);
-        animator.addListener(new DefaultAnimatorListener(){
+        ObjectAnimator menuLayoutAnim = ObjectAnimator.ofFloat(
+                mMenuLayout, "alpha", 1f, 0f);
+        AnimatorSet set = new AnimatorSet();
+        set.play(animator).with(menuLayoutAnim);
+        set.addListener(new DefaultAnimatorListener(){
 
             @Override
             public void onAnimationEnd(Animator animation) {
                 mTb.setVisibility(View.GONE);
+                mMenuLayout.setVisibility(View.INVISIBLE);
+                mMenuLayout.setEnabled(false);
             }
         });
-        animator.start();
-        mSetBtnAnim = animator;
+        set.start();
+        mSetBtnAnim = set;
     }
 
     private void animShowPositionLayout() {
@@ -541,7 +546,7 @@ public class PaperActivity extends WowActivity {
                 animation.removeAllListeners();
             }
         });
-        set.play(infoAnim).after(animator);
+        set.play(infoAnim).with(animator);
         set.start();
         mPositionAnim = set;
     }
@@ -562,9 +567,32 @@ public class PaperActivity extends WowActivity {
                 mPositionLayout.setVisibility(View.GONE);
             }
         });
-        set.play(infoAnim).before(animator);
+        set.play(infoAnim).with(animator);
         set.start();
         mPositionAnim = set;
+    }
+
+    private void expandMenu () {
+        Log.v(TAG, "expandMenu");
+        RelativeLayout.LayoutParams params =
+                (RelativeLayout.LayoutParams)mMenuLayout.getLayoutParams();
+        params.height = mCirclePb.getHeight() * 4;
+        mMenuLayout.setLayoutParams(params);
+
+        mLikeBtn.setSelected(LikeManager.getInstance(this).isLiked(mPaper.id));
+
+        ObjectAnimator shareTranslate =
+                ObjectAnimator.ofFloat(mShareBtn, "translationY", 0, mShareBtn.getHeight() * 3f);
+        ObjectAnimator shareAlpha =
+                ObjectAnimator.ofFloat(mShareBtn, "alpha", 0f, 1f);
+        ObjectAnimator likeTranslate =
+                ObjectAnimator.ofFloat(mLikeBtn, "translationY", 0, mLikeBtn.getHeight() * 1.5f);
+        ObjectAnimator likeAlpha =
+                ObjectAnimator.ofFloat(mLikeBtn, "alpha", 0f, 1f);
+        AnimatorSet set = new AnimatorSet();
+        set.setDuration(getResources().getInteger(android.R.integer.config_mediumAnimTime));
+        set.play(shareTranslate).with(likeTranslate).with(shareAlpha).with(likeAlpha);
+        set.start();
     }
 
 }

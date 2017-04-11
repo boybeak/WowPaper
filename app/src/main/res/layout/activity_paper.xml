@@ -1,5 +1,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.nulldreams.wowpaper.activity.PaperActivity"
@@ -65,4 +66,38 @@
     <android.support.v7.widget.Toolbar
         android:id="@+id/paper_tb"
         style="@style/ToolbarStyle"/>
+    <FrameLayout
+        android:id="@+id/paper_menu_layout"
+        android:layout_width="56dp"
+        android:layout_height="match_parent"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/paper_tb"
+        android:layout_margin="@dimen/margin_big"
+        >
+        <ImageView
+            android:id="@+id/paper_share_btn"
+            android:alpha="0"
+            style="@style/RoundBtnStyle"
+            app:srcCompat="@drawable/ic_share_variant"
+            />
+        <ImageView
+            android:id="@+id/paper_like_btn"
+            android:alpha="0"
+            style="@style/RoundBtnStyle"
+            app:srcCompat="@drawable/ic_heart_sel"
+            />
+        <ImageView
+            android:id="@+id/paper_set_btn"
+            style="@style/RoundBtnStyle"
+            app:srcCompat="@drawable/ic_check"
+            />
+        <android.support.v4.widget.ContentLoadingProgressBar
+            android:id="@+id/paper_pb"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_gravity="top|center_horizontal"
+            android:visibility="invisible"
+            style="@style/Widget.AppCompat.ProgressBar"
+            />
+    </FrameLayout>
 </RelativeLayout>

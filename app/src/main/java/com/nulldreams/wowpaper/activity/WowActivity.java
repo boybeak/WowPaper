@@ -22,9 +22,15 @@ public class WowActivity extends BaseActivity {
     private BroadcastReceiver mWowReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            boolean success = intent.getBooleanExtra(Finals.KEY_BOOL_RESULT, false);
-            Toast.makeText(WowActivity.this, success ? R.string.toast_set_wallpaper_success : R.string.toast_set_wallpaper_failed,
-                    Toast.LENGTH_SHORT).show();
+            switch (intent.getAction()) {
+                case Finals.ACTION_WOW_PAPER_SET_START:
+                    onWallpaperSetStart();
+                    break;
+                case Finals.ACTION_WOW_PAPER_SET_END:
+                    boolean success = intent.getBooleanExtra(Finals.KEY_BOOL_RESULT, false);
+                    onWallpaperSetEnd(success);
+                    break;
+            }
         }
     };
 
@@ -47,13 +53,24 @@ public class WowActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         LocalBroadcastManager.getInstance(this).registerReceiver(mWowReceiver,
-                new IntentFilter(Finals.ACTION_WOW_PAPER_SET));
+                new IntentFilter(Finals.ACTION_WOW_PAPER_SET_START));
+        LocalBroadcastManager.getInstance(this).registerReceiver(mWowReceiver,
+                new IntentFilter(Finals.ACTION_WOW_PAPER_SET_END));
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mWowReceiver);
+    }
+
+    protected void onWallpaperSetStart () {
+
+    }
+
+    protected void onWallpaperSetEnd (boolean success) {
+        Toast.makeText(WowActivity.this, success ? R.string.toast_set_wallpaper_success : R.string.toast_set_wallpaper_failed,
+                Toast.LENGTH_SHORT).show();
     }
 
 }

@@ -5,8 +5,10 @@ package com.nulldreams.wowpaper;
  */
 
 public class Finals {
-    public static final String ACTION_WOW_PAPER_SET =
-            "com.nulldreams.wowpaper.action.ACTION_WOW_PAPER_SET",
+    public static final String ACTION_WOW_PAPER_SET_START =
+            "com.nulldreams.wowpaper.action.ACTION_WOW_PAPER_SET_START",
+                        ACTION_WOW_PAPER_SET_END =
+            "com.nulldreams.wowpaper.action.ACTION_WOW_PAPER_SET_END",
                         ACTION_FILTER_SELECT =
             "com.nulldreams.wowpaper.action.ACTION_FILTER_SELECT";
 

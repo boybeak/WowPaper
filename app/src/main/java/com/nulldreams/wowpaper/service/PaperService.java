@@ -48,6 +48,9 @@ public class PaperService extends IntentService {
     }
 
     private void handleSetWallpaper(String path, int width, int height) {
+        LocalBroadcastManager.getInstance(this).sendBroadcast(
+                new Intent(Finals.ACTION_WOW_PAPER_SET_START)
+        );
         boolean success = false;
         try {
             Bitmap bitmap = BitmapFactory.decodeFile(path);
@@ -60,7 +63,7 @@ public class PaperService extends IntentService {
             e.printStackTrace();
         }
         LocalBroadcastManager.getInstance(this).sendBroadcast(
-                new Intent(Finals.ACTION_WOW_PAPER_SET).putExtra(Finals.KEY_BOOL_RESULT, success));
+                new Intent(Finals.ACTION_WOW_PAPER_SET_END).putExtra(Finals.KEY_BOOL_RESULT, success));
     }
 
     public static int calculateInSampleSize(
