@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.AppCompatDelegate;
 import android.view.View;
 import android.widget.Toast;
 
@@ -18,6 +19,10 @@ import com.nulldreams.wowpaper.R;
  */
 
 public class WowActivity extends BaseActivity {
+
+    static {
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+    }
 
     private BroadcastReceiver mWowReceiver = new BroadcastReceiver() {
         @Override
