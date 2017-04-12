@@ -19,6 +19,7 @@ import com.nulldreams.base.utils.UiHelper;
 import com.nulldreams.wowpaper.R;
 import com.nulldreams.wowpaper.fragment.HomeFragment;
 import com.nulldreams.wowpaper.fragment.LikeFragment;
+import com.nulldreams.wowpaper.fragment.TagStyleFragment;
 
 import org.xutils.view.annotation.ViewInject;
 import org.xutils.x;
@@ -42,6 +43,7 @@ public class MainActivity extends WowActivity
     private View mStatusPlaceHolderView;
 
     private HomeFragment mHomeFragment;
+    private TagStyleFragment mTagFragment;
     private LikeFragment mLikeFragment;
 
     private AbsPagerFragment mLastFragment;
@@ -59,16 +61,22 @@ public class MainActivity extends WowActivity
         if (savedInstanceState != null) {
             mHomeFragment = (HomeFragment) getSupportFragmentManager()
                     .findFragmentByTag(HomeFragment.class.getName());
+            mTagFragment = (TagStyleFragment) getSupportFragmentManager()
+                    .findFragmentByTag(TagStyleFragment.class.getName());
             mLikeFragment = (LikeFragment) getSupportFragmentManager()
                     .findFragmentByTag(LikeFragment.class.getName());
         }
         if (mHomeFragment == null) {
             mHomeFragment = new HomeFragment();
         }
+        if (mTagFragment == null) {
+            mTagFragment = new TagStyleFragment();
+        }
         if (mLikeFragment == null) {
             mLikeFragment = new LikeFragment();
         }
         mFragments.add(mHomeFragment);
+        mFragments.add(mTagFragment);
         mFragments.add(mLikeFragment);
 
         setSupportActionBar(mTb);
@@ -121,6 +129,8 @@ public class MainActivity extends WowActivity
                 mBottomNav.setSelectedItemId(mLastSelectId);
                 break;
             case R.id.nav_category:
+                mLastFragment = mTagFragment;
+                mBottomNav.setSelectedItemId(mLastSelectId);
                 break;
             case R.id.nav_collection:
                 break;
@@ -147,6 +157,9 @@ public class MainActivity extends WowActivity
             case R.id.nav_home:
                 fragment = mHomeFragment;
                 break;
+            case R.id.nav_category:
+                fragment = mTagFragment;
+                break;
             case R.id.nav_like:
                 fragment = mLikeFragment;
                 break;
@@ -167,6 +180,9 @@ public class MainActivity extends WowActivity
         switch (item.getItemId()) {
             case R.id.nav_home:
                 fragment = mHomeFragment;
+                break;
+            case R.id.nav_category:
+                fragment = mTagFragment;
                 break;
             case R.id.nav_like:
                 fragment = mLikeFragment;

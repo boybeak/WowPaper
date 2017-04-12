@@ -11,11 +11,11 @@
         android:title="@string/title_menu_category"
         android:icon="@drawable/ic_format_quote_open"
         />
-    <item
+    <!--<item
         android:id="@+id/nav_collection"
         android:title="@string/title_menu_collection"
         android:icon="@drawable/ic_pound"
-        />
+        />-->
     <item
         android:id="@+id/nav_like"
         android:title="@string/title_menu_like"

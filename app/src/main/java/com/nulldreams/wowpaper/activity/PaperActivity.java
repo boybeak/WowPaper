@@ -392,6 +392,7 @@ public class PaperActivity extends WowActivity {
             public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
                 Log.v(TAG, "showWallpaper onResourceReady");
                 mPb.setVisibility(View.GONE);
+                mPositionScreen.setVisibility(View.VISIBLE);
                 mCirclePb.setVisibility(View.INVISIBLE);
                 expandMenu();
                 mPaperIv.setImage(ImageSource.bitmap(resource));
