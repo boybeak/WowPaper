@@ -357,7 +357,7 @@ public class PaperActivity extends WowActivity {
             params.setSaveFilePath(paperFile.getAbsolutePath());
             params.setExecutor(executor);
             params.setCancelFast(true);
-            mCancelable= x.http().get(params, mDownloadCallback);
+            mCancelable = x.http().get(params, mDownloadCallback);
         }
     }
 
