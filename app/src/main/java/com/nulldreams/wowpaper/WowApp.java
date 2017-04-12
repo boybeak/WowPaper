@@ -38,7 +38,7 @@ public class WowApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        //CrashHandler.getInstance(this).install();
+        CrashHandler.getInstance(this).install();
 
         x.Ext.init(this);
         x.Ext.setDebug(BuildConfig.DEBUG);

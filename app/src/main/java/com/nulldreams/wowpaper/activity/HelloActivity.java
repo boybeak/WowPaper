@@ -16,7 +16,6 @@ public class HelloActivity extends SplashActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_hello);
 
         Log.v(TAG, "heightDpi=" + getResources().getConfiguration().screenHeightDp);

@@ -238,6 +238,9 @@ public abstract class PaperListFragment extends AbsPagerFragment
 
     @Override
     public void onResponse(Call<PaperResult> call, Response<PaperResult> response) {
+        if (isDetached()) {
+            return;
+        }
         onPaperList(response.body().wallpapers);
     }
 
