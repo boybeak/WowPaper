@@ -8,11 +8,13 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import com.nulldreams.base.content.It;
 import com.nulldreams.base.fragment.AbsPagerFragment;
 import com.nulldreams.base.utils.BuildHelper;
 import com.nulldreams.base.utils.UiHelper;
@@ -21,6 +23,7 @@ import com.nulldreams.wowpaper.fragment.HomeFragment;
 import com.nulldreams.wowpaper.fragment.LikeFragment;
 import com.nulldreams.wowpaper.fragment.TagStyleFragment;
 
+import org.xutils.view.annotation.Event;
 import org.xutils.view.annotation.ViewInject;
 import org.xutils.x;
 
@@ -61,22 +64,22 @@ public class MainActivity extends WowActivity
         if (savedInstanceState != null) {
             mHomeFragment = (HomeFragment) getSupportFragmentManager()
                     .findFragmentByTag(HomeFragment.class.getName());
-            mTagFragment = (TagStyleFragment) getSupportFragmentManager()
-                    .findFragmentByTag(TagStyleFragment.class.getName());
+            /*mTagFragment = (TagStyleFragment) getSupportFragmentManager()
+                    .findFragmentByTag(TagStyleFragment.class.getName());*/
             mLikeFragment = (LikeFragment) getSupportFragmentManager()
                     .findFragmentByTag(LikeFragment.class.getName());
         }
         if (mHomeFragment == null) {
             mHomeFragment = new HomeFragment();
         }
-        if (mTagFragment == null) {
+        /*if (mTagFragment == null) {
             mTagFragment = new TagStyleFragment();
-        }
+        }*/
         if (mLikeFragment == null) {
             mLikeFragment = new LikeFragment();
         }
         mFragments.add(mHomeFragment);
-        mFragments.add(mTagFragment);
+//        mFragments.add(mTagFragment);
         mFragments.add(mLikeFragment);
 
         setSupportActionBar(mTb);
@@ -128,12 +131,12 @@ public class MainActivity extends WowActivity
                 mLastFragment = mHomeFragment;
                 mBottomNav.setSelectedItemId(mLastSelectId);
                 break;
-            case R.id.nav_category:
+            /*case R.id.nav_category:
                 mLastFragment = mTagFragment;
                 mBottomNav.setSelectedItemId(mLastSelectId);
                 break;
             case R.id.nav_collection:
-                break;
+                break;*/
             case R.id.nav_like:
                 mLastFragment = mLikeFragment;
                 mBottomNav.setSelectedItemId(mLastSelectId);
@@ -151,15 +154,47 @@ public class MainActivity extends WowActivity
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_nav, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.nav_settings:
+                It.newInstance().startActivity(this, SettingsActivity.class);
+                return true;
+            case R.id.nav_about:
+                It.newInstance().startActivity(this, AboutActivity.class);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Event(value = {
+            R.id.main_tb
+    })
+    private void onClick (View view) {
+        switch (view.getId()) {
+            case R.id.main_tb:
+                if (mLastFragment != null) {
+                    mLastFragment.actionCommand(1, null);
+                }
+                break;
+        }
+    }
+
+    @Override
     public void onNavigationItemReselected(@NonNull MenuItem item) {
         AbsPagerFragment fragment = null;
         switch (item.getItemId()) {
             case R.id.nav_home:
                 fragment = mHomeFragment;
                 break;
-            case R.id.nav_category:
+            /*case R.id.nav_category:
                 fragment = mTagFragment;
-                break;
+                break;*/
             case R.id.nav_like:
                 fragment = mLikeFragment;
                 break;
@@ -168,7 +203,7 @@ public class MainActivity extends WowActivity
             return;
         }
         if (fragment.isAdded()) {
-
+            fragment.actionCommand(2, null);
         } else {
             showFragment(fragment, item);
         }
@@ -181,9 +216,9 @@ public class MainActivity extends WowActivity
             case R.id.nav_home:
                 fragment = mHomeFragment;
                 break;
-            case R.id.nav_category:
+            /*case R.id.nav_category:
                 fragment = mTagFragment;
-                break;
+                break;*/
             case R.id.nav_like:
                 fragment = mLikeFragment;
                 break;

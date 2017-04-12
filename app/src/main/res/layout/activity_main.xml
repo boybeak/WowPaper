@@ -30,6 +30,7 @@
         <android.support.v7.widget.Toolbar
             android:id="@+id/main_tb"
             android:background="@android:color/transparent"
+            app:popupTheme="@style/ThemeToolbar.PopTheme"
             style="@style/ToolbarStyle"
             />
     </LinearLayout>

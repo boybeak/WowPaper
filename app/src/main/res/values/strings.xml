@@ -34,6 +34,7 @@
     <string name="text_powered_by" translatable="false">Powered By Wallpaper Abyss</string>
     <string name="text_success" translatable="false">ʕ•ٹ•ʔ</string>
     <string name="text_failed" translatable="false">(｡&gt;﹏&lt;｡)</string>
+    <string name="text_like_empty">No liked wallpapers</string>
     <string name="text_like_will_lost_when_uninstalled">Liked Wallpapers will get lost when uninstall this app.</string>
 
     <string name="toast_set_wallpaper_success">Wallpaper Set Success</string>

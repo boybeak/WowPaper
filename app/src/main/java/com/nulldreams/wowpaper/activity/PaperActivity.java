@@ -394,10 +394,10 @@ public class PaperActivity extends WowActivity {
                 mPb.setVisibility(View.GONE);
                 mPositionScreen.setVisibility(View.VISIBLE);
                 mCirclePb.setVisibility(View.INVISIBLE);
-                expandMenu();
                 mPaperIv.setImage(ImageSource.bitmap(resource));
                 mPositionThumbIv.setImageBitmap(Bitmap.createScaledBitmap(
                         resource, mThumbWidth, mThumbHeight, true));
+                expandMenu();
             }
 
             @Override

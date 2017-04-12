@@ -6,11 +6,11 @@
         android:icon="@drawable/ic_home_outline"
         android:title="@string/title_menu_home"
         />
-    <item
+    <!--<item
         android:id="@+id/nav_category"
         android:title="@string/title_menu_category"
         android:icon="@drawable/ic_format_quote_open"
-        />
+        />-->
     <!--<item
         android:id="@+id/nav_collection"
         android:title="@string/title_menu_collection"

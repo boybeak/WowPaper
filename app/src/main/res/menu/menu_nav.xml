@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <!--<item
         android:id="@+id/nav_category"
         android:title="@string/title_menu_category"
         android:icon="@drawable/ic_format_quote_open"
@@ -14,7 +15,7 @@
         android:id="@+id/nav_like"
         android:title="@string/title_menu_like"
         android:icon="@drawable/ic_heart_outline"
-        />
+        />-->
     <!--<item
         android:id="@+id/nav_tag"
         android:title="@string/title_menu_tag"
@@ -24,10 +25,12 @@
         android:id="@+id/nav_settings"
         android:title="@string/title_menu_settings"
         android:icon="@drawable/ic_settings"
+        app:showAsAction="collapseActionView"
         />
     <item
         android:id="@+id/nav_about"
         android:title="@string/title_menu_about"
         android:icon="@drawable/ic_help_circle_outline"
+        app:showAsAction="collapseActionView"
         />
 </menu>

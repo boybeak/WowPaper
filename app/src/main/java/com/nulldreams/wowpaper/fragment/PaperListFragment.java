@@ -216,6 +216,15 @@ public abstract class PaperListFragment extends AbsPagerFragment
     public void actionCommand(int command, Bundle bundle) {
         if (command == 1) {
             mRv.scrollToPosition(0);
+        } else if (command == 2) {
+            mRv.scrollToPosition(0);
+            mSrl.post(new Runnable() {
+                @Override
+                public void run() {
+                    mSrl.setRefreshing(true);
+                    loadPaperList();
+                }
+            });
         }
     }
 
@@ -269,6 +278,9 @@ public abstract class PaperListFragment extends AbsPagerFragment
             }
         });
         mFooter.setState(FooterDelegate.STATE_SUCCESS);
+        if (!TextUtils.isEmpty(getStaticFooterMsg())) {
+            mFooter.setStaticMsg(getStaticFooterMsg());
+        }
         mAdapter.addIfNotExist(mFooter);
         final int count = mAdapter.getItemCount() - countBefore;
         if (mPage == 1) {
@@ -311,6 +323,10 @@ public abstract class PaperListFragment extends AbsPagerFragment
 
     public void setTitle (String title) {
         mTitle = title;
+    }
+
+    protected DelegateAdapter getAdapter () {
+        return mAdapter;
     }
 
     /*public void setMethod (String method) {
