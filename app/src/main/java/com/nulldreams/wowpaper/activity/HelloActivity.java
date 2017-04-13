@@ -3,6 +3,7 @@ package com.nulldreams.wowpaper.activity;
 import android.app.WallpaperManager;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
@@ -28,7 +29,10 @@ public class HelloActivity extends SplashActivity {
 
         x.view().inject(this);
 
-        mBgIv.setImageDrawable(WallpaperManager.getInstance(this).getFastDrawable());
+        Drawable drawable = WallpaperManager.getInstance(this).getFastDrawable();
+        if (drawable != null) {
+            mBgIv.setImageDrawable(drawable);
+        }
 
     }
 
