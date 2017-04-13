@@ -39,7 +39,8 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_paper"
             android:screenOrientation="portrait"
-             />
+            android:theme="@style/PaperTheme"
+            />
         <activity android:name=".activity.PaperListActivity" />
         <activity
             android:name=".activity.SettingsActivity"

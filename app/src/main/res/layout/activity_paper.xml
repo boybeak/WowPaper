@@ -63,15 +63,29 @@
         android:visibility="gone"
         android:max="100"
         />
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/paper_tb"
-        style="@style/ToolbarStyle"/>
+    <LinearLayout
+        android:id="@+id/paper_tb_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@color/colorHalfBlack"
+        >
+        <View
+            android:id="@+id/paper_status_bar_holder"
+            android:layout_width="match_parent"
+            android:layout_height="25dp"
+            />
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/paper_tb"
+            android:background="@android:color/transparent"
+            style="@style/ToolbarStyle"/>
+    </LinearLayout>
     <FrameLayout
         android:id="@+id/paper_menu_layout"
         android:layout_width="56dp"
         android:layout_height="match_parent"
         android:layout_alignParentEnd="true"
-        android:layout_below="@+id/paper_tb"
+        android:layout_below="@+id/paper_tb_layout"
         android:layout_margin="@dimen/margin_big"
         >
         <ImageView

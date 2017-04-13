@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -32,6 +33,7 @@ import com.nulldreams.adapter.DelegateAdapter;
 import com.nulldreams.adapter.DelegateListParser;
 import com.nulldreams.adapter.impl.LayoutImpl;
 import com.nulldreams.base.animation.DefaultAnimatorListener;
+import com.nulldreams.base.utils.BuildHelper;
 import com.nulldreams.base.utils.Intents;
 import com.nulldreams.base.utils.UiHelper;
 import com.nulldreams.wowpaper.R;
@@ -76,7 +78,7 @@ public class PaperActivity extends WowActivity {
     @ViewInject(R.id.paper_progress_bar) private ContentLoadingProgressBar mPb;
     @ViewInject(R.id.paper_pb) private ContentLoadingProgressBar mCirclePb;
     @ViewInject(R.id.paper_image) private SubsamplingScaleImageView mPaperIv;
-
+    @ViewInject(R.id.paper_status_bar_holder) private View mStatusHolder;
     @ViewInject(R.id.paper_tb) private Toolbar mTb;
     @ViewInject(R.id.paper_position_layout) private View mPositionLayout;
     @ViewInject(R.id.paper_position_screen) private View mPositionScreen;
@@ -270,12 +272,27 @@ public class PaperActivity extends WowActivity {
     }
 
     @Override
+    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        if (BuildHelper.api21AndAbove() && hasVirtualNavBar()) {
+            int navSize = UiHelper.getNavigationBarSize(this);
+            ViewGroup.LayoutParams params = mStatusHolder.getLayoutParams();
+            if (params == null) {
+                params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, navSize);
+            } else {
+                params.height = navSize;
+            }
+            mStatusHolder.setLayoutParams(params);
+        }
+    }
+
+    /*@Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
         if (hasFocus) {
             fullscreen();
         }
-    }
+    }*/
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

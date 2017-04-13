@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.nulldreams.base.BaseActivity;
+import com.nulldreams.base.utils.UiHelper;
 import com.nulldreams.wowpaper.Finals;
 import com.nulldreams.wowpaper.R;
 
@@ -76,6 +77,10 @@ public class WowActivity extends BaseActivity {
     protected void onWallpaperSetEnd (boolean success) {
         Toast.makeText(WowActivity.this, success ? R.string.toast_set_wallpaper_success : R.string.toast_set_wallpaper_failed,
                 Toast.LENGTH_SHORT).show();
+    }
+
+    protected boolean hasVirtualNavBar () {
+        return UiHelper.getRealHeight(this) > getResources().getDisplayMetrics().heightPixels;
     }
 
 }

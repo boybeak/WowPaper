@@ -86,4 +86,7 @@
     <style name="MainTheme" parent="AppTheme">
 
     </style>
+    <style name="PaperTheme" parent="MainTheme">
+
+    </style>
 </resources>

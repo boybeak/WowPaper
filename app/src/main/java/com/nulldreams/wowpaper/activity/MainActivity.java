@@ -108,10 +108,6 @@ public class MainActivity extends WowActivity
 
     }
 
-    private boolean hasVirtualNavBar () {
-        return UiHelper.getRealHeight(this) > getResources().getDisplayMetrics().heightPixels;
-    }
-
     @Override
     public void onBackPressed() {
         super.onBackPressed();
