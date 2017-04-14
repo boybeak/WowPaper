@@ -18,38 +18,49 @@
         android:background="@android:color/transparent"
         android:visibility="gone"
         />
-    <FrameLayout
-        android:id="@+id/paper_position_layout"
+    <LinearLayout
+        android:id="@+id/paper_navigation_layout"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_gravity="bottom"
-        android:background="@color/colorHalfBlack"
-        android:layout_alignParentBottom="true"
-        android:visibility="gone"
-        >
-        <ImageView
-            android:id="@+id/paper_position_thumb"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="center_horizontal"
-            android:scaleType="centerCrop"
-            />
-        <View
-            android:id="@+id/paper_position_screen"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="center_horizontal"
-            android:background="@color/colorPlaceHolder"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_alignParentBottom="true">
+        <FrameLayout
+            android:id="@+id/paper_position_layout"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_gravity="bottom"
+            android:background="@color/colorHalfBlack"
             android:visibility="gone"
-            />
-    </FrameLayout>
+            >
+            <ImageView
+                android:id="@+id/paper_position_thumb"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_horizontal"
+                android:scaleType="centerCrop"
+                />
+            <View
+                android:id="@+id/paper_position_screen"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_horizontal"
+                android:background="@color/colorPlaceHolder"
+                android:visibility="gone"
+                />
+        </FrameLayout>
+        <View
+            android:id="@+id/paper_navigation_bar_holder"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"/>
+    </LinearLayout>
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/paper_info_rv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingLeft="@dimen/margin_middle"
         android:paddingRight="@dimen/margin_middle"
-        android:layout_above="@+id/paper_position_layout"
+        android:layout_above="@+id/paper_navigation_layout"
         android:fadingEdge="none"
         android:requiresFadingEdge="none"
         android:overScrollMode="never"
@@ -68,7 +79,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:background="@color/colorHalfBlack"
         >
         <View
             android:id="@+id/paper_status_bar_holder"
@@ -77,7 +87,7 @@
             />
         <android.support.v7.widget.Toolbar
             android:id="@+id/paper_tb"
-            android:background="@android:color/transparent"
+            android:background="@color/colorHalfBlack"
             style="@style/ToolbarStyle"/>
     </LinearLayout>
     <FrameLayout

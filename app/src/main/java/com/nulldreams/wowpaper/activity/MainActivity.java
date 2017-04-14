@@ -1,5 +1,6 @@
 package com.nulldreams.wowpaper.activity;
 
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
@@ -12,6 +13,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.LinearLayout;
 
 import com.nulldreams.base.content.It;
@@ -56,6 +59,11 @@ public class MainActivity extends WowActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        /*if (BuildHelper.nAndAbove(Build.VERSION_CODES.KITKAT)) {
+            Window w = getWindow(); // in Activity's onCreate() for instance
+            w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+                    WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+        }*/
         setContentView(R.layout.activity_main);
 
         x.view().inject(this);

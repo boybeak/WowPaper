@@ -84,6 +84,7 @@ public class PaperActivity extends WowActivity {
     @ViewInject(R.id.paper_position_screen) private View mPositionScreen;
     @ViewInject(R.id.paper_info_rv) private RecyclerView mInfoRv;
     @ViewInject(R.id.paper_position_thumb) private ImageView mPositionThumbIv;
+    @ViewInject(R.id.paper_navigation_bar_holder) private View mNavigationHolder;
     @ViewInject(R.id.paper_mask) private ImageView mMaskIv;
     @ViewInject(R.id.paper_like_btn) private ImageView mLikeBtn;
     @ViewInject(R.id.paper_share_btn) private ImageView mShareBtn;
@@ -275,24 +276,37 @@ public class PaperActivity extends WowActivity {
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         if (BuildHelper.api21AndAbove() && hasVirtualNavBar()) {
-            int navSize = UiHelper.getNavigationBarSize(this);
-            ViewGroup.LayoutParams params = mStatusHolder.getLayoutParams();
-            if (params == null) {
-                params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, navSize);
+            int statusSize = UiHelper.getStatusBarHeight(this);
+            ViewGroup.LayoutParams statusParams = mStatusHolder.getLayoutParams();
+            if (statusParams == null) {
+                statusParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, statusSize);
             } else {
-                params.height = navSize;
+                statusParams.height = statusSize;
             }
-            mStatusHolder.setLayoutParams(params);
+            mStatusHolder.setLayoutParams(statusParams);
+
+            int navHeight = UiHelper.getNavigationBarSize(this);
+            ViewGroup.LayoutParams navParams = mNavigationHolder.getLayoutParams();
+            if (navParams == null) {
+                navParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, navHeight);
+            } else {
+                navParams.height = navHeight;
+            }
+            mNavigationHolder.setLayoutParams(navParams);
         }
     }
 
-    /*@Override
+    @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
         if (hasFocus) {
-            fullscreen();
+            getWindow().getDecorView().setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
+                    View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
+                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+            );
         }
-    }*/
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -458,7 +472,7 @@ public class PaperActivity extends WowActivity {
 
         final int height8 = mScreenHeight / mThumbScale;
 
-        RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams)mPositionLayout.getLayoutParams();
+        LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams)mPositionLayout.getLayoutParams();
         layoutParams.height = height8;
         mPositionLayout.setLayoutParams(layoutParams);
 
