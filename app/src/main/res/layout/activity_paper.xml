@@ -17,6 +17,7 @@
         android:layout_centerVertical="true"
         android:background="@android:color/transparent"
         android:visibility="gone"
+        android:scaleType="centerCrop"
         />
     <LinearLayout
         android:id="@+id/paper_navigation_layout"
@@ -79,6 +80,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:background="@color/colorHalfBlack"
         >
         <View
             android:id="@+id/paper_status_bar_holder"
@@ -87,7 +89,7 @@
             />
         <android.support.v7.widget.Toolbar
             android:id="@+id/paper_tb"
-            android:background="@color/colorHalfBlack"
+            android:background="@android:color/transparent"
             style="@style/ToolbarStyle"/>
     </LinearLayout>
     <FrameLayout

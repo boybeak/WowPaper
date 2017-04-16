@@ -80,6 +80,7 @@ public class PaperActivity extends WowActivity {
     @ViewInject(R.id.paper_image) private SubsamplingScaleImageView mPaperIv;
     @ViewInject(R.id.paper_status_bar_holder) private View mStatusHolder;
     @ViewInject(R.id.paper_tb) private Toolbar mTb;
+    @ViewInject(R.id.paper_tb_layout) private View mTbLayout;
     @ViewInject(R.id.paper_position_layout) private View mPositionLayout;
     @ViewInject(R.id.paper_position_screen) private View mPositionScreen;
     @ViewInject(R.id.paper_info_rv) private RecyclerView mInfoRv;
@@ -518,7 +519,7 @@ public class PaperActivity extends WowActivity {
             return;
         }
         ObjectAnimator animator = ObjectAnimator.ofFloat(
-                mTb, "alpha", 0f, 1f);
+                mTbLayout, "alpha", 0f, 1f);
         ObjectAnimator menuLayoutAnim = ObjectAnimator.ofFloat(
                 mMenuLayout, "alpha", 0f, 1f);
         AnimatorSet set = new AnimatorSet();
@@ -526,7 +527,7 @@ public class PaperActivity extends WowActivity {
         set.addListener(new DefaultAnimatorListener(){
             @Override
             public void onAnimationStart(Animator animation) {
-                mTb.setVisibility(View.VISIBLE);
+                mTbLayout.setVisibility(View.VISIBLE);
                 mMenuLayout.setVisibility(View.VISIBLE);
                 mMenuLayout.setEnabled(true);
             }
@@ -540,7 +541,7 @@ public class PaperActivity extends WowActivity {
             return;
         }
         ObjectAnimator animator = ObjectAnimator.ofFloat(
-                mTb, "alpha", 1f, 0f);
+                mTbLayout, "alpha", 1f, 0f);
         ObjectAnimator menuLayoutAnim = ObjectAnimator.ofFloat(
                 mMenuLayout, "alpha", 1f, 0f);
         AnimatorSet set = new AnimatorSet();
@@ -549,7 +550,7 @@ public class PaperActivity extends WowActivity {
 
             @Override
             public void onAnimationEnd(Animator animation) {
-                mTb.setVisibility(View.GONE);
+                mTbLayout.setVisibility(View.GONE);
                 mMenuLayout.setVisibility(View.INVISIBLE);
                 mMenuLayout.setEnabled(false);
             }

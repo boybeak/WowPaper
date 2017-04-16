@@ -298,7 +298,7 @@ public abstract class PaperListFragment extends AbsPagerFragment
     @Override
     public void onFailure(Call<PaperResult> call, Throwable t) {
         isLoading = false;
-        if (!isResumed()) {
+        if (isDetached()) {
             return;
         }
         if (mSrl.isRefreshing()) {
