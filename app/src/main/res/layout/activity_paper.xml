@@ -24,14 +24,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:background="@color/colorHalfBlack"
         android:layout_alignParentBottom="true">
         <FrameLayout
             android:id="@+id/paper_position_layout"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_gravity="bottom"
-            android:background="@color/colorHalfBlack"
-            android:visibility="gone"
             >
             <ImageView
                 android:id="@+id/paper_position_thumb"
@@ -46,7 +45,6 @@
                 android:layout_height="match_parent"
                 android:layout_gravity="center_horizontal"
                 android:background="@color/colorPlaceHolder"
-                android:visibility="gone"
                 />
         </FrameLayout>
         <View
@@ -85,7 +83,7 @@
         <View
             android:id="@+id/paper_status_bar_holder"
             android:layout_width="match_parent"
-            android:layout_height="25dp"
+            android:layout_height="0dp"
             />
         <android.support.v7.widget.Toolbar
             android:id="@+id/paper_tb"

@@ -95,25 +95,6 @@ public class MainActivity extends WowActivity
         mBottomNav.setOnNavigationItemReselectedListener(this);
         mBottomNav.setOnNavigationItemSelectedListener(this);
 
-        LinearLayout.LayoutParams statusParams = (LinearLayout.LayoutParams)mStatusPlaceHolderView.getLayoutParams();
-        statusParams.height = UiHelper.getStatusBarHeight(this);
-        mStatusPlaceHolderView.setLayoutParams(statusParams);
-
-        if (BuildHelper.api21AndAbove() && hasVirtualNavBar()) {
-            int navSize = UiHelper.getNavigationBarSize(this);
-            ViewGroup.LayoutParams params = mNavPlaceHolderView.getLayoutParams();
-            if (params == null) {
-                params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, navSize);
-            } else {
-                params.height = navSize;
-            }
-            mNavPlaceHolderView.setLayoutParams(params);
-        }
-
-        float scrHei = getResources().getConfiguration().screenHeightDp * getResources().getDisplayMetrics().density;
-        Log.v(TAG, "heightDpi=" + getResources().getConfiguration().screenHeightDp);
-        Log.v(TAG, "height=" + (scrHei + UiHelper.getStatusBarHeight(this) + UiHelper.getNavigationBarSize(this)));
-
     }
 
     @Override
@@ -148,6 +129,26 @@ public class MainActivity extends WowActivity
             default:
                 mBottomNav.setSelectedItemId(R.id.nav_home);
                 break;
+        }
+
+        if (BuildHelper.kitkatAndAbove() && hasVirtualNavBar()) {
+            int navSize = UiHelper.getNavigationBarSize(this);
+            ViewGroup.LayoutParams params = mNavPlaceHolderView.getLayoutParams();
+            if (params == null) {
+                params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, navSize);
+            } else {
+                params.height = navSize;
+            }
+            mNavPlaceHolderView.setLayoutParams(params);
+
+            int statusSize = UiHelper.getStatusBarHeight(this);
+            ViewGroup.LayoutParams statusParams = mStatusPlaceHolderView.getLayoutParams();
+            if (statusParams == null) {
+                statusParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, statusSize);
+            } else {
+                statusParams.height = statusSize;
+            }
+            mStatusPlaceHolderView.setLayoutParams(statusParams);
         }
     }
 

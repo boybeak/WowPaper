@@ -86,6 +86,7 @@ public class PaperActivity extends WowActivity {
     @ViewInject(R.id.paper_info_rv) private RecyclerView mInfoRv;
     @ViewInject(R.id.paper_position_thumb) private ImageView mPositionThumbIv;
     @ViewInject(R.id.paper_navigation_bar_holder) private View mNavigationHolder;
+    @ViewInject(R.id.paper_navigation_layout) private View mNavLayout;
     @ViewInject(R.id.paper_mask) private ImageView mMaskIv;
     @ViewInject(R.id.paper_like_btn) private ImageView mLikeBtn;
     @ViewInject(R.id.paper_share_btn) private ImageView mShareBtn;
@@ -276,7 +277,7 @@ public class PaperActivity extends WowActivity {
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        if (BuildHelper.api21AndAbove() && hasVirtualNavBar()) {
+        if (BuildHelper.kitkatAndAbove() && hasVirtualNavBar()) {
             int statusSize = UiHelper.getStatusBarHeight(this);
             ViewGroup.LayoutParams statusParams = mStatusHolder.getLayoutParams();
             if (statusParams == null) {
@@ -565,13 +566,13 @@ public class PaperActivity extends WowActivity {
         }
         AnimatorSet set = new AnimatorSet();
         ObjectAnimator animator = ObjectAnimator.ofFloat(
-                mPositionLayout, "alpha", 0f, 1f);
+                mNavLayout, "alpha", 0f, 1f);
         ObjectAnimator infoAnim = ObjectAnimator.ofFloat(
                 mInfoRv, "alpha", 0f, 1f);
         animator.addListener(new DefaultAnimatorListener(){
             @Override
             public void onAnimationStart(Animator animation) {
-                mPositionLayout.setVisibility(View.VISIBLE);
+                mNavLayout.setVisibility(View.VISIBLE);
             }
 
             @Override
@@ -590,14 +591,14 @@ public class PaperActivity extends WowActivity {
         }
         AnimatorSet set = new AnimatorSet();
         ObjectAnimator animator = ObjectAnimator.ofFloat(
-                mPositionLayout, "alpha", 1f, 0f);
+                mNavLayout, "alpha", 1f, 0f);
         ObjectAnimator infoAnim = ObjectAnimator.ofFloat(
                 mInfoRv, "alpha", 1f, 0f);
         animator.addListener(new DefaultAnimatorListener(){
             @Override
             public void onAnimationEnd(Animator animation) {
                 animation.removeAllListeners();
-                mPositionLayout.setVisibility(View.GONE);
+                mNavLayout.setVisibility(View.GONE);
             }
         });
         set.play(infoAnim).with(animator);

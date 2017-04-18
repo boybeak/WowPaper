@@ -25,7 +25,7 @@
         <View
             android:id="@+id/main_status_bar_place_holder"
             android:layout_width="match_parent"
-            android:layout_height="25dp"
+            android:layout_height="0dp"
             />
         <android.support.v7.widget.Toolbar
             android:id="@+id/main_tb"
