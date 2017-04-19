@@ -80,7 +80,7 @@ public class WowActivity extends BaseActivity {
     }
 
     protected boolean hasVirtualNavBar () {
-        return UiHelper.getRealHeight(this) > getResources().getDisplayMetrics().heightPixels;
+        return UiHelper.getRealHeight(this) - getResources().getDisplayMetrics().heightPixels >= UiHelper.getNavigationBarSize(this);
     }
 
 }

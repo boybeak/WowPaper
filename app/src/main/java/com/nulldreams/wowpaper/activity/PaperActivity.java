@@ -252,7 +252,7 @@ public class PaperActivity extends WowActivity {
         mPaperIv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mPositionLayout.getVisibility() == View.GONE) {
+                if (mNavLayout.getVisibility() == View.GONE) {
                     animShowSetBtn();
                     animShowPositionLayout();
                 } else {
@@ -277,25 +277,26 @@ public class PaperActivity extends WowActivity {
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        if (BuildHelper.kitkatAndAbove() && hasVirtualNavBar()) {
-            int statusSize = UiHelper.getStatusBarHeight(this);
-            ViewGroup.LayoutParams statusParams = mStatusHolder.getLayoutParams();
-            if (statusParams == null) {
-                statusParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, statusSize);
-            } else {
-                statusParams.height = statusSize;
+        if (BuildHelper.kitkatAndAbove()) {
+            if (hasVirtualNavBar()) {
+                int navHeight = UiHelper.getNavigationBarSize(this);
+                ViewGroup.LayoutParams navParams = mNavigationHolder.getLayoutParams();
+                if (navParams == null) {
+                    navParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, navHeight);
+                } else {
+                    navParams.height = navHeight;
+                }
+                mNavigationHolder.setLayoutParams(navParams);
             }
-            mStatusHolder.setLayoutParams(statusParams);
-
-            int navHeight = UiHelper.getNavigationBarSize(this);
-            ViewGroup.LayoutParams navParams = mNavigationHolder.getLayoutParams();
-            if (navParams == null) {
-                navParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, navHeight);
-            } else {
-                navParams.height = navHeight;
-            }
-            mNavigationHolder.setLayoutParams(navParams);
         }
+        int statusSize = UiHelper.getStatusBarHeight(this);
+        ViewGroup.LayoutParams statusParams = mStatusHolder.getLayoutParams();
+        if (statusParams == null) {
+            statusParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, statusSize);
+        } else {
+            statusParams.height = statusSize;
+        }
+        mStatusHolder.setLayoutParams(statusParams);
     }
 
     @Override
@@ -567,8 +568,8 @@ public class PaperActivity extends WowActivity {
         AnimatorSet set = new AnimatorSet();
         ObjectAnimator animator = ObjectAnimator.ofFloat(
                 mNavLayout, "alpha", 0f, 1f);
-        ObjectAnimator infoAnim = ObjectAnimator.ofFloat(
-                mInfoRv, "alpha", 0f, 1f);
+        /*ObjectAnimator infoAnim = ObjectAnimator.ofFloat(
+                mInfoRv, "alpha", 0f, 1f);*/
         animator.addListener(new DefaultAnimatorListener(){
             @Override
             public void onAnimationStart(Animator animation) {
@@ -580,7 +581,7 @@ public class PaperActivity extends WowActivity {
                 animation.removeAllListeners();
             }
         });
-        set.play(infoAnim).with(animator);
+        set.play(animator);
         set.start();
         mPositionAnim = set;
     }
@@ -592,8 +593,8 @@ public class PaperActivity extends WowActivity {
         AnimatorSet set = new AnimatorSet();
         ObjectAnimator animator = ObjectAnimator.ofFloat(
                 mNavLayout, "alpha", 1f, 0f);
-        ObjectAnimator infoAnim = ObjectAnimator.ofFloat(
-                mInfoRv, "alpha", 1f, 0f);
+        /*ObjectAnimator infoAnim = ObjectAnimator.ofFloat(
+                mInfoRv, "alpha", 1f, 0f);*/
         animator.addListener(new DefaultAnimatorListener(){
             @Override
             public void onAnimationEnd(Animator animation) {
@@ -601,13 +602,12 @@ public class PaperActivity extends WowActivity {
                 mNavLayout.setVisibility(View.GONE);
             }
         });
-        set.play(infoAnim).with(animator);
+        set.play(animator);
         set.start();
         mPositionAnim = set;
     }
 
     private void expandMenu () {
-        Log.v(TAG, "expandMenu");
         RelativeLayout.LayoutParams params =
                 (RelativeLayout.LayoutParams)mMenuLayout.getLayoutParams();
         params.height = mCirclePb.getHeight() * 4;

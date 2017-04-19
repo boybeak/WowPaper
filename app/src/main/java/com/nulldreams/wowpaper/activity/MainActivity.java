@@ -131,15 +131,17 @@ public class MainActivity extends WowActivity
                 break;
         }
 
-        if (BuildHelper.kitkatAndAbove() && hasVirtualNavBar()) {
-            int navSize = UiHelper.getNavigationBarSize(this);
-            ViewGroup.LayoutParams params = mNavPlaceHolderView.getLayoutParams();
-            if (params == null) {
-                params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, navSize);
-            } else {
-                params.height = navSize;
+        if (BuildHelper.kitkatAndAbove()) {
+            if (hasVirtualNavBar()) {
+                int navSize = UiHelper.getNavigationBarSize(this);
+                ViewGroup.LayoutParams params = mNavPlaceHolderView.getLayoutParams();
+                if (params == null) {
+                    params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, navSize);
+                } else {
+                    params.height = navSize;
+                }
+                mNavPlaceHolderView.setLayoutParams(params);
             }
-            mNavPlaceHolderView.setLayoutParams(params);
 
             int statusSize = UiHelper.getStatusBarHeight(this);
             ViewGroup.LayoutParams statusParams = mStatusPlaceHolderView.getLayoutParams();

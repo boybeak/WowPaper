@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">base</string>
+    <string name="bottom_hide_behavior">com.nulldreams.base.widget.behavior.BottomHideBehavior</string>
+    <string name="top_hide_behavior">com.nulldreams.base.widget.behavior.TopHideBehavior</string>
+    <string name="scroll_aware_fab_behavior">com.nulldreams.base.widget.behavior.ScrollAwareFabBehavior</string>
 </resources>

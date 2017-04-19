@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -18,6 +19,7 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.google.android.flexbox.FlexDirection;
@@ -30,7 +32,9 @@ import com.nulldreams.adapter.DelegateParser;
 import com.nulldreams.adapter.SimpleFilter;
 import com.nulldreams.adapter.impl.LayoutImpl;
 import com.nulldreams.adapter.widget.OnScrollBottomListener;
+import com.nulldreams.base.utils.BuildHelper;
 import com.nulldreams.base.utils.Intents;
+import com.nulldreams.base.utils.UiHelper;
 import com.nulldreams.wowpaper.Finals;
 import com.nulldreams.wowpaper.R;
 import com.nulldreams.wowpaper.WowHelper;
@@ -47,6 +51,9 @@ import com.nulldreams.wowpaper.presenter.TagPresenter;
 import com.nulldreams.wowpaper.presenter.WowPresenter;
 import com.nulldreams.wowpaper.presenter.WowView;
 
+import org.xutils.view.annotation.ViewInject;
+import org.xutils.x;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,18 +62,20 @@ public class PaperListActivity extends WowActivity implements SwipeRefreshLayout
 
     private static final String TAG = PaperListActivity.class.getSimpleName();
 
-    private DrawerLayout mDl;
-    private Toolbar mTb;
-    private RecyclerView mRv, mNavRv;
-    private DelegateAdapter mAdapter, mNavAdapter;
+    @ViewInject(R.id.paper_list_dl) private DrawerLayout mDl;
+    @ViewInject(R.id.paper_list_tb) private Toolbar mTb;
+    @ViewInject(R.id.paper_list_rv) private RecyclerView mRv;
+    @ViewInject(R.id.paper_list_nav_rv) private RecyclerView mNavRv;
 
+    @ViewInject(R.id.paper_list_srl) private SwipeRefreshLayout mSrl;
+    @ViewInject(R.id.paper_list_status_place_holder) private View mStatusHolderView;
+
+    private DelegateAdapter mAdapter, mNavAdapter;
     private Filter mFilter;
     private String mType;
 
     //private int mPage = 1;
     private boolean isLoading = false;
-
-    private SwipeRefreshLayout mSrl;
 
     private OnScrollBottomListener mBottomListener = new OnScrollBottomListener() {
         @Override
@@ -124,9 +133,8 @@ public class PaperListActivity extends WowActivity implements SwipeRefreshLayout
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_paper_list);
 
-        mDl = (DrawerLayout)findViewById(R.id.paper_list_dl);
+        x.view().inject(this);
 
-        mTb = (Toolbar)findViewById(R.id.paper_list_tb);
         setSupportActionBar(mTb);
         mTb.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -135,12 +143,10 @@ public class PaperListActivity extends WowActivity implements SwipeRefreshLayout
             }
         });
 
-        mSrl = (SwipeRefreshLayout)findViewById(R.id.paper_list_srl);
         mSrl.setColorSchemeResources(R.color.colorAccent);
         mSrl.setOnRefreshListener(this);
         mSrl.setProgressViewOffset(false, 0, WowHelper.getSrlOffset(this));
 
-        mRv = (RecyclerView)findViewById(R.id.paper_list_rv);
         final int spanCount = getResources().getInteger(R.integer.span_count);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, spanCount);
         gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
@@ -160,7 +166,6 @@ public class PaperListActivity extends WowActivity implements SwipeRefreshLayout
 
         mFooter = new FooterDelegate (FooterDelegate.STATE_NONE);
 
-        mNavRv = (RecyclerView)findViewById(R.id.paper_list_nav_rv);
         FlexboxLayoutManager layoutManager = new FlexboxLayoutManager();
         layoutManager.setFlexDirection(FlexDirection.ROW);
         layoutManager.setJustifyContent(JustifyContent.FLEX_START);
@@ -220,6 +225,16 @@ public class PaperListActivity extends WowActivity implements SwipeRefreshLayout
         );
         PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(mPrefListener);
         LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter(Finals.ACTION_FILTER_SELECT));
+    }
+
+    @Override
+    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        if (BuildHelper.kitkatAndAbove()) {
+            ViewGroup.LayoutParams params = mStatusHolderView.getLayoutParams();
+            params.height = UiHelper.getStatusBarHeight(this);
+            mStatusHolderView.setLayoutParams(params);
+        }
     }
 
     @Override
