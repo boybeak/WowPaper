@@ -276,7 +276,7 @@ public abstract class PaperListFragment extends AbsPagerFragment
                 delegate.setShowInfo(show);
                 return delegate;
             }
-        });
+        }).autoNotify();
         mFooter.setState(FooterDelegate.STATE_SUCCESS);
         if (!TextUtils.isEmpty(getStaticFooterMsg())) {
             mFooter.setStaticMsg(getStaticFooterMsg());

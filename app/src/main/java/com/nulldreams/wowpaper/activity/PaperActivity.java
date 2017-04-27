@@ -6,6 +6,7 @@ import android.animation.ObjectAnimator;
 import android.graphics.Bitmap;
 import android.graphics.PointF;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v7.app.AlertDialog;
@@ -239,6 +240,12 @@ public class PaperActivity extends WowActivity {
                         new PointF(mPaper.width / 2, mPaper.height / 2));
                 mCenterX = mPaperIv.getCenter().x;
                 mCenterY = mPaperIv.getCenter().y;
+
+                mPb.setVisibility(View.GONE);
+                mPositionScreen.setVisibility(View.VISIBLE);
+                mCirclePb.setVisibility(View.INVISIBLE);
+//                mPaperIv.setImage(ImageSource.bitmap(resource));
+                expandMenu();
             }
         });
         mPaperIv.setOnStateChangedListener(new SubsamplingScaleImageView.DefaultOnStateChangedListener(){
@@ -401,58 +408,9 @@ public class PaperActivity extends WowActivity {
 
     private void showWallpaper (File result) {
         mPaperFile = result;
+        mPaperIv.setImage(ImageSource.uri(Uri.fromFile(result)));
         //Uri uri = FileProvider.getUriForFile(this, "com.nulldreams.wowpaper", mPaperFile);
-        Glide.with(PaperActivity.this).load(result).asBitmap().into(new SimpleTarget<Bitmap>() {
-
-            @Override
-            public void onStart() {
-                super.onStart();
-                Log.v(TAG, "showWallpaper onStart");
-            }
-
-            @Override
-            public void onStop() {
-                super.onStop();
-                Log.v(TAG, "showWallpaper onStop");
-            }
-
-            @Override
-            public void onLoadStarted(Drawable placeholder) {
-                super.onLoadStarted(placeholder);
-                Log.v(TAG, "showWallpaper onLoadStarted");
-            }
-
-            @Override
-            public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-                Log.v(TAG, "showWallpaper onResourceReady");
-                mPb.setVisibility(View.GONE);
-                mPositionScreen.setVisibility(View.VISIBLE);
-                mCirclePb.setVisibility(View.INVISIBLE);
-                mPaperIv.setImage(ImageSource.bitmap(resource));
-                mPositionThumbIv.setImageBitmap(Bitmap.createScaledBitmap(
-                        resource, mThumbWidth, mThumbHeight, true));
-                expandMenu();
-            }
-
-            @Override
-            public void onLoadCleared(Drawable placeholder) {
-                super.onLoadCleared(placeholder);
-                Log.v(TAG, "showWallpaper onLoadCleared");
-            }
-
-            @Override
-            public void onDestroy() {
-                super.onDestroy();
-                Log.v(TAG, "showWallpaper onDestroy");
-            }
-
-            @Override
-            public void onLoadFailed(Exception e, Drawable errorDrawable) {
-                super.onLoadFailed(e, errorDrawable);
-                Log.v(TAG, "showWallpaper onLoadFailed e=" + e.getMessage());
-                e.printStackTrace();
-            }
-        });
+        Glide.with(PaperActivity.this).load(result).asBitmap().into(mPositionThumbIv);
     }
 
     @Override
